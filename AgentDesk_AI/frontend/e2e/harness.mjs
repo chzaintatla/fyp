@@ -30,7 +30,7 @@ export async function startBackend({ port: fixedPort } = {}) {
     AGENTDESK_TEST_DIR: join(root, 'testdir'),
     AGENTDESK_LOG_DIR: join(root, 'logs'),
     AGENTDESK_TOKEN_FILE: tokenFile,
-    AI_PROVIDER: 'groq', GROQ_API_KEY: '', AI_CLOUD_MODE: 'explicit',
+    AI_PROVIDER: 'groq', GROQ_API_KEY: '', GROQ_API_KEYS: '', CLOUD_BRAIN_URL: '', CLOUD_BRAIN_TOKEN: '', AI_CLOUD_MODE: 'explicit',
   };
   const child = spawn(python, ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', String(port), '--log-level', 'warning'],
     { cwd: BACKEND, env, stdio: ['ignore', 'inherit', 'inherit'] });
@@ -80,7 +80,7 @@ const FAKE_SPEECH = `
 `;
 
 export async function openApp(backend, { path = '/', viewport = { width: 1280, height: 900 } } = {}) {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(process.env.E2E_CHANNEL ? { channel: process.env.E2E_CHANNEL } : (process.platform === 'win32' ? { channel: 'msedge' } : {}));
   const context = await browser.newContext({ viewport });
   await context.addInitScript(FAKE_SPEECH);
   const page = await context.newPage();
