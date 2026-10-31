@@ -49,3 +49,24 @@ body.mini-orb { background: transparent !important; overflow: hidden; }
 
 /* Keyboard focus is always visible. */
 :focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+
+/* ---- M3 avatars: one animation per mood; all of them stop under prefers-reduced-motion ---- */
+.avatar { overflow: visible; }
+.avatar .av-ring { opacity: 0.55; transform-origin: 100px 100px; }
+.avatar .av-body { transform-origin: 100px 190px; animation: av-breathe 4s ease-in-out infinite; }
+.avatar .av-eye { transform-origin: center; transform-box: fill-box; animation: av-blink 5s infinite; }
+.avatar-listening .av-ring { opacity: 1; animation: av-pulse 1.2s ease-out infinite; }
+.avatar-listening .av-body { transform: rotate(2deg) translateY(2px); animation: none; }
+.avatar-speaking .av-ring { opacity: 1; animation: av-pulse 0.7s ease-out infinite; }
+.avatar-thinking .av-orbit { transform-origin: 100px 100px; animation: av-spin 2.4s linear infinite; }
+.avatar-happy .av-ring { opacity: 1; filter: drop-shadow(0 0 8px var(--av)); }
+.avatar-happy .av-body { animation: av-hop 0.6s ease-out 1; }
+.avatar-concerned .av-ring { opacity: 0.9; stroke-dasharray: 6 6; }
+@keyframes av-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.015); } }
+@keyframes av-blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.08); } }
+@keyframes av-pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.06); opacity: 0.35; } }
+@keyframes av-spin { to { transform: rotate(360deg); } }
+@keyframes av-hop { 0% { transform: translateY(0); } 40% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .avatar *, .avatar { animation: none !important; }
+}

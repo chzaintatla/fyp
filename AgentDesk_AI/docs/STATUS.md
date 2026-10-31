@@ -6,6 +6,16 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-10-31 — Session 10: M3 Avatars and personalities (branch `m3-avatars`, partly done)
+
+**Done:** 6 avatars (3 female, 3 male) + custom picture, 5 personalities (Assistant, Mentor, Best Friend, Coach, Custom with sliders),
+persona fields, `/voice/catalog`, personality wording in `responses.py`, SVG avatar with 6 moods, Characters page, 5-step onboarding
+with mic test, Home shows the avatar (or the orb). Rule 3.9 test: same commands give identical plans under every personality.
+**Tested:** `pytest tests -q` 831 passed, 4 skipped; `npm test` 18 passed; `npm run build` ok; onboarding and Characters page clicked
+through in a browser (Orion + Best Friend saved with male voices). **Not done:** `scripts/check_m3.ps1` and the M3 section of
+`docs/TEST_SCRIPT.md`; real voice playback of male vs female voices; e2e (Playwright not installed, flow updated but not run);
+wake-word detection (phrase is only saved); Urdu/Hindi personality wording (uses Assistant wording).
+
 ### 2026-10-31 — Session 9: M2 Two-way voice (branch `m2-voice`)
 
 **Done**

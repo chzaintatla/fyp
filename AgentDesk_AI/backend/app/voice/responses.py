@@ -6,7 +6,9 @@ Languages: "en", "roman" (Roman Urdu), "ur" (Urdu script), "hi" (Hindi).
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, NamedTuple
+
+from . import personas
 
 LANGUAGES = ("en", "roman", "ur", "hi")
 PERSONALITIES = ("assistant", "mentor", "friend", "coach", "custom")
@@ -56,6 +58,48 @@ _TOOL: dict[str, dict[str, tuple[str, str]]] = {
 }
 
 
+class Voiceprint(NamedTuple):
+    """Who is speaking: the personality plus the user's name and the custom sliders. Wording only."""
+    personality: str = "assistant"
+    user_name: str = ""
+    formality: int = 50
+    humour: int = 50
+
+
+# style -> event -> language -> template. Missing entries fall back to the Assistant set above, so every
+# personality can say every event; Urdu-script and Hindi currently use the Assistant wording.
+_P: dict[str, dict[str, dict[str, str]]] = {
+    "mentor": {
+        "wake": {"en": "I'm here. What shall we work on?", "roman": "Main hoon. Kya karna hai?"},
+        "acknowledge": {"en": "Let's do that.", "roman": "Chalein, karte hain."},
+        "progress": {"en": "This step takes a moment.", "roman": "Is step mein thora waqt lagta hai."},
+        "success": {"en": "That's finished. {detail}", "roman": "Mukammal. {detail}"},
+        "failure": {"en": "That didn't work, and here is why: {reason}", "roman": "Nahi hua, wajah yeh hai: {reason}"},
+        "cancelled": {"en": "No problem. Nothing was changed.", "roman": "Koi masla nahi. Kuch nahi badla."},
+    },
+    "friend": {
+        "wake": {"en": "Hey{who}, I'm listening!", "roman": "Haan bolo{who}!"},
+        "acknowledge": {"en": "On it{who}!", "roman": "Abhi karta hoon{who}!"},
+        "progress": {"en": "Hang on, almost there!", "roman": "Bas thora sa aur!"},
+        "success": {"en": "All done{who}! {detail}", "roman": "Ho gaya{who}! {detail}"},
+        "failure": {"en": "Oops, that didn't work: {reason}", "roman": "Oho, nahi hua: {reason}"},
+        "cancelled": {"en": "No worries, cancelled. Nothing changed.", "roman": "Koi baat nahi, cancel. Kuch nahi badla."},
+    },
+    "coach": {
+        "wake": {"en": "Ready. What's the goal?", "roman": "Tayyar hoon. Goal kya hai?"},
+        "acknowledge": {"en": "Let's go!", "roman": "Chalo shuru!"},
+        "progress": {"en": "Keep going, we're getting there.", "roman": "Lage raho, pohnchne wale hain."},
+        "success": {"en": "Nailed it. {detail}", "roman": "Kar diya. {detail}"},
+        "failure": {"en": "Not this time: {reason} We'll fix it.", "roman": "Is baar nahi: {reason} Theek kar lenge."},
+        "cancelled": {"en": "Cancelled, nothing changed. What's next?", "roman": "Cancel, kuch nahi badla. Ab agla?"},
+    },
+}
+
+
+def _voiceprint(personality: "str | Voiceprint") -> Voiceprint:
+    return personality if isinstance(personality, Voiceprint) else Voiceprint(personality or "assistant")
+
+
 class _Safe(dict):
     def __missing__(self, key):  # an unknown slot degrades to empty text, never to an exception
         return ""
@@ -76,10 +120,18 @@ def _lang(language: str | None) -> str:
     return "en"
 
 
-def line(event: str, language: str = "en", personality: str = "assistant", **slots: Any) -> str:
+def line(event: str, language: str = "en", personality: "str | Voiceprint" = "assistant", **slots: Any) -> str:
     """One spoken line. Unknown personality -> assistant; unknown language -> English."""
-    table = _T[event]
-    return _fmt(table.get(_lang(language)) or table["en"], slots)
+    vp = _voiceprint(personality)
+    lang = _lang(language)
+    style = personas.resolve_style(vp.personality, vp.formality, vp.humour)
+    name = " ".join(vp.user_name.split())[:40]
+    slots = {**slots, "who": f", {name}" if name else ""}
+    template = _P.get(style, {}).get(event, {}).get(lang)
+    if template is None:
+        table = _T[event]
+        template = table.get(lang) or table["en"]
+    return _fmt(template, slots)
 
 
 def _slots_for(args: dict[str, Any]) -> dict[str, Any]:
@@ -87,7 +139,7 @@ def _slots_for(args: dict[str, Any]) -> dict[str, Any]:
     return {"app": app[:1].upper() + app[1:], "query": str(args.get("query") or "")[:60]}
 
 
-def acknowledge_line(tool: str, args: dict[str, Any], language: str = "en", personality: str = "assistant") -> str:
+def acknowledge_line(tool: str, args: dict[str, Any], language: str = "en", personality: "str | Voiceprint" = "assistant") -> str:
     entry = _TOOL.get(tool, {}).get(_lang(language))
     if not entry:
         return line("acknowledge", language, personality)
@@ -99,7 +151,7 @@ def _verified(action: dict[str, Any]) -> bool:
     return action.get("status") == "succeeded" and bool(ver.get("passed"))
 
 
-def line_for_task(task: dict[str, Any], language: str = "en", personality: str = "assistant") -> str:
+def line_for_task(task: dict[str, Any], language: str = "en", personality: "str | Voiceprint" = "assistant") -> str:
     """The closing line for a finished (or waiting) task. "Done" only when the verifier confirmed every action."""
     status, actions = task.get("status"), task.get("actions") or []
     if status == "awaiting_approval":
