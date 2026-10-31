@@ -3,3 +3,4 @@
 -r requirements.txt
 pywebview>=5.0 ; sys_platform == "win32"
 pystray>=0.19 ; sys_platform == "win32"
+edge-tts>=6.1

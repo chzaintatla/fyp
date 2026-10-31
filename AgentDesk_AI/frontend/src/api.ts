@@ -71,6 +71,7 @@ export interface ConfigStatus {
   ai_configured: boolean;
   mock_mode: boolean;
   groq_configured?: boolean;
+  speech_ready?: boolean;
   agent_max_steps?: number;
   fallback_provider?: string;
   fallback_configured?: boolean;
@@ -239,4 +240,50 @@ export const api = {
   run: (id: string) => request<TaskOut>(`/tasks/${id}/run`, { method: 'POST' }),
 
   cancel: (id: string) => request<TaskOut>(`/tasks/${id}/cancel`, { method: 'POST' }),
+};
+
+// ---------------------------------------------------------------- M2 voice endpoints
+export interface VoiceOptions {
+  language: string;
+  gender: 'female' | 'male';
+  voice_en: string;
+  voice_ur?: string | null;
+  voice_hi?: string | null;
+  direction?: string | null;
+}
+
+async function voiceFetch(path: string, init: RequestInit): Promise<Response> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    ...init,
+    headers: { ...(apiToken() ? { Authorization: `Bearer ${apiToken()}` } : {}), ...(init.headers ?? {}) },
+  });
+  if (!res.ok) throw new Error(`Voice request failed (${res.status})`);
+  return res;
+}
+
+const jsonInit = (body: unknown): RequestInit => ({
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body),
+});
+
+export const voiceApi = {
+  chunks: async (text: string, direction?: string | null) =>
+    ((await (await voiceFetch('/voice/chunks', jsonInit({ text, direction }))).json()) as { chunks: string[] }).chunks,
+  tts: async (text: string, options: VoiceOptions) => {
+    const res = await voiceFetch('/voice/tts', jsonInit({ text, ...options }));
+    return { blob: await res.blob(), engine: res.headers.get('X-TTS-Engine') ?? '' };
+  },
+  /** The phrase to speak. A task yields its closing line ("Done" only if verified); a tool yields the acknowledgement. */
+  line: async (body: { task?: TaskOut; tool?: string; args?: Record<string, unknown>; event?: string; language: string; personality?: string }) =>
+    ((await (await voiceFetch('/voice/line', jsonInit(body))).json()) as { text: string }).text,
+  stt: async (wav: Uint8Array, language?: string, prompt?: string) => {
+    const form = new FormData();
+    form.append('audio', new Blob([wav as BlobPart], { type: 'audio/wav' }), 'speech.wav');
+    if (language) form.append('language', language);
+    if (prompt) form.append('prompt', prompt);
+    return ((await (await voiceFetch('/voice/stt', { method: 'POST', body: form })).json()) as { text: string }).text;
+  },
+  latency: (kind: 'local' | 'planned' | 'chat', ms: Record<string, number>) =>
+    voiceFetch('/voice/latency', jsonInit({ kind, ms })).catch(() => undefined),
 };

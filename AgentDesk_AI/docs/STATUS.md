@@ -6,6 +6,40 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-10-31 — Session 9: M2 Two-way voice (branch `m2-voice`)
+
+**Done**
+- `backend/app/voice/`: `responses.py` (spoken lines per event x language [en, Roman Urdu, Urdu, Hindi]; "Done" only when every
+  action is `succeeded` AND its verification passed), `chunking.py` (sentences <= 200 chars, direction tag budgeted), `tts.py`
+  (chain Orpheus -> edge-tts -> Windows SAPI; a failing engine is skipped for 5 min; 64-clip cache; SAPI picks an installed
+  voice of the requested gender), `latency.py` (per-stage JSONL, no transcript text), `api.py` (`/voice/stt|tts|chunks|line|latency`,
+  token-protected; `/config/status` has `speech_ready`).
+- Frontend: `speech/player.ts` (sentence-by-sentence playback, next sentence generated while one plays, immediate `stop()`, browser
+  voice as last resort), `speech/whisperRecognition.ts` (mic + energy VAD + pre-roll, WAV to Groq Whisper via `/voice/stt`, drop-in for
+  the browser SpeechRecognition, `onspeechstart` = barge-in), `speech/vad.ts`. App.tsx: server voice when `speech_ready`, spoken
+  acknowledgement after 0.9 s and "Still working" after 4.5 s of a running task, 8 s follow-up window in push-to-talk, silence
+  debounce 2.2 s -> 0.5 s for Whisper input. Without a speech service the old browser voice is unchanged.
+- `scripts/check_m2.ps1`, `scripts/voice_bench.py`, `scripts/tts_probe.py`, `docs/TEST_SCRIPT.md` (M2 section).
+- Cloud brain URL set in `backend/.env` (git-ignored): chat through Render returned HTTP 200.
+
+**Tested how**
+- `pytest tests -q` -> 774 passed, 4 skipped, 0 failed (`tests/test_m2_voice.py`: 38). `npm test` 11 passed (incl. 7 new VAD/WAV), `npm run build` ok.
+- Real engines on this PC (`tts_probe.py`): edge-tts ur-PK-UzmaNeural / AsadNeural, hi-IN-SwaraNeural / MadhurNeural PASS (1.8-3.5 s per
+  sentence, new connection each time); SAPI male (David) and female (Zira) PASS (~0.5 s); Orpheus FAIL: Groq org must accept the terms.
+- `voice_bench.py` (server side, cold synthesis, 30 runs, command text -> first sentence synthesized): p50 0.9 s, p90 1.56 s,
+  29/30 <= 2.5 s (96.7%). With Whisper in front (`--stt`, SAPI-spoken commands): p50 2.24 s, only 22/30 (73%) <= 2.5 s; Whisper
+  word accuracy 100% (30 synthetic commands). Direct Groq (no Render hop) was no faster (STT ~1.0 s). **The 90% target is NOT met
+  with speech-to-text included**; Orpheus (faster than spawning SAPI) cannot be measured until the terms are accepted.
+- Bugs found by measuring and fixed: action status is `succeeded` (not `completed`), so real tasks would never have said "Done";
+  long `plan_note` text was read aloud; SAPI `SelectVoiceByHints` ignored gender.
+
+**Not done / not measured (needs you)**
+- Real microphone, real speaker playback, barge-in time (<= 300 ms), follow-up window and the true first-word latency in the browser:
+  run `docs/TEST_SCRIPT.md` section M2 (the UI reports to `/voice/latency`).
+- Orpheus: accept the terms at console.groq.com/playground?model=canopylabs/orpheus-v1-english.
+- VAD is energy-based, not Silero (Silero needs onnxruntime-web); Roman Urdu is spoken by the English voice chain.
+- Personalities: only the Assistant phrase set exists (M3). `PLANNER_MODE` still `legacy`; M1 items still open.
+
 ### 2026-10-31 — Session 8: M1 Live foundations (in progress)
 
 **Done**
