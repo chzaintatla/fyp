@@ -1,0 +1,436 @@
+{
+ "summary": {
+  "chat": {
+   "correct": 19,
+   "total": 20
+  },
+  "web": {
+   "correct": 12,
+   "total": 20
+  },
+  "memory": {
+   "correct": 3,
+   "total": 3
+  }
+ },
+ "rows": [
+  {
+   "set": "chat",
+   "n": 1,
+   "question": "What is the capital of Japan?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.8,
+   "sources": 0,
+   "answer": "Right away, the capital of Japan is Tokyo."
+  },
+  {
+   "set": "chat",
+   "n": 2,
+   "question": "What is 12 times 12?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.3,
+   "sources": 0,
+   "answer": "Right away, 12 times 12 equals 144."
+  },
+  {
+   "set": "chat",
+   "n": 3,
+   "question": "At what temperature does water boil at sea level in Celsius?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.3,
+   "sources": 0,
+   "answer": "Right away, water boils at 100 °C at sea level."
+  },
+  {
+   "set": "chat",
+   "n": 4,
+   "question": "Who wrote the play Hamlet?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.2,
+   "sources": 0,
+   "answer": "Right away, Hamlet was written by William Shakespeare."
+  },
+  {
+   "set": "chat",
+   "n": 5,
+   "question": "Which is the largest planet in our solar system?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.3,
+   "sources": 0,
+   "answer": "Right away, the largest planet in our solar system is Jupiter."
+  },
+  {
+   "set": "chat",
+   "n": 6,
+   "question": "What is the chemical symbol for gold?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.0,
+   "sources": 0,
+   "answer": "Right away, the chemical symbol for gold is Au."
+  },
+  {
+   "set": "chat",
+   "n": 7,
+   "question": "How many days are there in a leap year?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.3,
+   "sources": 0,
+   "answer": "Right away, a leap year has 366 days."
+  },
+  {
+   "set": "chat",
+   "n": 8,
+   "question": "What does CPU stand for?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.2,
+   "sources": 0,
+   "answer": "Right away, CPU stands for Central Processing Unit."
+  },
+  {
+   "set": "chat",
+   "n": 9,
+   "question": "What is the speed of light in kilometres per second, roughly?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.9,
+   "sources": 0,
+   "answer": "Right away, the speed of light is roughly 299,792 kilometres per second, often rounded to about 300,000 km/s."
+  },
+  {
+   "set": "chat",
+   "n": 10,
+   "question": "What is the square root of 81?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.2,
+   "sources": 0,
+   "answer": "Right away, the square root of 81 is 9."
+  },
+  {
+   "set": "chat",
+   "n": 11,
+   "question": "Explain photosynthesis in one sentence.",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.4,
+   "sources": 0,
+   "answer": "Right away, photosynthesis is the process by which green plants convert sunlight, water, and carbon dioxide into glucose and oxygen."
+  },
+  {
+   "set": "chat",
+   "n": 12,
+   "question": "What is the difference between RAM and ROM?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.4,
+   "sources": 0,
+   "answer": "Right away, RAM is volatile memory that holds data temporarily while a computer runs, whereas ROM is non‑volatile and contains permanent firmware."
+  },
+  {
+   "set": "chat",
+   "n": 13,
+   "question": "Explain what an API is in one sentence.",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.1,
+   "sources": 0,
+   "answer": "Right away, an API, or Application Programming Interface, is a set of defined rules and protocols that allows different software applications to communicate with each other. It specifies the methods and data formats that developers can use to request and exchange information."
+  },
+  {
+   "set": "chat",
+   "n": 14,
+   "question": "Who is the founder of Pakistan?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.3,
+   "sources": 0,
+   "answer": "Right away, the founder of Pakistan is Muhammad Ali Jinnah."
+  },
+  {
+   "set": "chat",
+   "n": 15,
+   "question": "Pakistan ki rajdhani kya hai?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.3,
+   "sources": 0,
+   "answer": "Right away, Pakistan ki rajdhani Islamabad hai."
+  },
+  {
+   "set": "chat",
+   "n": 16,
+   "question": "Pani ka chemical formula kya hai?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.0,
+   "sources": 0,
+   "answer": "Right away, pani ka chemical formula H₂O hai."
+  },
+  {
+   "set": "chat",
+   "n": 17,
+   "question": "Translate 'thank you' into Urdu.",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.2,
+   "sources": 0,
+   "answer": "Right away, \"thank you\" ka Urdu tarjuma \"شکریہ\" hai."
+  },
+  {
+   "set": "chat",
+   "n": 18,
+   "question": "Tell me a joke.",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.3,
+   "sources": 0,
+   "answer": "Right away, why did the computer go to therapy? It had too many bugs."
+  },
+  {
+   "set": "chat",
+   "n": 19,
+   "question": "hello",
+   "ok": false,
+   "status": "completed",
+   "seconds": 0.9,
+   "sources": 0,
+   "answer": "Good evening. How may I assist you?"
+  },
+  {
+   "set": "chat",
+   "n": 20,
+   "question": "How are you?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 1.0,
+   "sources": 0,
+   "answer": "Right away, I am functioning normally. How may I assist you?"
+  },
+  {
+   "set": "web",
+   "n": 1,
+   "question": "Who is the current CEO of Microsoft?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 5.1,
+   "sources": 1,
+   "answer": "Satya Nadella is the current CEO of Microsoft."
+  },
+  {
+   "set": "web",
+   "n": 2,
+   "question": "Who is the current CEO of Google?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 5.3,
+   "sources": 1,
+   "answer": "Sundar Pichai is the current CEO of Google."
+  },
+  {
+   "set": "web",
+   "n": 3,
+   "question": "Who is the current CEO of Nvidia?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 5.3,
+   "sources": 1,
+   "answer": "Jensen Huang is the current CEO of Nvidia."
+  },
+  {
+   "set": "web",
+   "n": 4,
+   "question": "Who is the current CEO of Amazon?",
+   "ok": false,
+   "status": "failed",
+   "seconds": 3.5,
+   "sources": 0,
+   "answer": "I couldn't do that: I couldn't read any web page for that."
+  },
+  {
+   "set": "web",
+   "n": 5,
+   "question": "Who is the current CEO of Tesla?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 8.0,
+   "sources": 2,
+   "answer": "The current CEO of Tesla is Elon Musk."
+  },
+  {
+   "set": "web",
+   "n": 6,
+   "question": "Who is the current president of France?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 5.1,
+   "sources": 1,
+   "answer": "The current President of France is Emmanuel Macron."
+  },
+  {
+   "set": "web",
+   "n": 7,
+   "question": "Who won the 2022 FIFA World Cup?",
+   "ok": false,
+   "status": "failed",
+   "seconds": 4.8,
+   "sources": 0,
+   "answer": "I couldn't do that: I couldn't read any web page for that."
+  },
+  {
+   "set": "web",
+   "n": 8,
+   "question": "Who won the 2023 Cricket World Cup?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 8.5,
+   "sources": 2,
+   "answer": "Australia won the 2023 Cricket World Cup."
+  },
+  {
+   "set": "web",
+   "n": 9,
+   "question": "Who won the men's singles at Wimbledon in 2023?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 5.7,
+   "sources": 2,
+   "answer": "Carlos Alcaraz won the men's singles title at Wimbledon in 2023."
+  },
+  {
+   "set": "web",
+   "n": 10,
+   "question": "Who won the Nobel Peace Prize in 2023?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 6.7,
+   "sources": 2,
+   "answer": "Narges Mohammadi won the Nobel Peace Prize in 2023."
+  },
+  {
+   "set": "web",
+   "n": 11,
+   "question": "What is the latest stable version of Python?",
+   "ok": false,
+   "status": "failed",
+   "seconds": 4.9,
+   "sources": 0,
+   "answer": "I couldn't do that: I found pages but could not summarise them: Cloud brain error 422: {\"detail\":\"Invalid message\"}"
+  },
+  {
+   "set": "web",
+   "n": 12,
+   "question": "What is the weather in Karachi today?",
+   "ok": false,
+   "status": "failed",
+   "seconds": 7.5,
+   "sources": 0,
+   "answer": "I couldn't do that: I found pages but could not summarise them: Cloud brain error 422: {\"detail\":\"Invalid message\"}"
+  },
+  {
+   "set": "web",
+   "n": 13,
+   "question": "How much is one US dollar in Pakistani rupees right now?",
+   "ok": false,
+   "status": "failed",
+   "seconds": 1.9,
+   "sources": 0,
+   "answer": "I couldn't do that: I couldn't read any web page for that."
+  },
+  {
+   "set": "web",
+   "n": 14,
+   "question": "What is the price of one bitcoin in US dollars right now?",
+   "ok": false,
+   "status": "failed",
+   "seconds": 1.9,
+   "sources": 0,
+   "answer": "I couldn't do that: I couldn't read any web page for that."
+  },
+  {
+   "set": "web",
+   "n": 15,
+   "question": "What is the latest news about NASA?",
+   "ok": false,
+   "status": "failed",
+   "seconds": 2.0,
+   "sources": 0,
+   "answer": "I couldn't do that: I couldn't read any web page for that."
+  },
+  {
+   "set": "web",
+   "n": 16,
+   "question": "Who is the current Secretary-General of the United Nations?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 5.1,
+   "sources": 1,
+   "answer": "António Guterres is the current Secretary‑General of the United Nations."
+  },
+  {
+   "set": "web",
+   "n": 17,
+   "question": "Who is the current head coach of the Pakistan men's cricket team?",
+   "ok": false,
+   "status": "failed",
+   "seconds": 2.0,
+   "sources": 0,
+   "answer": "I couldn't do that: I couldn't read any web page for that."
+  },
+  {
+   "set": "web",
+   "n": 18,
+   "question": "What is today's top headline in technology?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 8.8,
+   "sources": 1,
+   "answer": "Today's top technology headline is: “Malware now uses AI to autonomously profile and rank victims by value — ‘Volta‑Autodoxer’ and LLM‑driven tools mark a leap in automated cybercrime targeting.”"
+  },
+  {
+   "set": "web",
+   "n": 19,
+   "question": "What is the latest iPhone model?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 6.2,
+   "sources": 2,
+   "answer": "The newest iPhone models are the iPhone 18 Pro and iPhone 18 Pro Max, introduced alongside the folding iPhone Duo."
+  },
+  {
+   "set": "web",
+   "n": 20,
+   "question": "Who is the current Prime Minister of the United Kingdom?",
+   "ok": true,
+   "status": "completed",
+   "seconds": 7.1,
+   "sources": 2,
+   "answer": "The current Prime Minister of the United Kingdom is Andy Burnham."
+  },
+  {
+   "set": "memory",
+   "question": "remember my name is Nabiha",
+   "ok": true,
+   "answer": "Okay, I'll remember: my name is Nabiha"
+  },
+  {
+   "set": "memory",
+   "question": "what do you remember about me?",
+   "ok": true,
+   "answer": "Here is what I remember: my name is Nabiha."
+  },
+  {
+   "set": "memory",
+   "question": "what is my name?",
+   "ok": true,
+   "answer": "Your name is Nabiha."
+  }
+ ]
+}

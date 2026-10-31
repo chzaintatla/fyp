@@ -14,7 +14,8 @@ every probe is chosen to be harmless:
   gui      visible launches: Notepad, Explorer on the sandbox, example.com,
            a web search, a YouTube search, a mailto draft, Settings home,
            and a screenshot saved in the sandbox (opt in: --gui)
-  network  download https://example.com into the sandbox (opt in: --network)
+  network  download https://example.com, web answer + summaries (opt in: --network; needs an AI service)
+  memory   remember / recall / forget against the real database, self-cleaning (opt in: --memory)
 
 Never run: setters for volume/brightness/Bluetooth/Wi-Fi/theme, desktop
 clicks/typing/closing, browser tab closing, WinGet downloads.
@@ -52,7 +53,7 @@ from app.tools.registry import ToolRegistry  # noqa: E402
 PASS, FAIL, BLOCKED, SKIP = "PASS", "FAIL", "BLOCKED", "SKIP"
 IS_WINDOWS = platform.system() == "Windows"
 PROBE_TIMEOUT_SECONDS = 45
-CATEGORIES = ("sandbox", "read", "gui", "network", "media", "messaging", "install")
+CATEGORIES = ("sandbox", "read", "gui", "network", "media", "messaging", "install", "memory")
 
 
 @dataclass
@@ -364,6 +365,77 @@ def p_install(env: Env) -> Outcome:
     return judge(r, v, bool(v.evidence.get("winget_list_tail")), f"winget list shows {package}")
 
 
+# ---------------------------------------------------------------- memory + knowledge probes
+def _db():
+    from app.database import SessionLocal, init_db
+    init_db()
+    return SessionLocal()
+
+
+def p_memory_remember(env: Env) -> Outcome:
+    from app.models import MemoryItem
+    text = "AgentDesk live check note (safe to delete)"
+    r, v = env.run("memory_remember", {"text": text})
+    with _db() as db:
+        row = db.query(MemoryItem).filter(MemoryItem.text == text).first()
+        stored = row is not None
+        if row is not None:
+            db.delete(row)  # leave the user's real memory exactly as it was
+            db.commit()
+    return judge(r, v, stored, "note found in the database, then removed")
+
+
+def p_memory_recall(env: Env) -> Outcome:
+    from app.models import MemoryItem
+    with _db() as db:
+        before = db.query(MemoryItem).count()
+    r, v = env.run("memory_recall", {})
+    return judge(r, v, (r.output or {}).get("count") == before, f"reported {(r.output or {}).get('count')} of {before} stored notes")
+
+
+def p_memory_forget(env: Env) -> Outcome:
+    from app.models import MemoryItem
+    text = "AgentDesk live check forget probe zebra"
+    with _db() as db:
+        db.add(MemoryItem(kind="fact", text=text))
+        db.commit()
+    r, v = env.run("memory_forget", {"query": "forget probe zebra"})
+    with _db() as db:
+        gone = db.query(MemoryItem).filter(MemoryItem.text == text).first() is None
+        db.query(MemoryItem).filter(MemoryItem.text == text).delete()
+        db.commit()
+    return judge(r, v, gone, "note deleted from the database")
+
+
+def p_summarise_file(env: Env) -> Outcome:
+    note = env.work / "note.txt"
+    if not note.is_file():
+        note.parent.mkdir(parents=True, exist_ok=True)
+        note.write_text(NOTE_TEXT * 3, encoding="utf-8")
+    r, v = env.run("summarise_file", {"path": str(note)})
+    blocked = external(r, ("No AI service", "could not summarise", "busy"))
+    if blocked:
+        return Outcome(BLOCKED, f"needs an AI service: {blocked.evidence}")
+    return judge(r, v, bool((r.output or {}).get("answer")), f"summary: {_short((r.output or {}).get('answer'), 80)}")
+
+
+def p_web_answer(env: Env) -> Outcome:
+    r, v = env.run("web_answer", {"query": "What is the capital of France?"})
+    blocked = external(r, ("couldn't read any web page", "No AI service", "could not summarise", "busy"))
+    if blocked:
+        return Outcome(BLOCKED, f"needs internet and an AI service: {blocked.evidence}")
+    answer = str((r.output or {}).get("answer", ""))
+    return judge(r, v, "paris" in answer.casefold(), f"answer: {_short(answer, 90)}")
+
+
+def p_summarise_page(env: Env) -> Outcome:
+    r, v = env.run("summarise_page", {"url": "https://example.com/"})
+    blocked = external(r, ("couldn't read that page", "No AI service", "could not summarise", "busy"))
+    if blocked:
+        return Outcome(BLOCKED, f"needs internet and an AI service: {blocked.evidence}")
+    return judge(r, v, bool((r.output or {}).get("answer")), f"summary: {_short((r.output or {}).get('answer'), 80)}")
+
+
 PROBES: list[Probe] = [
     Probe("create_folder", "sandbox", p_create_folder),
     Probe("write_text_file", "sandbox", p_write_text_file),
@@ -394,6 +466,12 @@ PROBES: list[Probe] = [
     Probe("open_windows_settings", "gui", p_open_settings, windows_only=True),
     Probe("take_screenshot", "gui", p_take_screenshot),
     Probe("download_web_content", "network", p_download),
+    Probe("memory_remember", "memory", p_memory_remember),
+    Probe("memory_recall", "memory", p_memory_recall),
+    Probe("memory_forget", "memory", p_memory_forget),
+    Probe("summarise_file", "network", p_summarise_file),
+    Probe("web_answer", "network", p_web_answer),
+    Probe("summarise_page", "network", p_summarise_page),
     Probe("media_control", "media", p_media),
     Probe("whatsapp_open_chat", "messaging", p_whatsapp),
     Probe("winget_install", "install", p_install),
@@ -471,7 +549,8 @@ def record(rows: list[dict[str, str]], enabled: set[str]) -> Path:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--gui", action="store_true", help="also run visible launches")
-    parser.add_argument("--network", action="store_true", help="also download example.com into the sandbox")
+    parser.add_argument("--network", action="store_true", help="also download example.com, answer a web question and summarise a page (needs an AI service)")
+    parser.add_argument("--memory", action="store_true", help="also run the memory tools against the real database (each probe cleans up after itself)")
     parser.add_argument("--no-read", action="store_true", help="skip read-only system/desktop/browser/package probes")
     parser.add_argument("--only", nargs="*", help="run only these tool names")
     parser.add_argument("--json", action="store_true", help="print JSON instead of a table")
@@ -485,6 +564,7 @@ def main(argv: list[str] | None = None) -> int:
     enabled = {"sandbox"} | ({"read"} if not args.no_read else set())
     enabled |= {"gui"} if args.gui else set()
     enabled |= {"network"} if args.network else set()
+    enabled |= {"memory"} if args.memory else set()
     enabled |= {"media"} if args.media else set()
     enabled |= {"messaging"} if args.whatsapp_phone else set()
     enabled |= {"install"} if args.install_id else set()

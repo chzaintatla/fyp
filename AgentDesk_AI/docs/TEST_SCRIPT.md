@@ -65,3 +65,27 @@ Open the app (`START_AGENT_X.cmd`). Do each step at Windows display scaling 100%
 8. Tray menu: **Start / stop listening**, **Settings**, **Open Agent X**, **Quit** all work.
 9. Keyboard only (no mouse): Tab through the whole Home page; every control shows a visible ring and has a spoken name in Narrator.
 10. Look at `docs\ui\*.png` (saved by the script): every page in dark and light at both scalings, nothing cut off.
+
+## M5 — memory and conversation
+
+Needs the speech service (Groq key or cloud brain) and internet. Do these by voice (Ctrl+Space) unless a step says "type".
+
+1. Say "remember my exam is on 12 December". Expect: you hear "Okay, I'll remember: my exam is on 12 December." and the note
+   appears on the Memory page.
+2. Say "what do you remember about me?". Expect: it reads the note(s) back. Ask "what is my exam date?" — the answer uses the note.
+3. Say "forget my exam date". Expect: an approval card names what will be deleted; nothing is deleted until you click Approve;
+   then you hear "Okay, I forgot: ...". A spoken "yes" is allowed for this medium-risk step; check the note is gone on the Memory page.
+4. Say "remember my password is abc12345". Expect: it refuses (memory never stores passwords, PINs or keys).
+5. Settings > Memory off, then "remember my cat is Mishu": it says memory is off and saves nothing. Turn it back on.
+6. Memory page: add, edit, delete one note; then **Delete all memory** (asks first). Nothing remains.
+7. Ask 5 general questions out loud, e.g. "What is the capital of Japan?", "Explain photosynthesis", "Pani ka chemical formula kya hai?".
+   Expect: a spoken answer of at most 3 sentences, in your language, and the answer also appears in the transcript.
+8. Ask 5 current-fact questions, e.g. "Who is the current CEO of Microsoft?", "What is the weather in Karachi today?".
+   Expect: a spoken 2-3 sentence answer; the task card lists the pages it read as sources. Disconnect the internet and ask again:
+   it says it could not read any page, and never invents an answer.
+9. Type (or say) `summarise C:\Users\<you>\Documents\notes.txt` (a txt, pdf or docx inside an allowed folder) and
+   `summarise https://en.wikipedia.org/wiki/Karachi`. Expect: a 2-3 sentence spoken summary each time. A file outside the allowed
+   folders, or a missing file, is refused with the reason. Bare file names ("summarise my report") are not guessed yet.
+10. Settings > tick "Say a greeting the first time the app opens each day", fully close and reopen the app. Expect: one greeting
+    with your name ("Good morning, Nabiha."), and not again on a second launch the same day.
+11. Switch to Local only (Settings > AI provider) and ask a question: it must NOT call the internet and says local-only is on.

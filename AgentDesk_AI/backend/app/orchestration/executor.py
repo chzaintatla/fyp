@@ -639,6 +639,10 @@ def start_task(
     if not created:
         return task  # idempotency key matched a task made by an earlier or concurrent request
     usage.record(db, "task", task.id)
+    from . import conversation_flow
+    handled = conversation_flow.try_conversation(db, task, command, registry, settings, auto_approve=auto_approve, before_local=True)
+    if handled is not None:
+        return handled
     if settings.ai_provider.strip().lower() != "mock":
         from .local_agent import prepare_local_request
         local = prepare_local_request(db, task, registry)
@@ -659,6 +663,9 @@ def start_task(
             if task.status == TaskStatus.APPROVED:
                 return run_task(db, task.id, registry, settings)
             return task
+        handled = conversation_flow.try_conversation(db, task, command, registry, settings, auto_approve=auto_approve, before_local=False)
+        if handled is not None:
+            return handled
         from ..preferences import get_preferences
 
         if get_preferences(db).provider_mode == "local_only":

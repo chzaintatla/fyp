@@ -201,6 +201,15 @@ def edit_memory(item_id: str, payload: prefs.MemoryIn, db: Session = Depends(get
     return prefs.memory_out(item)
 
 
+@app.delete("/memory")
+def delete_all_memory(db: Session = Depends(get_db)) -> dict:
+    """Delete every remembered note (the Memory page asks first). Task history is separate."""
+    count = db.query(MemoryItem).delete()
+    db.commit()
+    log_event("memory_deleted_all", count=count)
+    return {"deleted": count}
+
+
 @app.delete("/memory/{item_id}")
 def delete_memory(item_id: str, db: Session = Depends(get_db)) -> dict:
     item = db.get(MemoryItem, item_id)

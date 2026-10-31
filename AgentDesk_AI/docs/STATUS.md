@@ -6,6 +6,36 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-10-31 — Session 12: M5 Memory and conversation (branch `m5-memory-chat`)
+
+**Done**
+- Memory tools `memory_remember` (low), `memory_recall` (low), `memory_forget` (medium, preview + approval, refuses when several notes match);
+  voice/typed routing by strict rules (`app/conversation.py`), `DELETE /memory` (delete all) + button, secret guard now also refuses
+  "my password is ..." (it let that through before), daily greeting (`GET /voice/greeting`, Settings switch, once per day).
+- Chat answers (`conversation_flow.py`): questions and small talk get a spoken answer of at most 3 sentences with persona wording and the
+  saved notes as fenced data. `web_answer` (search, read up to 3 pages as data, answer + sources), `summarise_page`, `summarise_file`
+  (txt/md/csv/pdf/docx, allowed folders only), "summarise <url or full path>" routing. A spoken line for a verified single action is its own
+  `spoken` text, not "Done."
+- **Privacy gate (decided by the user, 2026-10-31):** questions and web text go to Groq only after the user says yes. Onboarding step
+  "Questions and privacy" asks once; Settings has the switch; unanswered or "no" means questions are refused locally with a spoken
+  explanation and nothing is sent. One switch covers chat and web answers; "Local only" mode overrides it. Commands for this PC are unaffected.
+
+**Tested how**
+- `pytest tests -q` -> 900 passed before the gate; `tests/test_m5_conversation.py` 81 passed after (adds the gate, search limits, routing).
+  Browser tests (Edge): 14/14 for ui + new_user after the gate.
+- Live evaluation (`scripts/eval_conversation.py`, real Groq via the cloud brain, real internet, keyword-graded, run on the code BEFORE the
+  fixes below): **chat 19/20, web 12/20, memory 3/3**. Chat miss: "hello" -> "Good evening. How may I assist you?" is a fine answer my
+  keyword grader rejected (counted as a miss). Web misses: 6x "couldn't read any web page" (DuckDuckGo's HTML endpoint answered HTTP 202,
+  a bot challenge, after a few quick queries; Wikipedia answers 403 to any generic user agent), 2x cloud brain 422 (my prompt was ~10,500
+  characters; the cloud brain refuses over 8,000). **The 90% target for web answers is NOT met.**
+- Fixed after the eval: prompt documents capped at 6,000 characters; a throttled search now says so instead of "couldn't read any web page".
+  Not re-run live yet.
+
+**Not done / needs the user**
+- A reliable web search source. DuckDuckGo's HTML endpoint is rate-limited for automated use and Wikipedia requires contact details in the
+  user agent. Options need a user decision (an API key, or what contact to send). No workaround was added.
+- Human steps in `docs/TEST_SCRIPT.md` (M5). Web answers and summaries not verified on a second internet connection.
+
 ### 2026-10-31 — Session 11: M4 UI refinement (branch `m4-ui`)
 
 **Done**

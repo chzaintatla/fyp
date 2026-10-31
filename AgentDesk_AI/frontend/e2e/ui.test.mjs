@@ -157,3 +157,57 @@ test('mini mode: a 72 px character bubble that is a named button', async () => {
     await browser.close();
   }
 });
+
+test('memory page: "Delete all memory" asks first and then empties the list', async () => {
+  await api(backend, '/memory', { method: 'POST', body: JSON.stringify({ kind: 'fact', text: 'my exam is on 12 Dec' }) });
+  await api(backend, '/memory', { method: 'POST', body: JSON.stringify({ kind: 'fact', text: 'I like green tea' }) });
+  await withPage(async (page) => {
+    await nav(page, 'Memory').click();
+    await page.getByRole('list', { name: 'Saved memories' }).getByText('12 Dec').waitFor();
+    let asked = '';
+    page.once('dialog', (d) => { asked = d.message(); void d.dismiss(); });
+    await page.getByTestId('delete-all-memory').click();
+    await page.waitForTimeout(300);
+    assert.match(asked, /Delete ALL/);
+    assert.equal((await api(backend, '/memory')).items.length, 2, 'dismissing the question must delete nothing');
+    page.once('dialog', (d) => void d.accept());
+    await page.getByTestId('delete-all-memory').click();
+    await page.getByText('Nothing saved yet', { exact: false }).first().waitFor({ timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(500);
+    assert.equal((await api(backend, '/memory')).items.length, 0);
+  });
+});
+
+test('settings: the daily greeting switch is saved', async () => {
+  await withPage(async (page) => {
+    await nav(page, 'Settings').click();
+    await page.getByTestId('daily-greeting').click();
+    await page.getByText('Greeting setting saved.').waitFor();
+    assert.equal((await api(backend, '/preferences')).daily_greeting, true);
+    await page.getByText('Greeting setting saved.').waitFor();
+    await page.getByTestId('daily-greeting').click();
+    await page.getByText('Greeting setting saved.').waitFor();
+    assert.equal((await api(backend, '/preferences')).daily_greeting, false);
+  });
+});
+
+test('privacy: the cloud-answers switch is saved, and a question with it off is refused in the UI without any request to the model', async () => {
+  await api(backend, '/preferences', { method: 'PUT', body: JSON.stringify({ cloud_answers: false }) });
+  await withPage(async (page) => {
+    await nav(page, 'Settings').click();
+    const box = page.getByTestId('cloud-answers');
+    assert.equal(await box.isChecked(), false);
+    await box.click();
+    await page.getByText('Privacy setting saved.').waitFor();
+    assert.equal((await api(backend, '/preferences')).cloud_answers, true);
+    await box.click();
+    await page.waitForFunction(() => document.querySelector('[data-testid="cloud-answers"]')?.checked === false);
+    assert.equal((await api(backend, '/preferences')).cloud_answers, false);
+    await nav(page, 'Home').click();
+    await page.keyboard.press('/');
+    await page.waitForTimeout(200);
+    await page.keyboard.type('what is the capital of France?');
+    await page.keyboard.press('Enter');
+    await page.getByText(/not allowed that|Settings if you want it/).first().waitFor({ timeout: 15000 });
+  });
+});

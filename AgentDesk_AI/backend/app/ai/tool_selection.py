@@ -19,6 +19,8 @@ def tool_metadata(registry, command):
         (r"search|website|browser|youtube|play", {"web_search", "open_url", "play_youtube_video"}),
         (r"tab|browser|youtube|video|pause|resume", {"control_browser"}),
         (r"screenshot", {"take_screenshot"}),
+        (r"remember|forget|memory", {"memory_remember", "memory_recall", "memory_forget"}),
+        (r"summari[sz]e|summary|news|latest|weather|who|what|why|how", {"web_answer", "summarise_page", "summarise_file", "read_text_file"}),
     ]
     selected = set()
     for pattern, names in groups:

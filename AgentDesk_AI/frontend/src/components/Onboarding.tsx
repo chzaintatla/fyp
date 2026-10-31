@@ -5,11 +5,12 @@ import { Avatar } from './Avatar';
 import { useFocusTrap } from './useFocusTrap';
 
 interface OnboardingProps {
+  cloudAnswers: boolean | null;
   persona: Persona;
   catalog: Catalog | null;
   micSupported: boolean;
   memoryEnabled: boolean;
-  onFinish: (persona: Persona, memoryEnabled: boolean, startVoice: boolean) => void;
+  onFinish: (persona: Persona, memoryEnabled: boolean, cloudAnswers: boolean | null, startVoice: boolean) => void;
 }
 
 const EXAMPLE: Record<Persona['language'], string> = {
@@ -19,7 +20,7 @@ const EXAMPLE: Record<Persona['language'], string> = {
   'en-GB': 'Create a folder called Demo in Documents',
 };
 
-const STEPS = 5;
+const STEPS = 6;
 
 /** Microphone test: shows the live level and confirms when it hears speech. Nothing is recorded or sent. */
 function MicTest({ supported, name }: { supported: boolean; name: string }) {
@@ -74,15 +75,16 @@ function MicTest({ supported, name }: { supported: boolean; name: string }) {
 }
 
 /** First run: you, the character, the personality, the microphone, then one guided command. */
-export function Onboarding({ persona, catalog, micSupported, memoryEnabled, onFinish }: OnboardingProps) {
+export function Onboarding({ persona, catalog, micSupported, memoryEnabled, cloudAnswers, onFinish }: OnboardingProps) {
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<Persona>(persona);
   const [memory, setMemory] = useState(memoryEnabled);
+  const [cloud, setCloud] = useState<boolean | null>(cloudAnswers);
   const [filter, setFilter] = useState<'all' | 'female' | 'male'>('all');
-  const ref = useFocusTrap<HTMLElement>(true, () => onFinish(draft, memory, false));
+  const ref = useFocusTrap<HTMLElement>(true, () => onFinish(draft, memory, cloud, false));
   const avatars = (catalog?.avatars ?? []).filter((a) => filter === 'all' || a.gender === filter);
   const personalities = catalog?.personalities.filter((p) => p.id !== 'custom') ?? [];
-  const finish = (voice: boolean) => onFinish({ ...draft, name: draft.name.trim() || 'Agent X' }, memory, voice);
+  const finish = (voice: boolean) => onFinish({ ...draft, name: draft.name.trim() || 'Agent X' }, memory, cloud, voice);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">
@@ -157,11 +159,31 @@ export function Onboarding({ persona, catalog, micSupported, memoryEnabled, onFi
         )}
         {step === 3 && (
           <>
+            <h2 id="onboarding-title" className="mt-1 text-xl font-semibold">Questions and privacy</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Commands for this PC (open an app, move a file) are understood on this PC first. To answer a general question or look
+              something up on the web, the question, and for web answers some text from the pages read, must be sent to the cloud AI (Groq).
+              Do you allow that?
+            </p>
+            <div role="radiogroup" aria-label="Cloud answers" className="mt-3 space-y-2">
+              {([[true, 'Yes, answer questions with the cloud AI'], [false, 'No, keep everything on this PC (questions will not be answered)']] as const).map(([value, label]) => (
+                <label key={String(value)} className={`block cursor-pointer rounded-xl border p-3 text-sm ${cloud === value ? 'border-blue-700 ring-2 ring-blue-200' : 'border-slate-200'}`}>
+                  <input type="radio" name="cloud-answers" className="sr-only" checked={cloud === value} onChange={() => setCloud(value)}
+                    data-testid={value ? 'onboarding-cloud-yes' : 'onboarding-cloud-no'} />
+                  {label}
+                </label>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-slate-500">You can change this any time in Settings. If you skip it, questions stay on this PC.</p>
+          </>
+        )}
+        {step === 4 && (
+          <>
             <h2 id="onboarding-title" className="mt-1 text-xl font-semibold">Microphone</h2>
             <MicTest supported={micSupported} name={draft.user_name} />
           </>
         )}
-        {step === 4 && (
+        {step === 5 && (
           <>
             <h2 id="onboarding-title" className="mt-1 text-xl font-semibold">Try one command</h2>
             <p className="mt-2 text-sm text-slate-600">
