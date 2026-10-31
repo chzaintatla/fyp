@@ -1,1 +1,0 @@
-"""AgentDesk AI backend application."""
