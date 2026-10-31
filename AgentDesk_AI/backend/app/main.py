@@ -52,6 +52,8 @@ async def lifespan(app: FastAPI):
     init_db()
     log_event("server_start")
     threading.Thread(target=voice_api.get_chain, daemon=True).start()  # first spoken line should not pay setup
+    from .search import budget as _budget
+    threading.Thread(target=_budget.warm, daemon=True).start()  # tokenizer download (first run only)
     # The launcher runs one server. Never leave a crashed task showing as active
     # or replay its possibly completed device/file operation after restart.
     with SessionLocal() as db:
@@ -231,6 +233,12 @@ def health() -> HealthOut:
     return HealthOut(status="ok", version=settings.app_version)
 
 
+def _search_status(s) -> dict[str, bool]:
+    from .search.tavily import TavilyProvider
+    from .search.wikipedia import WikipediaProvider
+    return {"wikipedia": WikipediaProvider(s.wikipedia_contact_email).available(), "tavily": TavilyProvider().available()}
+
+
 @app.get("/config/status", response_model=ConfigStatusOut)
 def config_status() -> ConfigStatusOut:
     # Never expose any API key - only whether one is configured.
@@ -249,6 +257,7 @@ def config_status() -> ConfigStatusOut:
         mock_mode=s.is_mock_mode,
         groq_configured=s.groq_configured,
         speech_ready=s.groq_configured or s.cloud_configured,
+        search=_search_status(s),
         agent_max_steps=s.agent_max_steps,
         fallback_provider=s.ai_fallback_provider,
         cloud_mode=s.ai_cloud_mode,

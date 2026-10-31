@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     groq_api_keys: str = ""
     # Optional cloud brain (Render): planning/chat/speech run there, tools still run on this PC. See app/cloud_main.py.
     cloud_brain_url: str = ""
+    # Contact e-mail sent to Wikipedia in the User-Agent (their policy). Empty = Wikipedia is not used.
+    wikipedia_contact_email: str = ""
     cloud_brain_token: str | None = None
     openai_api_key: str | None = None
     gemini_api_key: str | None = None

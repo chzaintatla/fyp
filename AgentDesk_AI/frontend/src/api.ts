@@ -72,6 +72,7 @@ export interface ConfigStatus {
   mock_mode: boolean;
   groq_configured?: boolean;
   speech_ready?: boolean;
+  search?: { wikipedia: boolean; tavily: boolean };
   agent_max_steps?: number;
   fallback_provider?: string;
   fallback_configured?: boolean;

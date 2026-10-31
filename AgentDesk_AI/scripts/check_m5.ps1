@@ -1,6 +1,8 @@
 # M5 live check. Run from AgentDesk_AI\ on your Windows PC:  powershell -ExecutionPolicy Bypass -File scripts\check_m5.ps1
 # Needs backend\.env with GROQ_API_KEYS (or CLOUD_BRAIN_URL + CLOUD_BRAIN_TOKEN) and internet for the live rows (about 12 minutes).
-# Evidence goes to docs\eval\m5_<date>\ . The 20 chat + 20 web questions are graded by keywords: read the answers in conversation_eval.txt too.
+# Needs WIKIPEDIA_CONTACT_EMAIL in backend\.env and a Tavily key (python backend\scripts\set_search_key.py; see docs\SEARCH_SETUP.md).
+# Evidence goes to docs\eval\m5_<date>\ . conversation_eval.csv has every answer with keyword and model grades: spot-check it.
+# Run this script twice, an hour apart; the target is web >= 18/20 (model-graded correct) on BOTH runs.
 $ErrorActionPreference = 'Continue'
 $root = Split-Path -Parent $PSScriptRoot
 $backend = Join-Path $root 'backend'
@@ -24,7 +26,7 @@ Step 'Frontend unit tests + build'                    { npm test; if ($LASTEXITC
 Step 'Browser tests (Edge)'                           { npm run test:e2e }                                                                    'e2e.txt' $frontend
 Step 'Memory tools on the real database (self-clean)' { & $py scripts\live_check.py --memory --only memory_remember memory_recall memory_forget } 'live_memory.txt' $backend
 Step 'Web answer + summaries on this PC'              { & $py scripts\live_check.py --network --only web_answer summarise_page summarise_file } 'live_knowledge.txt' $backend
-Step 'Live: 20 chat + 20 web questions + 3 memory'    { & $py scripts\eval_conversation.py --json (Join-Path $out 'conversation_eval.json') } 'conversation_eval.txt' $backend
+Step 'Live: 20 chat + 20 web + 3 memory (model-graded)' { & $py scripts\eval_conversation.py --json (Join-Path $out 'conversation_eval.json') --csv (Join-Path $out 'conversation_eval.csv') } 'conversation_eval.txt' $backend
 $rows | Format-Table -AutoSize | Tee-Object -FilePath (Join-Path $out 'SUMMARY.txt')
 Write-Host "Evidence: $out"
 Write-Host "Now do the human checks in docs\TEST_SCRIPT.md (section M5)."

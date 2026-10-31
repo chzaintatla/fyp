@@ -122,6 +122,10 @@ export function SettingsPage({ prefs, config, usage, onSave }: SettingsPageProps
             onChange={(e) => void save({ cloud_answers: e.target.checked }, 'Privacy setting saved.')} />
           <span>Answer questions with the cloud AI (Groq). <span className="block text-slate-500">When on, the question you ask (and, for web answers, text of the pages read) is sent to Groq. Commands for this PC are not affected. {prefs.cloud_answers === null && 'You have not chosen yet, so questions stay on this PC.'}</span></span>
         </label>
+        <p className="ml-6 mt-1 text-xs text-slate-500" data-testid="search-status">
+          Web search: Wikipedia {config?.search?.wikipedia ? 'ready' : 'off (needs WIKIPEDIA_CONTACT_EMAIL in backend/.env)'}; Tavily{' '}
+          {config?.search?.tavily ? 'ready' : 'off (needs a key: see docs/SEARCH_SETUP.md)'}.
+        </p>
         <label className="mt-3 flex items-center gap-2 text-sm">
           <input type="checkbox" checked={prefs.daily_greeting} data-testid="daily-greeting"
             onChange={(e) => void save({ daily_greeting: e.target.checked }, 'Greeting setting saved.')} />
