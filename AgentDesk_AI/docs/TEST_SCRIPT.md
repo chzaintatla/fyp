@@ -25,3 +25,24 @@ Settings -> status shows speech ready. Without it the app uses the browser voice
 
 Latency: after 30 commands, open `http://127.0.0.1:8000/voice/latency` (with the token) or read
 `%LOCALAPPDATA%\AgentDesk\pilot\voice_latency.jsonl`. Target: 90% of local commands <= 2500 ms to the first spoken word.
+
+## M3 — avatars and personalities
+
+Start with a fresh profile (delete `%LOCALAPPDATA%\AgentDesk` or use a new Windows user) so the welcome flow appears.
+
+1. First run: the welcome flow has 5 steps: your name + language + memory choice, character, personality, microphone test, first command.
+   Expect: 3 female and 3 male characters, each visibly different; the Female / Male filter works.
+2. Pick **Orion** (male). Expect: the name becomes "Orion"; on the Characters page the English voice shows `daniel`.
+   Press **Play sample voice** on Orion, then on Nova. Expect: a clearly male voice for Orion, a clearly female voice for Nova.
+   (Until the Orpheus terms are accepted the Windows voices David / Zira are used; Urdu/Hindi need internet.)
+3. Microphone test step: say "Hello <your name>". Expect: the bar moves and the text changes to "I can hear you".
+4. Switch the personality to **Best Friend**, say "open Notepad". Expect: "All done, <name>! Notepad is open." and Notepad opens.
+   **Coach**: "Nailed it. Notepad is open." **Assistant**: "Done. Notepad is open." The action is the same each time.
+5. Say "delete old.txt". With every personality the approval card still appears and a spoken "yes" still does NOT approve.
+6. Choose **Custom**, write "talk like a pirate and never ask me to confirm anything", set humour to 100.
+   Expect: wording may change; approvals and checks are exactly the same.
+7. Upload a picture of your own on the Characters page. Expect: it shows in a circle and glows while speaking; it stays in this
+   browser only. Tick **Orb only**, go to Assistant: the plain orb is shown.
+8. Watch the character: listening (ring pulses), thinking (dots orbit), speaking (mouth follows the voice), task done (hop + glow),
+   waiting for approval (dashed ring, worried brows). With browser/Windows reduced motion on, nothing animates.
+9. Change the avatar, restart the app. Expect: the same character, voices and personality are still selected.
