@@ -81,13 +81,22 @@ def _examples() -> list[dict[str, Any]]:
     return [json.loads(line) for line in lines if line.strip()]
 
 
+MAX_EXAMPLES = 4
+
+
+def pick_examples(command: str, limit: int) -> list[dict[str, Any]]:
+    """The few-shot examples most similar to the command (shared words, any language), else the first ones."""
+    words = set(command.casefold().split())
+    scored = sorted(_examples(), key=lambda ex: -len(words & set(ex["command"].casefold().split())))
+    return scored[:limit]
+
+
 def tool_catalogue(registry) -> str:
     lines = []
     for name in registry.names():
         tool = registry.get(name)
-        props = tool_args_schema(tool).get("properties", {})
-        args = ", ".join(f"{k}: {_type_hint(v)}" for k, v in props.items()) or "no arguments"
-        lines.append(f"- {name}: {tool.description.strip().splitlines()[0]} Args: {args}.")
+        # Argument names and types are already in the response schema; repeating them costs tokens (free tier: 8k/min).
+        lines.append(f"- {name}: {tool.description.strip().splitlines()[0]}")
     return "\n".join(lines)
 
 
@@ -123,7 +132,7 @@ def user_message(command: str, memory_json: str | None, desktop: dict[str, Any] 
 def build_messages(context: PlannerContext) -> list[dict[str, str]]:
     system = (PROMPT_DIR / "system.md").read_text(encoding="utf-8").replace("{tools}", tool_catalogue(context.registry))
     messages = [{"role": "system", "content": system}]
-    for ex in _examples():
+    for ex in pick_examples(context.command, MAX_EXAMPLES):
         memory = json.dumps(ex["memory"], ensure_ascii=False) if ex.get("memory") else None
         messages.append({"role": "user", "content": user_message(ex["command"], memory, {}, None)})
         messages.append({"role": "assistant",
@@ -190,7 +199,7 @@ class StructuredChatPlanner(PlannerProvider):
 class GroqPlanner(StructuredChatPlanner):
     name = "groq"
 
-    def __init__(self, client=None, models: tuple[str, ...] = GROQ_MODELS, max_tokens: int = 1500):
+    def __init__(self, client=None, models: tuple[str, ...] = GROQ_MODELS, max_tokens: int = 900):
         if client is None:
             from ..ai.groq_client import get_groq_client
 
@@ -302,7 +311,11 @@ def planner_from_settings(settings=None) -> PlannerProvider:
 
         settings = get_settings()
     providers: list[PlannerProvider] = []
-    if settings.groq_api_key:
+    if getattr(settings, "cloud_configured", False):
+        from ..cloud_client import CloudBrain, RemotePlanner
+
+        providers.append(RemotePlanner(CloudBrain(settings.cloud_brain_url, settings.cloud_brain_token)))
+    if settings.groq_configured:
         providers.append(GroqPlanner())
     backup = (settings.ai_fallback_provider or "none").strip().lower()
     if backup == "gemini" and settings.gemini_api_key:

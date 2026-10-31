@@ -15,6 +15,13 @@ from .mock_provider import MockProvider
 from .openai_provider import OpenAIProvider
 
 
+def _pool(settings):
+    from .key_pool import pool_for
+
+    keys = settings.resolved_groq_keys()
+    return pool_for(keys) if len(keys) > 1 else None
+
+
 def get_provider(settings=None) -> AIProvider:
     """Select the AI provider from configuration.
 
@@ -29,7 +36,8 @@ def get_provider(settings=None) -> AIProvider:
     if provider_name == "groq":
         # Raises AIConfigError when the key is missing - never falls back.
         primary = GroqProvider(
-            api_key=settings.groq_api_key or "",
+            api_key=(settings.resolved_groq_keys() or [""])[0],
+            key_pool=_pool(settings),
             model=settings.ai_model,
             timeout_seconds=settings.ai_timeout_seconds,
             max_retries=settings.ai_max_retries,

@@ -6,6 +6,44 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-10-31 — Session 8: M1 Live foundations (in progress)
+
+**Done**
+- `PLANNER_MODE` (`legacy` default | `shadow` | `structured`), `app/orchestration/planner_mode.py`. `shadow`: for commands the
+  local parsers understood, the strict-JSON planner is also asked in a background thread and compared in
+  `%LOCALAPPDATA%\AgentDesk\pilot\shadow_plans.jsonl` (command hash only). `structured`: commands the local parsers did not
+  understand go to the strict planner first; any failure falls back to the old Groq agent path. Risk/approval unchanged.
+- `backend/scripts/groq_smoke.py` (chat, strict-schema acceptance, 3 plans, optional `--wav` STT, `--tts`).
+- `scripts/check_m1.ps1` (tests, live Groq, NLU held-out local + Groq, all tools on Windows, shadow log; evidence in `docs/eval/m1_*`).
+
+**Tested how**
+- `pytest tests -q` -> 731 passed, 3 skipped, 1 failed. The failure (`test_phase18_tools.py::test_media_key_off_windows_fails_honestly`)
+  also fails without these changes: it assumes a non-Windows host. New: `tests/test_m1_planner_mode.py` (7).
+
+- **Multiple Groq keys** (`GROQ_API_KEYS=k1,k2,...` in `backend/.env`, git-ignored; `app/ai/key_pool.py`). On HTTP 429 the key cools down
+  (Groq's retry-after, else 60 s) and the next key is used at once, without waiting; a key Groq rejects (401/403) is dropped. Shared by
+  the agent loop, planner, STT and TTS. Tests: `tests/test_key_pool.py` (7). Tests ignore `backend/.env`.
+- **Live run found and fixed two real problems**: (1) Groq rejected the strict schema (`"required": []` on no-argument tools);
+  (2) the planner prompt was ~10k tokens, over the free tier's 8k tokens/min (HTTP 413) — catalogue now names/descriptions only,
+  4 few-shot examples chosen by similarity, max_tokens 900 -> about 7.1k prompt tokens per plan.
+
+- **Cloud brain for Render** (`app/cloud_main.py`, `render.yaml`, `requirements-cloud.txt`, `docs/RENDER_DEPLOY.md`): token-guarded
+  `/cloud/plan|chat|stt|tts`, fails closed without `CLOUD_API_TOKEN`, rate limited, no tools. The PC calls it through
+  `app/cloud_client.py` (`CLOUD_BRAIN_URL` + `CLOUD_BRAIN_TOKEN`) and re-validates every plan locally. Tests: `test_cloud_brain.py` (6).
+  Run locally with real keys: token check 401 without / plan "chrome kholo" -> `open_application` valid / chat OK. NOT yet deployed
+  to Render, so cold-start time and Linux install of `requirements-cloud.txt` are unmeasured.
+
+**Measured live (2026-10-31, free tier)**
+- `groq_smoke.py`: chat PASS; strict schema accepted by gpt-oss-120b (2 plans: "open notepad", "chrome kholo" -> `open_application`, valid).
+  Full smoke run: plans row FAIL with a rate limit (see below). TTS FAIL: Orpheus needs the org admin to accept its terms at
+  console.groq.com/playground?model=canopylabs/orpheus-v1-english.
+- All 11 keys appear to belong to one Groq organization (the 413 error names the same org): the 8k tokens/min limit is per
+  organization, so switching keys does NOT add capacity. Separate accounts/organizations are needed for that.
+
+**Not done (needs you)**
+- Accept the Orpheus terms (above). Planner-vs-old comparison and the Windows tool run are NOT measured: run `scripts\check_m1.ps1`.
+  Default stays `legacy` until shadow data exists.
+
 ### 2026-10-31 — Session 7: Phases 19-20 PILOT, RELEASE, REPORT
 
 **Done**

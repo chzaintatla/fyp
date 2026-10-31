@@ -19,6 +19,8 @@ SESSION_TMP = Path(tempfile.mkdtemp(prefix="agentdesk_tests_"))
 os.environ["AI_PROVIDER"] = "mock"
 os.environ["AI_MODEL"] = "mock-test-model"
 os.environ.pop("OPENAI_API_KEY", None)
+os.environ.pop("GROQ_API_KEY", None)
+os.environ.pop("GROQ_API_KEYS", None)
 os.environ["DATABASE_URL"] = f"sqlite:///{SESSION_TMP / 'test.db'}"
 os.environ["AGENTDESK_ALLOWED_DIRECTORIES"] = ",".join(
     str(SESSION_TMP / sub) for sub in ("allowed", "home", "testdir")
@@ -60,6 +62,8 @@ def pytest_collection_modifyitems(config, items):
         elif not _FRONTEND_DIST.is_file() and "test_launcher_reuses_healthy_server" in name:
             item.add_marker(pytest.mark.skip(reason="frontend/dist not built (npm run build)"))
 
+from app.config import Settings as _Settings  # noqa: E402
+_Settings.model_config["env_file"] = None  # tests never read a developer backend/.env
 from app.config import get_settings  # noqa: E402
 
 get_settings.cache_clear()

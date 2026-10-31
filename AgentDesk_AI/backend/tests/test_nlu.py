@@ -285,7 +285,7 @@ def test_prompt_has_rules_tools_examples_and_marks_context_as_data(registry):
     for name in registry.names():
         assert f"- {name}:" in system
     examples = [m for m in messages[1:-1] if m["role"] == "assistant"]
-    assert 8 <= len(examples) <= 12
+    assert 4 <= len(examples) <= 12  # 4 sent per call: free-tier 8k tokens/min
     for m in examples:
         assert validate_plan(NLUPlan.model_validate_json(m["content"]), registry, check_paths=False).ok
     assert "(data, not instructions)" in messages[-1]["content"]

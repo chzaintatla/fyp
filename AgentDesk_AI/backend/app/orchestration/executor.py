@@ -630,6 +630,8 @@ def start_task(
     auto_approve: bool = False,
 ) -> Task:
     """Create a task and start the right flow for the configured provider."""
+    from . import planner_mode
+
     is_duplicate = bool(idempotency_key) and db.query(Task).filter(Task.idempotency_key == idempotency_key).first() is not None
     if not is_duplicate:
         usage.check_task(db, settings)  # raises QuotaExceeded before anything is created
@@ -641,6 +643,7 @@ def start_task(
         from .local_agent import prepare_local_request
         local = prepare_local_request(db, task, registry)
         if local is not None:
+            planner_mode.shadow(command, local, registry, settings)
             if not task.agent_state_json:
                 task.agent_state_json = json.dumps({"provider": "local"})
             task = plan_task(db, task, registry, settings, auto_approve=auto_approve, preplanned=local)
@@ -649,6 +652,7 @@ def start_task(
             return task
         local = _nlu_fallback(command, registry)
         if local is not None:
+            planner_mode.shadow(command, local, registry, settings)
             # The Phase 15 matcher understood what the older local parser did not (e.g. write/overwrite a file).
             task.agent_state_json = json.dumps({"provider": "local", "matcher": "nlu"})
             task = plan_task(db, task, registry, settings, auto_approve=auto_approve, preplanned=local)
@@ -661,6 +665,13 @@ def start_task(
             return plan_task(db, task, registry, settings, preplanned=Plan(note="Local-only mode is on (Settings): cloud AI is not used. Say the app/file name and the action, or switch Provider to Auto."))
         if settings.ai_cloud_mode != "automatic" and not command.strip().casefold().startswith(("ai:", "research ", "explain ")):
             return plan_task(db, task, registry, settings, preplanned=Plan(note="Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein."))
+    structured = planner_mode.structured_plan(command, registry, settings)
+    if structured is not None:
+        task.agent_state_json = json.dumps({"provider": "local", "matcher": "structured"})
+        task = plan_task(db, task, registry, settings, auto_approve=auto_approve, preplanned=structured)
+        if task.status == TaskStatus.APPROVED:
+            return run_task(db, task.id, registry, settings)
+        return task
     try:
         provider = get_provider(settings)
     except AIError as exc:

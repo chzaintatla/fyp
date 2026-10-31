@@ -1,0 +1,21 @@
+# Render Blueprint: the AgentDesk cloud brain (planning, chat, speech). PC tools stay on the user's Windows PC.
+services:
+  - type: web
+    name: agentdesk-cloud
+    runtime: python
+    plan: free                      # free instances sleep after ~15 min idle: first request takes ~30 s
+    rootDir: AgentDesk_AI/backend
+    buildCommand: pip install -r requirements-cloud.txt
+    startCommand: uvicorn app.cloud_main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: CLOUD_API_TOKEN
+        generateValue: true         # Render creates a long random secret; copy it to the Windows app
+      - key: GROQ_API_KEYS
+        sync: false                 # paste your keys in the Render dashboard, never in git
+      - key: AI_PROVIDER
+        value: groq
+      - key: CLOUD_RATE_PER_MINUTE
+        value: "30"
