@@ -30,3 +30,4 @@ logs/
 # Local per-phase virtualenvs
 .venv-*/
 dist-release/
+.env.render
