@@ -51,6 +51,7 @@ interface SpeechRecognitionEventLike extends Event {
 
 interface SpeechRecognitionErrorEventLike extends Event {
   readonly error: string;
+  readonly message?: string;
 }
 
 interface SpeechRecognitionLike {
@@ -708,7 +709,7 @@ export default function App() {
         if (!handsFreeRef.current) return;
         if (event.error === 'network') {
           voiceNetworkErrorsRef.current += 1;
-          setVoiceMessage('Voice service network error. Hands-free will keep retrying; check internet or microphone access.');
+          setVoiceMessage(`Voice service error${event.message ? ` (${event.message})` : ''}. Hands-free will keep retrying; check that the backend is running and the speech service is reachable.`);
           return;
         }
         if (event.error === 'no-speech' || event.error === 'aborted') return;

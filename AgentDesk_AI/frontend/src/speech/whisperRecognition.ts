@@ -15,6 +15,7 @@ export interface WhisperResultEvent extends Event {
 }
 export interface WhisperErrorEvent extends Event {
   readonly error: string;
+  readonly message?: string;
 }
 
 const PRE_ROLL_MS = 300;
@@ -142,12 +143,12 @@ export class WhisperRecognition {
       const result: Result = Object.assign([{ transcript: text }], { isFinal: true }) as unknown as Result;
       const event = Object.assign(new Event('result'), { resultIndex: 0, results: [result] }) as WhisperResultEvent;
       this.onresult?.(event);
-    } catch {
-      this.fail('network');
+    } catch (error) {
+      this.fail('network', error instanceof Error ? error.message : undefined);
     }
   }
 
-  private fail(error: string): void {
-    this.onerror?.(Object.assign(new Event('error'), { error }) as WhisperErrorEvent);
+  private fail(error: string, message?: string): void {
+    this.onerror?.(Object.assign(new Event('error'), { error, message }) as WhisperErrorEvent);
   }
 }

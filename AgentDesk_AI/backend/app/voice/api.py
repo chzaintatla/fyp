@@ -144,7 +144,13 @@ async def stt(audio: UploadFile = File(...), language: str | None = Form(default
     name = audio.filename or "speech.wav"
     try:
         if hasattr(client, "transcribe") and client.__class__.__name__ == "CloudBrain":
-            return {"text": client.transcribe(data, name, language, prompt)}
+            try:
+                return {"text": client.transcribe(data, name, language, prompt)}
+            except (AIError, AIConfigError):  # cloud asleep / unreachable: use this machine's Groq key if it has one
+                if not get_settings().groq_configured:
+                    raise
+                from ..ai.groq_client import get_groq_client
+                client = get_groq_client()
         result = client.transcribe(data, filename=name, language=language, prompt=prompt)
         return {"text": result["text"], "language": result.get("language"), "model": result.get("model")}
     except AIRateLimitError as exc:
