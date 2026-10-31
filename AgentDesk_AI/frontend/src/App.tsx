@@ -2,14 +2,17 @@ import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNod
 import { spokenReply, isSpeechEcho, afterInterruption, finishOnce } from './voice';
 import { SpeechPlayer } from './speech/player';
 import { WhisperRecognition } from './speech/whisperRecognition';
-import { voiceApi, type VoiceOptions } from './api';
+import { voiceApi, type Catalog, type VoiceOptions } from './api';
+import { Avatar, moodFor } from './components/Avatar';
+import { CharactersPage } from './pages/CharactersPage';
+import { accentFor, loadCustomImage, voiceOptions } from './characters';
 import { ActionPreview } from './components/ActionPreview';
 import { Onboarding } from './components/Onboarding';
 import { Orb } from './components/Orb';
 import { Transcript } from './components/Transcript';
 import { MemoryPage } from './pages/MemoryPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { deriveVoiceState } from './voiceState';
+import { deriveVoiceState, STATE_LABEL } from './voiceState';
 import {
   api,
   type ActionOut,
@@ -276,7 +279,7 @@ export default function App() {
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<string | null>(null);
-  const [view, setView] = useState<'assistant' | 'memory' | 'settings'>('assistant');
+  const [view, setView] = useState<'assistant' | 'characters' | 'memory' | 'settings'>('assistant');
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [heard, setHeard] = useState('');
   const [speaking, setSpeaking] = useState(false);
@@ -312,7 +315,31 @@ export default function App() {
   const speechReadyRef = useRef(false);
   speechReadyRef.current = speechReady;
   const voiceOptionsRef = useRef<VoiceOptions>({ language: voiceLanguage, gender: 'female', voice_en: 'diana' });
-  voiceOptionsRef.current = { ...voiceOptionsRef.current, language: voiceLanguage };
+  voiceOptionsRef.current = prefs ? voiceOptions(prefs.persona, voiceLanguage) : { ...voiceOptionsRef.current, language: voiceLanguage };
+  const [catalog, setCatalog] = useState<Catalog | null>(null);
+  useEffect(() => { void voiceApi.catalog().then(setCatalog).catch(() => setCatalog(null)); }, []);
+  // How the character speaks (wording only): sent with every phrase request.
+  const wording = () => ({
+    language: voiceLanguage,
+    personality: prefs?.persona.personality ?? 'assistant',
+    user_name: prefs?.persona.user_name ?? '',
+    formality: prefs?.persona.formality ?? 50,
+    humour: prefs?.persona.humour ?? 50,
+  });
+  const [avatarLevel, setAvatarLevel] = useState(0);
+  useEffect(() => {
+    if (!speaking) {
+      setAvatarLevel(0);
+      return;
+    }
+    let frame = 0;
+    const tick = () => {
+      setAvatarLevel(playerRef.current?.level() ?? 0);
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [speaking]);
   const playerRef = useRef<SpeechPlayer | null>(null);
   if (playerRef.current === null) playerRef.current = new SpeechPlayer(() => voiceOptionsRef.current);
   const speechEndedAtRef = useRef(0);
@@ -752,7 +779,7 @@ export default function App() {
       void (async () => {
         let text = message;
         try {
-          text = await voiceApi.line({ task: activeTask, language: voiceLanguage });
+          text = await voiceApi.line({ task: activeTask, ...wording() });
         } catch {
           // keep the short built-in phrase
         }
@@ -803,10 +830,10 @@ export default function App() {
     };
     const first = activeTask.actions[0];
     const ack = window.setTimeout(() => {
-      void speakLine(`${activeTask.id}:ack`, first ? { tool: first.tool_name, args: first.args, language: voiceLanguage } : { event: 'acknowledge', language: voiceLanguage });
+      void speakLine(`${activeTask.id}:ack`, first ? { tool: first.tool_name, args: first.args, ...wording() } : { event: 'acknowledge', ...wording() });
     }, 900);
     const progress = window.setTimeout(() => {
-      void speakLine(`${activeTask.id}:progress`, { event: 'progress', language: voiceLanguage });
+      void speakLine(`${activeTask.id}:progress`, { event: 'progress', ...wording() });
     }, 4500);
     return () => {
       window.clearTimeout(ack);
@@ -814,16 +841,16 @@ export default function App() {
     };
   }, [activeTask?.id, activeTask?.status, speechReady, voiceLanguage, prefs?.persona.speak_replies]);
 
-  // Keyboard: Ctrl+Space = microphone, Alt+1/2/3 = Assistant/Memory/Settings, "/" = command box.
+  // Keyboard: Ctrl+Space = microphone, Alt+1/2/3/4 = Assistant/Characters/Memory/Settings, "/" = command box.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement;
       if (e.ctrlKey && e.code === 'Space') {
         e.preventDefault();
         toggleVoiceRef.current();
-      } else if (e.altKey && ['1', '2', '3'].includes(e.key)) {
+      } else if (e.altKey && ['1', '2', '3', '4'].includes(e.key)) {
         e.preventDefault();
-        setView((['assistant', 'memory', 'settings'] as const)[Number(e.key) - 1]);
+        setView((['assistant', 'characters', 'memory', 'settings'] as const)[Number(e.key) - 1]);
       } else if (e.key === '/' && !typing) {
         e.preventDefault();
         setView('assistant');
@@ -876,10 +903,12 @@ export default function App() {
       {prefs && !prefs.onboarded && (
         <Onboarding
           persona={prefs.persona}
+          catalog={catalog}
           micSupported={micSupported}
-          onFinish={(language, startVoice) => {
-            setVoiceLanguage(language);
-            void savePreferences({ onboarded: true, persona: { ...prefs.persona, language } }).catch(() => {});
+          memoryEnabled={prefs.memory_enabled}
+          onFinish={(persona, memoryEnabled, startVoice) => {
+            setVoiceLanguage(persona.language);
+            void savePreferences({ onboarded: true, memory_enabled: memoryEnabled, persona }).catch(() => {});
             if (startVoice) toggleVoiceInput();
             else window.setTimeout(() => commandInputRef.current?.focus(), 0);
           }}
@@ -924,7 +953,7 @@ export default function App() {
               </Badge>
             )}
 <nav aria-label="Pages" className="flex gap-1">
-              {(['assistant', 'memory', 'settings'] as const).map((name, i) => (
+              {(['assistant', 'characters', 'memory', 'settings'] as const).map((name, i) => (
                 <button
                   key={name}
                   type="button"
@@ -945,6 +974,9 @@ export default function App() {
         <main {...inertWhenModal} className="mx-auto max-w-3xl px-4 py-6">
           {banner && <p role="alert" className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">{banner}</p>}
           {view === 'settings' && prefs && <SettingsPage prefs={prefs} config={config} usage={usage} onSave={savePreferences} />}
+          {view === 'characters' && prefs && (
+            <CharactersPage persona={prefs.persona} catalog={catalog} language={voiceLanguage} speechReady={speechReady} onSave={savePreferences} />
+          )}
           {view === 'memory' && prefs && <MemoryPage memoryEnabled={prefs.memory_enabled} onToggle={(on) => void savePreferences({ memory_enabled: on }).catch(() => {})} />}
           {!prefs && <p className="text-sm text-slate-500">Loading preferences…</p>}
         </main>
@@ -971,13 +1003,37 @@ export default function App() {
           {/* Command input */}
           <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex flex-col items-center gap-3 sm:flex-row sm:items-start">
-              <Orb
-                state={voiceState}
-                color={prefs?.persona.orb_color}
-                name={prefs?.persona.name}
-                onActivate={prefs?.listen_mode === 'off' ? () => commandInputRef.current?.focus() : toggleVoiceInput}
-                activateHint={prefs?.listen_mode === 'off' ? 'Press to type a command' : handsFree ? 'Press to stop listening' : 'Press or Ctrl+Space to speak'}
-              />
+              {prefs && prefs.persona.show_avatar ? (
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    type="button"
+                    data-testid="orb"
+                    data-state={voiceState}
+                    onClick={prefs.listen_mode === 'off' ? () => commandInputRef.current?.focus() : toggleVoiceInput}
+                    aria-label={`${prefs.persona.name}: ${STATE_LABEL[voiceState]}. ${prefs.listen_mode === 'off' ? 'Press to type a command' : handsFree ? 'Press to stop listening' : 'Press or Ctrl+Space to speak'}`}
+                    className="rounded-full outline-none focus-visible:ring-4 focus-visible:ring-blue-300"
+                  >
+                    <Avatar
+                      id={prefs.persona.avatar_id}
+                      color={accentFor(prefs.persona, catalog)}
+                      mood={moodFor(voiceState, activeTask?.status === 'completed' && !speaking)}
+                      level={avatarLevel}
+                      size={144}
+                      image={prefs.persona.avatar_id === 'custom' ? loadCustomImage() : null}
+                      label={`${prefs.persona.name}, ${STATE_LABEL[voiceState]}`}
+                    />
+                  </button>
+                  <p className="text-sm font-medium text-slate-700" aria-live="polite" data-testid="orb-label">{STATE_LABEL[voiceState]}</p>
+                </div>
+              ) : (
+                <Orb
+                  state={voiceState}
+                  color={prefs?.persona.orb_color}
+                  name={prefs?.persona.name}
+                  onActivate={prefs?.listen_mode === 'off' ? () => commandInputRef.current?.focus() : toggleVoiceInput}
+                  activateHint={prefs?.listen_mode === 'off' ? 'Press to type a command' : handsFree ? 'Press to stop listening' : 'Press or Ctrl+Space to speak'}
+                />
+              )}
               <Transcript heard={heard} lastCommand={activeTask?.command} reply={lastReply} name={prefs?.persona.name ?? 'Agent X'} />
             </div>
             <h2 className="text-base font-semibold text-slate-900">New command</h2>

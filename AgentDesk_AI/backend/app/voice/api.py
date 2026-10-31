@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 from ..ai.base import AIConfigError, AIError, AIRateLimitError
 from ..config import get_settings
-from . import latency, responses
+from . import latency, personas, responses
 from .chunking import ORPHEUS_LIMIT
 from .tts import TTSChain, VoiceChoice, default_chain
 
@@ -69,13 +69,22 @@ class LineIn(BaseModel):
     tool: str | None = None
     args: dict[str, Any] = {}
     language: str = "en"
-    personality: str = "assistant"
+    personality: str = Field(default="assistant", pattern="^(assistant|mentor|friend|coach|custom)$")
+    user_name: str = Field(default="", max_length=40)
+    formality: int = Field(default=50, ge=0, le=100)
+    humour: int = Field(default=50, ge=0, le=100)
     slots: dict[str, Any] = {}
 
 
 class LatencyIn(BaseModel):
     kind: str = Field(default="local", pattern="^(local|planned|chat)$")
     ms: dict[str, float]
+
+
+@router.get("/catalog")
+def catalog() -> dict:
+    """Built-in avatars, personalities and the voices that exist for them."""
+    return personas.catalog()
 
 
 @router.post("/chunks")
@@ -98,12 +107,13 @@ def tts(body: TtsIn) -> Response:
 @router.post("/line")
 def spoken_line(body: LineIn) -> dict:
     """The phrase to speak. A task is turned into its closing line; "Done" appears only for verified tasks."""
+    who = responses.Voiceprint(body.personality, body.user_name, body.formality, body.humour)
     if body.task is not None:
-        text = responses.line_for_task(body.task, body.language, body.personality)
+        text = responses.line_for_task(body.task, body.language, who)
     elif body.tool:
-        text = responses.acknowledge_line(body.tool, body.args, body.language, body.personality)
+        text = responses.acknowledge_line(body.tool, body.args, body.language, who)
     elif body.event in responses._T:
-        text = responses.line(body.event, body.language, body.personality, **body.slots)
+        text = responses.line(body.event, body.language, who, **body.slots)
     else:
         raise HTTPException(422, "Give a task, a tool, or a known event.")
     return {"text": text}

@@ -4,6 +4,7 @@ from __future__ import annotations
 import platform
 import json
 import secrets
+import threading
 import time
 import uuid
 from pathlib import Path
@@ -37,6 +38,7 @@ from .schemas import (
 from .tools.base import ToolContext
 from .tools.registry import ToolRegistry
 from .browser_bridge import router as browser_router, bridge
+from .voice import api as voice_api
 from .voice.api import router as voice_router
 from . import state  # noqa: F401  (registers state-machine guards)
 
@@ -49,6 +51,7 @@ async def lifespan(app: FastAPI):
     usage.get_plan(settings)  # an unknown plan name stops startup instead of silently meaning "unlimited"
     init_db()
     log_event("server_start")
+    threading.Thread(target=voice_api.get_chain, daemon=True).start()  # first spoken line should not pay setup
     # The launcher runs one server. Never leave a crashed task showing as active
     # or replay its possibly completed device/file operation after restart.
     with SessionLocal() as db:
@@ -71,8 +74,6 @@ async def lifespan(app: FastAPI):
 
         prune(db, settings)
     if settings.tool_isolation == "process":
-        import threading
-
         from .orchestration import worker
         # Start one tool worker in the background so the first command does not pay its start-up cost.
         threading.Thread(target=worker.pool.warm, name="tool-worker-warmup", daemon=True).start()

@@ -18,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.orm import Session
 
 from .models import MemoryItem, Preference, Task, utcnow
+from .voice import personas
 
 
 class Persona(BaseModel):
@@ -28,6 +29,39 @@ class Persona(BaseModel):
     style: Literal["friendly", "brief", "formal"] = "friendly"
     speak_replies: bool = True
     orb_color: Literal["indigo", "emerald", "rose", "amber", "slate"] = "indigo"
+    # M3: character. Changes how it looks, sounds and words things; never what it does (rule 3.9).
+    user_name: str = Field(default="", max_length=40)
+    avatar_id: Literal["nova", "aria", "zara", "orion", "atlas", "kai", "custom"] = "nova"
+    show_avatar: bool = True                      # False = orb only
+    gender: Literal["female", "male", "neutral"] = "female"
+    voice_en: str = "diana"
+    voice_ur: str = "ur-PK-UzmaNeural"
+    voice_hi: str = "hi-IN-SwaraNeural"
+    personality: Literal["assistant", "mentor", "friend", "coach", "custom"] = "assistant"
+    custom_description: str = Field(default="", max_length=500)
+    formality: int = Field(default=50, ge=0, le=100)
+    humour: int = Field(default=50, ge=0, le=100)
+    verbosity: int = Field(default=50, ge=0, le=100)
+    wake_word: str = Field(default="", max_length=30)
+
+    @field_validator("voice_en")
+    @classmethod
+    def _english_voice(cls, value: str) -> str:
+        if value not in personas.ORPHEUS_VOICES:
+            raise ValueError(f"voice_en must be one of {', '.join(personas.ORPHEUS_VOICES)}")
+        return value
+
+    @field_validator("voice_ur", "voice_hi")
+    @classmethod
+    def _edge_voice(cls, value: str) -> str:
+        if not personas.EDGE_VOICE.match(value):
+            raise ValueError("expected a neural voice name such as ur-PK-UzmaNeural")
+        return value
+
+    @field_validator("user_name", "wake_word", "custom_description")
+    @classmethod
+    def _tidy(cls, value: str) -> str:
+        return " ".join(value.split()) if value else ""
 
 
 class Preferences(BaseModel):

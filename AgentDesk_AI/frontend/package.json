@@ -20,7 +20,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "test:e2e": "node --test --test-concurrency=1 e2e/new_user.test.mjs e2e/flows.test.mjs",
-    "test": "node --test voice.test.mjs speech.test.mjs",
+    "test": "node --test voice.test.mjs speech.test.mjs characters.test.mjs",
     "test:browser": "node --test e2e/extension_real.test.mjs"
   },
   "type": "module",

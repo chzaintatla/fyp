@@ -102,6 +102,47 @@ export interface Persona {
   style: 'friendly' | 'brief' | 'formal';
   speak_replies: boolean;
   orb_color: OrbColor;
+  user_name: string;
+  avatar_id: AvatarId;
+  show_avatar: boolean;
+  gender: 'female' | 'male' | 'neutral';
+  voice_en: string;
+  voice_ur: string;
+  voice_hi: string;
+  personality: PersonalityId;
+  custom_description: string;
+  formality: number;
+  humour: number;
+  verbosity: number;
+  wake_word: string;
+}
+
+export type AvatarId = 'nova' | 'aria' | 'zara' | 'orion' | 'atlas' | 'kai' | 'custom';
+export type PersonalityId = 'assistant' | 'mentor' | 'friend' | 'coach' | 'custom';
+
+export interface CatalogAvatar {
+  id: Exclude<AvatarId, 'custom'>;
+  name: string;
+  gender: 'female' | 'male';
+  style: string;
+  color: string;
+  voice_en: string;
+  voice_ur: string;
+  voice_hi: string;
+}
+
+export interface CatalogPersonality {
+  id: PersonalityId;
+  label: string;
+  tone: string;
+  style: string;
+  direction: string;
+}
+
+export interface Catalog {
+  avatars: CatalogAvatar[];
+  personalities: CatalogPersonality[];
+  voices: { english_female: string[]; english_male: string[]; urdu: string[]; hindi: string[] };
 }
 
 export interface Preferences {
@@ -275,7 +316,8 @@ export const voiceApi = {
     return { blob: await res.blob(), engine: res.headers.get('X-TTS-Engine') ?? '' };
   },
   /** The phrase to speak. A task yields its closing line ("Done" only if verified); a tool yields the acknowledgement. */
-  line: async (body: { task?: TaskOut; tool?: string; args?: Record<string, unknown>; event?: string; language: string; personality?: string }) =>
+  catalog: async () => (await (await voiceFetch('/voice/catalog', { method: 'GET' })).json()) as Catalog,
+  line: async (body: { task?: TaskOut; tool?: string; args?: Record<string, unknown>; event?: string; language: string; personality?: string; user_name?: string; formality?: number; humour?: number }) =>
     ((await (await voiceFetch('/voice/line', jsonInit(body))).json()) as { text: string }).text,
   stt: async (wav: Uint8Array, language?: string, prompt?: string) => {
     const form = new FormData();
