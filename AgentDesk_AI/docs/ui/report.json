@@ -1,0 +1,98 @@
+[
+ {
+  "file": "home_dark_100.png",
+  "scrollWidth": 1920,
+  "innerWidth": 1920,
+  "ok": true
+ },
+ {
+  "file": "characters_dark_100.png",
+  "scrollWidth": 1920,
+  "innerWidth": 1920,
+  "ok": true
+ },
+ {
+  "file": "memory_dark_100.png",
+  "scrollWidth": 1920,
+  "innerWidth": 1920,
+  "ok": true
+ },
+ {
+  "file": "settings_dark_100.png",
+  "scrollWidth": 1920,
+  "innerWidth": 1920,
+  "ok": true
+ },
+ {
+  "file": "home_dark_150.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "ok": true
+ },
+ {
+  "file": "characters_dark_150.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "ok": true
+ },
+ {
+  "file": "memory_dark_150.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "ok": true
+ },
+ {
+  "file": "settings_dark_150.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "ok": true
+ },
+ {
+  "file": "home_light_100.png",
+  "scrollWidth": 1920,
+  "innerWidth": 1920,
+  "ok": true
+ },
+ {
+  "file": "characters_light_100.png",
+  "scrollWidth": 1920,
+  "innerWidth": 1920,
+  "ok": true
+ },
+ {
+  "file": "memory_light_100.png",
+  "scrollWidth": 1920,
+  "innerWidth": 1920,
+  "ok": true
+ },
+ {
+  "file": "settings_light_100.png",
+  "scrollWidth": 1920,
+  "innerWidth": 1920,
+  "ok": true
+ },
+ {
+  "file": "home_light_150.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "ok": true
+ },
+ {
+  "file": "characters_light_150.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "ok": true
+ },
+ {
+  "file": "memory_light_150.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "ok": true
+ },
+ {
+  "file": "settings_light_150.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "ok": true
+ }
+]

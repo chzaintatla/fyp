@@ -79,10 +79,11 @@ const FAKE_SPEECH = `
   })();
 `;
 
-export async function openApp(backend, { path = '/', viewport = { width: 1280, height: 900 } } = {}) {
+export async function openApp(backend, { path = '/', viewport = { width: 1280, height: 900 }, deviceScaleFactor = 1, theme = null } = {}) {
   const browser = await chromium.launch(process.env.E2E_CHANNEL ? { channel: process.env.E2E_CHANNEL } : (process.platform === 'win32' ? { channel: 'msedge' } : {}));
-  const context = await browser.newContext({ viewport });
+  const context = await browser.newContext({ viewport, deviceScaleFactor });
   await context.addInitScript(FAKE_SPEECH);
+  if (theme) await context.addInitScript(`try { localStorage.setItem('agentdesk_theme', '${theme}'); } catch {}`);
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));

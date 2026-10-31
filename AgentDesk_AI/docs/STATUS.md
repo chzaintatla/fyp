@@ -6,6 +6,34 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-10-31 — Session 11: M4 UI refinement (branch `m4-ui`)
+
+**Done**
+- Design tokens (`--bg/--surface/--raised/--line/--ink/--ink2/--accent/--ok/--warn/--bad`) in Tailwind + `index.css`; dark HUD by default,
+  light theme toggle (remembered), accent follows the chosen character, Inter / Space Grotesk (web fonts; system fonts offline),
+  14 px radius, glass cards. The old components keep their classes; legacy slate/white/blue/red/amber/emerald classes are mapped to tokens.
+- Left rail (Home, Characters, Memory, Settings; bottom bar under ~770 px), Start AI / Stop button + `Ctrl + Space` hint, chat-bubble
+  transcript, avatar-first Home. Mini mode = 72 px character bubble with state glow and an "Approve?" tag. Tray: Start/stop listening,
+  mini mode, Settings (`window.__agentx` hooks, fixed calls only). Settings: follow-up window 0-15 s and speech volume (new preferences).
+- Playwright now installed (`playwright`, `pixelmatch`, `pngjs`); the harness runs on Edge and ignores local API keys.
+
+**Tested how (all on this PC)**
+- `pytest tests -q` -> 837 passed, 4 skipped. `npm test` 21 passed (incl. contrast >= 4.5:1 for every text/background token pair in both
+  themes and for all six avatar accents, read from the real CSS). `npm run build` ok.
+- `npm run test:e2e` -> 20/20 in Edge: 8 earlier flows (onboarding now 5 steps), 10 new UI tests (avatar select + reload, filter, personality,
+  avatar mood idle/listening/concerned, approval, theme, settings persistence, layout at 1280 and 360 px, focus ring, mini mode), 2 pixel
+  snapshots of Home (baselines in `frontend/e2e/snapshots/`).
+- `docs/ui/`: 27 screenshots (onboarding, home, characters, memory, settings, approval card in dark and light, at 100% = 1920x1080 and
+  150% = 1280x720 CSS px at 1.5x; mini mode); none scroll sideways (`docs/ui/report.json`).
+
+**Not done / not measured**
+- Not tested at real Windows display scaling 125%, on a 4K monitor, or with Narrator; "150%" is emulated in the browser.
+- Tray and mini window were not run (pywebview shell); only the tray menu logic is unit-tested.
+- Spec items not built: Tasks / Routines / World Monitor rail entries (M6, M7), mic device picker, speech speed, noise-level test,
+  a dedicated "current task" side panel (the existing Current task card is kept below the command box), mic level meter in the bottom bar,
+  Framer Motion (CSS transitions are used), the light theme keeps a fixed darker accent.
+- Visual snapshots cover Home only. The fonts load from Google Fonts when online.
+
 ### 2026-10-31 — Session 10: M3 Avatars and personalities (branch `m3-avatars`, partly done)
 
 **Done:** 6 avatars (3 female, 3 male) + custom picture, 5 personalities (Assistant, Mentor, Best Friend, Coach, Custom with sliders),

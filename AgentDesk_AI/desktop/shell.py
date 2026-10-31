@@ -99,6 +99,20 @@ class Shell:
         self.panel.hide()
         self.panel_visible = False
 
+    def run_in_panel(self, script: str) -> None:
+        """Run a fixed script in the panel (used by the tray). Never builds script text from user input."""
+        evaluate = getattr(self.panel, "evaluate_js", None)
+        if evaluate is not None:
+            evaluate(script)
+
+    def toggle_listening(self) -> None:
+        self.show_panel()
+        self.run_in_panel("window.__agentx && window.__agentx.toggleVoice()")
+
+    def open_settings(self) -> None:
+        self.show_panel()
+        self.run_in_panel("window.__agentx && window.__agentx.openView('settings')")
+
     def toggle_orb(self) -> None:
         if getattr(self.orb, "_agentdesk_hidden", False):
             self.orb.show()
@@ -139,7 +153,9 @@ def menu_items(shell: Shell, item, separator):
     """Tray menu, built from plain callables so it can be tested without a tray."""
     return [
         item("Open Agent X", lambda *_: shell.show_panel(), default=True),
-        item("Show / hide orb", lambda *_: shell.toggle_orb()),
+        item("Start / stop listening", lambda *_: shell.toggle_listening()),
+        item("Show / hide mini mode", lambda *_: shell.toggle_orb()),
+        item("Settings", lambda *_: shell.open_settings()),
         item("Start with Windows", lambda *_: shell.api.set_autostart(not shell.api.get_autostart()),
              checked=lambda *_: shell.api.get_autostart()),
         separator,

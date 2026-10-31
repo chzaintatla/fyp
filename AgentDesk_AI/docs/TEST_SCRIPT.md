@@ -46,3 +46,22 @@ Start with a fresh profile (delete `%LOCALAPPDATA%\AgentDesk` or use a new Windo
 8. Watch the character: listening (ring pulses), thinking (dots orbit), speaking (mouth follows the voice), task done (hop + glow),
    waiting for approval (dashed ring, worried brows). With browser/Windows reduced motion on, nothing animates.
 9. Change the avatar, restart the app. Expect: the same character, voices and personality are still selected.
+
+## M4 — UI refinement
+
+Open the app (`START_AGENT_X.cmd`). Do each step at Windows display scaling 100%, 125% and 150% (Settings > System > Display > Scale).
+
+1. Home: the character is in the centre with its state under it ("Ready"), a **Start AI** button and `Ctrl + Space` below it.
+   Conversation bubbles: you on the right, the assistant on the left. Task history on the right, current task below.
+2. Click **Start AI**, speak, click **Stop**. Expect: the character leans in while listening (ring pulses), the button reads Stop.
+3. The left rail has Home, Characters, Memory, Settings with icons and labels; `Alt+1..4` switch pages. Narrow the window below
+   ~770 px: the rail becomes a bar at the bottom and nothing scrolls sideways.
+4. Click **Light theme** (top right): the whole app switches; restart the app and it stays. Dark is the default.
+5. Accent colour: choose a different character; buttons, rail highlight and focus rings take that character's colour (dark theme).
+6. Settings: move **Follow-up window** to 0, then say a command by voice. Expect: after the reply the microphone does NOT stay open.
+   Set it to 15: it stays open about 15 s. Move **Speech volume** and press Characters > Hear a sample: the loudness follows it.
+7. Mini mode: tray icon > **Show / hide mini mode**. Expect: a 72 px character bubble, always on top, draggable, bottom right. It glows
+   while working; when an approval is waiting a small "Approve?" tag appears; click it to open the panel.
+8. Tray menu: **Start / stop listening**, **Settings**, **Open Agent X**, **Quit** all work.
+9. Keyboard only (no mouse): Tab through the whole Home page; every control shows a visible ring and has a spoken name in Narrator.
+10. Look at `docs\ui\*.png` (saved by the script): every page in dark and light at both scalings, nothing cut off.

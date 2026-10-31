@@ -147,12 +147,12 @@ def test_tray_menu_actions(shell):
         made.append((text, action, kw))
         return text
     items = menu_items(shell, item, "SEP")
-    assert items == ["Open Agent X", "Show / hide orb", "Start with Windows", "SEP", "Quit"]
+    assert items == ["Open Agent X", "Start / stop listening", "Show / hide mini mode", "Settings", "Start with Windows", "SEP", "Quit"]
     actions = {text: action for text, action, _ in made}
     shell.hide_panel()
     actions["Open Agent X"]()
     assert shell.panel_visible
-    actions["Show / hide orb"]()
+    actions["Show / hide mini mode"]()
     assert shell.orb.calls[-1] == "hide"
     actions["Start with Windows"]()
     assert shell.api.get_autostart() is True

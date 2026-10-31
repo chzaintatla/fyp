@@ -28,7 +28,7 @@ test('new user: onboarding -> voice command -> preview card -> approve -> verifi
     await page.getByRole('button', { name: 'Next' }).click();
     const example = await page.getByTestId('onboarding-example').innerText();
     assert.match(example, /Create a folder called Demo in Documents/);
-    await page.getByRole('button', { name: 'Start' }).click();
+    await page.getByTestId('onboarding').getByRole('button', { name: 'Start', exact: true }).click();
 
     // The orb shows it is listening, then the live transcript shows the words.
     await page.locator('[data-testid="orb"][data-state="listening"]').waitFor();

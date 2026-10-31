@@ -9,6 +9,8 @@ import { accentFor, loadCustomImage, voiceOptions } from './characters';
 import { ActionPreview } from './components/ActionPreview';
 import { Onboarding } from './components/Onboarding';
 import { Orb } from './components/Orb';
+import { Rail, type View } from './components/Rail';
+import { applyTheme, loadTheme, type Theme } from './theme';
 import { Transcript } from './components/Transcript';
 import { MemoryPage } from './pages/MemoryPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -279,7 +281,7 @@ export default function App() {
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<string | null>(null);
-  const [view, setView] = useState<'assistant' | 'characters' | 'memory' | 'settings'>('assistant');
+  const [view, setView] = useState<View>('assistant');
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [heard, setHeard] = useState('');
   const [speaking, setSpeaking] = useState(false);
@@ -326,6 +328,8 @@ export default function App() {
     formality: prefs?.persona.formality ?? 50,
     humour: prefs?.persona.humour ?? 50,
   });
+  const [theme, setTheme] = useState<Theme>(loadTheme);
+  useEffect(() => applyTheme(theme, prefs ? accentFor(prefs.persona, catalog) : undefined), [theme, prefs?.persona.avatar_id, catalog]);
   const [avatarLevel, setAvatarLevel] = useState(0);
   useEffect(() => {
     if (!speaking) {
@@ -344,7 +348,8 @@ export default function App() {
   if (playerRef.current === null) playerRef.current = new SpeechPlayer(() => voiceOptionsRef.current);
   const speechEndedAtRef = useRef(0);
   const followUpTimerRef = useRef<number | null>(null);
-  const FOLLOW_UP_MS = 8000; // after a spoken reply, keep listening this long without a hotkey
+  const followUpMs = (prefs?.follow_up_seconds ?? 8) * 1000; // after a spoken reply, keep listening this long without a hotkey
+  if (playerRef.current) playerRef.current.volume = (prefs?.speech_volume ?? 100) / 100;
 
   submittingRef.current = submitting;
   const busy = busyAction !== null || submitting;
@@ -558,7 +563,7 @@ export default function App() {
       recognitionRef.current?.abort();
       recognitionRef.current = null;
       setListening(false);
-    }, FOLLOW_UP_MS);
+    }, followUpMs);
   };
 
   const toggleVoiceInput = () => {
@@ -728,6 +733,13 @@ export default function App() {
   };
 
   toggleVoiceRef.current = toggleVoiceInput;
+  // Hooks for the desktop tray (fixed calls only): start/stop listening, open a page.
+  useEffect(() => {
+    (window as unknown as { __agentx?: unknown }).__agentx = {
+      toggleVoice: () => toggleVoiceRef.current(),
+      openView: (v: View) => setView(v),
+    };
+  }, []);
   // While a dialog is open, the page behind it can't be focused or read (aria-modal alone is not enforced).
   const modalOpen = activeTask?.status === 'awaiting_approval' || (prefs !== null && !prefs.onboarded);
   const inertWhenModal = (modalOpen ? { inert: 'true' } : {}) as Record<string, string>;  // React 18 drops inert=""
@@ -769,7 +781,7 @@ export default function App() {
       if (epoch !== speechEpochRef.current) return;
       voiceSpeakingRef.current = false;
       if (handsFreeRef.current) finishVoiceTask();
-      else if (serverVoice && listenModeRef.current === 'push_to_talk' && voiceTaskActiveRef.current && isTerminal) beginFollowUp();
+      else if (serverVoice && followUpMs > 0 && listenModeRef.current === 'push_to_talk' && voiceTaskActiveRef.current && isTerminal) beginFollowUp();
     });
     speechFinishRef.current = finish;
     if (handsFreeRef.current) startListeningRef.current();
@@ -886,7 +898,8 @@ export default function App() {
   const totalCount = activeTask?.actions.length ?? 0;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 md:pb-0 md:pl-[84px]">
+      <Rail view={view} onChange={setView} />
       {activeTask?.status === 'awaiting_approval' && (
         <ActionPreview
           task={activeTask}
@@ -952,20 +965,10 @@ export default function App() {
                 {config.platform}
               </Badge>
             )}
-<nav aria-label="Pages" className="flex gap-1">
-              {(['assistant', 'characters', 'memory', 'settings'] as const).map((name, i) => (
-                <button
-                  key={name}
-                  type="button"
-                  onClick={() => setView(name)}
-                  aria-current={view === name ? 'page' : undefined}
-                  title={`Alt+${i + 1}`}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium ring-1 ring-inset ${view === name ? 'bg-blue-700 text-white ring-blue-700' : 'bg-white text-slate-700 ring-slate-300 hover:bg-slate-50'}`}
-                >
-                  {name[0].toUpperCase() + name.slice(1)}
-                </button>
-              ))}
-            </nav>
+<button type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-pressed={theme === 'light'}
+              title="Switch between the dark and light theme" className="rounded-md px-3 py-1.5 text-sm font-medium ring-1 ring-inset ring-slate-300">
+              {theme === 'dark' ? 'Light theme' : 'Dark theme'}
+            </button>
           </div>
         </div>
       </header>
@@ -1024,6 +1027,15 @@ export default function App() {
                     />
                   </button>
                   <p className="text-sm font-medium text-slate-700" aria-live="polite" data-testid="orb-label">{STATE_LABEL[voiceState]}</p>
+                  {prefs.listen_mode !== 'off' && (
+                    <>
+                      <button type="button" onClick={toggleVoiceInput} data-testid="start-ai"
+                        className={`rounded-full px-5 py-2 text-sm font-semibold ${handsFree ? 'bg-red-700 text-white' : 'bg-blue-700 text-white'}`}>
+                        {handsFree ? 'Stop' : 'Start AI'}
+                      </button>
+                      <p className="text-xs text-slate-500"><kbd className="rounded border px-1">Ctrl</kbd> + <kbd className="rounded border px-1">Space</kbd></p>
+                    </>
+                  )}
                 </div>
               ) : (
                 <Orb
