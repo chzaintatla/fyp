@@ -4,12 +4,14 @@ from __future__ import annotations
 import threading
 from typing import Any
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy.orm import Session
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
 from ..ai.base import AIConfigError, AIError, AIRateLimitError
 from ..config import get_settings
+from ..database import get_db
 from . import latency, personas, responses
 from .chunking import ORPHEUS_LIMIT
 from .tts import TTSChain, VoiceChoice, default_chain
@@ -79,6 +81,17 @@ class LineIn(BaseModel):
 class LatencyIn(BaseModel):
     kind: str = Field(default="local", pattern="^(local|planned|chat)$")
     ms: dict[str, float]
+
+
+@router.get("/greeting")
+def greeting_line(db: Session = Depends(get_db)) -> dict:
+    """The daily greeting (time of day, the user's name, reminders due today). `enabled` follows the Settings switch."""
+    from datetime import datetime
+    from ..preferences import get_preferences
+    prefs = get_preferences(db)
+    lang = {"ur-PK": "roman", "hi-IN": "hi"}.get(prefs.persona.language, "en")
+    text = responses.greeting(datetime.now().hour, lang, prefs.persona.user_name, reminders=0)  # reminders arrive with M6
+    return {"enabled": prefs.daily_greeting, "text": text}
 
 
 @router.get("/catalog")

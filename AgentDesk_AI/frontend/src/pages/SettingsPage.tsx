@@ -117,6 +117,16 @@ export function SettingsPage({ prefs, config, usage, onSave }: SettingsPageProps
           <span className="w-8 text-right" data-testid="follow-up-value">{prefs.follow_up_seconds}</span>
         </label>
         <p className="ml-1 text-xs text-slate-500">After a spoken reply the microphone stays open this long, so you can say "and close Notepad" without pressing the hotkey. 0 turns it off.</p>
+        <label className="mt-3 flex items-start gap-2 text-sm">
+          <input type="checkbox" className="mt-1" checked={prefs.cloud_answers === true} data-testid="cloud-answers"
+            onChange={(e) => void save({ cloud_answers: e.target.checked }, 'Privacy setting saved.')} />
+          <span>Answer questions with the cloud AI (Groq). <span className="block text-slate-500">When on, the question you ask (and, for web answers, text of the pages read) is sent to Groq. Commands for this PC are not affected. {prefs.cloud_answers === null && 'You have not chosen yet, so questions stay on this PC.'}</span></span>
+        </label>
+        <label className="mt-3 flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={prefs.daily_greeting} data-testid="daily-greeting"
+            onChange={(e) => void save({ daily_greeting: e.target.checked }, 'Greeting setting saved.')} />
+          Say a greeting the first time the app opens each day
+        </label>
         <label className="mt-3 flex items-center gap-3 text-sm">
           <span className="w-44">Speech volume</span>
           <input type="range" min={0} max={100} value={prefs.speech_volume} aria-label="Speech volume" data-testid="speech-volume"

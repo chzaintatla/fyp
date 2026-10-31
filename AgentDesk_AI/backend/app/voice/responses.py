@@ -6,6 +6,7 @@ Languages: "en", "roman" (Roman Urdu), "ur" (Urdu script), "hi" (Hindi).
 """
 from __future__ import annotations
 
+import re
 from typing import Any, NamedTuple
 
 from . import personas
@@ -105,6 +106,31 @@ class _Safe(dict):
         return ""
 
 
+_GREETING = {
+    "morning": {"en": "Good morning{who}.", "roman": "Subah bakhair{who}.", "ur": "صبح بخیر{who}۔", "hi": "सुप्रभात{who}।"},
+    "afternoon": {"en": "Good afternoon{who}.", "roman": "Assalam o alaikum{who}.", "ur": "السلام علیکم{who}۔", "hi": "नमस्ते{who}।"},
+    "evening": {"en": "Good evening{who}.", "roman": "Shaam bakhair{who}.", "ur": "شام بخیر{who}۔", "hi": "शुभ संध्या{who}।"},
+}
+_REMINDERS = {
+    "en": ("You have {n} reminder today.", "You have {n} reminders today."),
+    "roman": ("Aaj aap ka {n} reminder hai.", "Aaj aap ke {n} reminders hain."),
+    "ur": ("آج آپ کا {n} ریمائنڈر ہے۔", "آج آپ کے {n} ریمائنڈر ہیں۔"),
+    "hi": ("आज आपका {n} रिमाइंडर है।", "आज आपके {n} रिमाइंडर हैं।"),
+}
+
+
+def greeting(hour: int, language: str = "en", user_name: str = "", reminders: int = 0) -> str:
+    """Time-of-day greeting with the user's name and, when there are any, today's reminder count."""
+    part = "morning" if 4 <= hour < 12 else "afternoon" if 12 <= hour < 17 else "evening"
+    lang = _lang(language)
+    name = " ".join(user_name.split())[:40]
+    text = _fmt(_GREETING[part][lang], {"who": f", {name}" if name else ""})
+    if reminders > 0:
+        one, many = _REMINDERS[lang]
+        text += " " + _fmt(one if reminders == 1 else many, {"n": reminders})
+    return text
+
+
 def _fmt(template: str, slots: dict[str, Any]) -> str:
     return " ".join(template.format_map(_Safe(slots)).split())
 
@@ -164,9 +190,15 @@ def line_for_task(task: dict[str, Any], language: str = "en", personality: "str 
     if status == "waiting_retry":
         return line("slow", language, personality)
     if status == "completed" and actions and all(_verified(a) for a in actions):
+        said = _tool_speech(actions)
+        if said:
+            return said  # an answer or a read-out ("Here is what I remember...") is the reply itself
         return line("success", language, personality, detail=_success_detail(actions, language))
     if status == "completed" and not actions:
-        return line("success", language, personality, detail="")  # an answer-only task has nothing to verify
+        note = task.get("plan_note")
+        if note:
+            return _answer_speech(note)  # a chat answer / report: say it as it is
+        return line("success", language, personality, detail="")  # nothing to verify
     if status == "partially_completed":
         done = [a for a in actions if _verified(a)]
         return line("partial", language, personality, detail=_success_detail(done, language) if done else "")
@@ -175,6 +207,19 @@ def line_for_task(task: dict[str, Any], language: str = "en", personality: "str 
     reason = (task.get("error") or next((a.get("error") for a in actions if a.get("error")), None)
               or _failed_check(actions) or "it did not work")
     return line("failure", language, personality, reason=_one_sentence(reason))
+
+
+def _tool_speech(actions: list[dict[str, Any]]) -> str:
+    """The text a single verified action wants spoken (its `spoken` output), if any."""
+    if len(actions) != 1:
+        return ""
+    return _answer_speech(str(((actions[0].get("result") or {}).get("output") or {}).get("spoken") or ""))
+
+
+def _answer_speech(text: str, sentences: int = 3, limit: int = 420) -> str:
+    text = " ".join(str(text).split())
+    out = " ".join(re.split(r"(?<=[.!?؟۔।])\s+", text)[:sentences])
+    return out if len(out) <= limit else out[: limit - 1].rstrip() + "…"
 
 
 def _success_detail(actions: list[dict[str, Any]], language: str) -> str:

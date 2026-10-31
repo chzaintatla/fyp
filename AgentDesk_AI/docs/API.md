@@ -280,3 +280,9 @@ Task statuses: `created`, `planned`, `awaiting_approval`, `awaiting_input`,
 (last four are terminal).
 Action statuses: `pending`, `approved`, `rejected`, `running`, `succeeded`,
 `failed`, `skipped`, `cancelled`.
+
+### `DELETE /memory`
+Delete every remembered note (the Memory page asks first). Returns `{"deleted": <count>}`. Task history is not touched.
+
+### `GET /voice/greeting`
+`{"enabled": bool, "text": str}`: the time-of-day greeting with the user's name; `enabled` follows the "daily greeting" setting.

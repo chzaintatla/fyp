@@ -75,6 +75,8 @@ class Preferences(BaseModel):
     onboarded: bool = False
     follow_up_seconds: int = Field(default=8, ge=0, le=15)  # keep listening this long after a spoken reply
     speech_volume: int = Field(default=100, ge=0, le=100)
+    cloud_answers: bool | None = None             # None = not asked yet; True = questions/web answers may use the cloud AI
+    daily_greeting: bool = False                  # speak a greeting the first time the app opens each day
     conversation_cutoff: str | None = None   # ISO time; older turns are not used as memory
 
 
@@ -91,6 +93,8 @@ class PreferencesUpdate(BaseModel):
     onboarded: bool | None = None
     follow_up_seconds: int | None = Field(default=None, ge=0, le=15)
     speech_volume: int | None = Field(default=None, ge=0, le=100)
+    daily_greeting: bool | None = None
+    cloud_answers: bool | None = None
 
 
 def get_preferences(db: Session) -> Preferences:
@@ -126,7 +130,8 @@ def forget_conversation(db: Session) -> Preferences:
 
 # ------------------------------------------------------------------ memory items
 _SECRET = re.compile(r"(gsk_[A-Za-z0-9]{8,}|sk-[A-Za-z0-9_-]{12,}|AIza[0-9A-Za-z_-]{16,}|"
-                     r"(?i:password|passcode|api[ _-]?key|token|pin)\s*[:=]?\s*\S{4,})")
+                     r"(?i:password|passcode|api[ _-]?key|token|pin)\s*[:=]?\s*\S{4,})|"
+                     r"(?i:\b(?:passwords?|passcodes?|passwd|api[ _-]?keys?|secret keys?|cvv|otp|pin(?: code| number)?|card number)\b)")
 
 
 class MemoryIn(BaseModel):

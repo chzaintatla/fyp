@@ -86,6 +86,14 @@ export function MemoryPage({ memoryEnabled, onToggle }: { memoryEnabled: boolean
         </ul>
       </section>
 
+      <section aria-labelledby="wipe-heading" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h3 id="wipe-heading" className="font-semibold">Delete everything I remember</h3>
+        <p className="mt-1 text-xs text-slate-500">Removes every saved note above. Task history is not touched. This cannot be undone.</p>
+        <button type="button" data-testid="delete-all-memory" disabled={!data?.items.length}
+          onClick={() => { if (window.confirm('Delete ALL remembered notes? This cannot be undone.')) void act(() => api.deleteAllMemory()); }}
+          className="mt-2 rounded border border-red-300 px-3 py-1 text-sm text-red-700 disabled:opacity-50">Delete all memory</button>
+      </section>
+
       <section aria-labelledby="turns-heading" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <h3 id="turns-heading" className="font-semibold">Recent conversation</h3>

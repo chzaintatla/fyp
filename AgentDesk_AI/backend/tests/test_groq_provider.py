@@ -197,6 +197,7 @@ def test_tool_specs_cover_registry(tmp_path):
         "open_url", "open_windows_settings", "play_youtube_video", "read_text_file", "rename_file", "restore_file",
         "take_screenshot", "web_search", "write_text_file",
         "find_files", "edit_text_file", "media_control", "whatsapp_open_chat", "winget_install",
+        "memory_remember", "memory_recall", "memory_forget", "web_answer", "summarise_page", "summarise_file",
     }
     for s in specs:
         assert s["type"] == "function"

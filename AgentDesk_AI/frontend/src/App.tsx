@@ -331,6 +331,18 @@ export default function App() {
   const [theme, setTheme] = useState<Theme>(loadTheme);
   useEffect(() => applyTheme(theme, prefs ? accentFor(prefs.persona, catalog) : undefined), [theme, prefs?.persona.avatar_id, catalog]);
   const [avatarLevel, setAvatarLevel] = useState(0);
+  // Optional daily greeting: once per calendar day, only when the server voice is on and the user finished onboarding.
+  useEffect(() => {
+    if (!prefs?.onboarded || !prefs.daily_greeting || !speechReady || prefs.persona.speak_replies === false) return;
+    const today = new Date().toDateString();
+    try {
+      if (localStorage.getItem('agentdesk_greeted') === today) return;
+      localStorage.setItem('agentdesk_greeted', today);
+    } catch {
+      return;
+    }
+    void voiceApi.greeting().then((g) => (g.enabled && g.text ? playerRef.current?.speak(g.text) : undefined)).catch(() => undefined);
+  }, [prefs?.onboarded, prefs?.daily_greeting, speechReady]);
   useEffect(() => {
     if (!speaking) {
       setAvatarLevel(0);
@@ -919,9 +931,10 @@ export default function App() {
           catalog={catalog}
           micSupported={micSupported}
           memoryEnabled={prefs.memory_enabled}
-          onFinish={(persona, memoryEnabled, startVoice) => {
+          cloudAnswers={prefs.cloud_answers}
+          onFinish={(persona, memoryEnabled, cloudAnswers, startVoice) => {
             setVoiceLanguage(persona.language);
-            void savePreferences({ onboarded: true, memory_enabled: memoryEnabled, persona }).catch(() => {});
+            void savePreferences({ onboarded: true, memory_enabled: memoryEnabled, persona, ...(cloudAnswers === null ? {} : { cloud_answers: cloudAnswers }) }).catch(() => {});
             if (startVoice) toggleVoiceInput();
             else window.setTimeout(() => commandInputRef.current?.focus(), 0);
           }}

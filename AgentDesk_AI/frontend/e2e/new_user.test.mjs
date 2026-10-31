@@ -24,6 +24,9 @@ test('new user: onboarding -> voice command -> preview card -> approve -> verifi
     await page.getByRole('heading', { name: 'Choose a personality' }).waitFor();
     await page.getByTestId('onboarding-personality-friend').check({ force: true });
     await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByRole('heading', { name: 'Questions and privacy' }).waitFor();
+    await page.getByTestId('onboarding-cloud-no').check({ force: true }); // the choice is the user's: tested both ways in ui.test.mjs
+    await page.getByRole('button', { name: 'Next' }).click();
     await page.getByRole('heading', { name: 'Microphone' }).waitFor();
     await page.getByRole('button', { name: 'Next' }).click();
     const example = await page.getByTestId('onboarding-example').innerText();

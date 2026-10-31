@@ -1,0 +1,44 @@
+PASS  chat  1    1.8s  What is the capital of Japan?                           -> Right away, the capital of Japan is Tokyo.
+PASS  chat  2    1.3s  What is 12 times 12?                                    -> Right away, 12 times 12 equals 144.
+PASS  chat  3    1.3s  At what temperature does water boil at sea level in Cel -> Right away, water boils at 100 °C at sea level.
+PASS  chat  4    1.2s  Who wrote the play Hamlet?                              -> Right away, Hamlet was written by William Shakespeare.
+PASS  chat  5    1.3s  Which is the largest planet in our solar system?        -> Right away, the largest planet in our solar system is Jupiter.
+PASS  chat  6    1.0s  What is the chemical symbol for gold?                   -> Right away, the chemical symbol for gold is Au.
+PASS  chat  7    1.3s  How many days are there in a leap year?                 -> Right away, a leap year has 366 days.
+PASS  chat  8    1.2s  What does CPU stand for?                                -> Right away, CPU stands for Central Processing Unit.
+PASS  chat  9    1.9s  What is the speed of light in kilometres per second, ro -> Right away, the speed of light is roughly 299,792 kilometres per second, often rounded to about 300,000 km/s.
+PASS  chat 10    1.2s  What is the square root of 81?                          -> Right away, the square root of 81 is 9.
+PASS  chat 11    1.4s  Explain photosynthesis in one sentence.                 -> Right away, photosynthesis is the process by which green plants convert sunlight, water, and carbon dioxide in
+PASS  chat 12    1.4s  What is the difference between RAM and ROM?             -> Right away, RAM is volatile memory that holds data temporarily while a computer runs, whereas ROM is non‑volat
+PASS  chat 13    1.1s  Explain what an API is in one sentence.                 -> Right away, an API, or Application Programming Interface, is a set of defined rules and protocols that allows 
+PASS  chat 14    1.3s  Who is the founder of Pakistan?                         -> Right away, the founder of Pakistan is Muhammad Ali Jinnah.
+PASS  chat 15    1.3s  Pakistan ki rajdhani kya hai?                           -> Right away, Pakistan ki rajdhani Islamabad hai.
+PASS  chat 16    1.0s  Pani ka chemical formula kya hai?                       -> Right away, pani ka chemical formula H₂O hai.
+PASS  chat 17    1.2s  Translate 'thank you' into Urdu.                        -> Right away, "thank you" ka Urdu tarjuma "شکریہ" hai.
+PASS  chat 18    1.3s  Tell me a joke.                                         -> Right away, why did the computer go to therapy? It had too many bugs.
+FAIL  chat 19    0.9s  hello                                                   -> Good evening. How may I assist you?
+PASS  chat 20    1.0s  How are you?                                            -> Right away, I am functioning normally. How may I assist you?
+PASS  web  1    5.1s  Who is the current CEO of Microsoft?                    -> Satya Nadella is the current CEO of Microsoft.
+PASS  web  2    5.3s  Who is the current CEO of Google?                       -> Sundar Pichai is the current CEO of Google.
+PASS  web  3    5.3s  Who is the current CEO of Nvidia?                       -> Jensen Huang is the current CEO of Nvidia.
+FAIL  web  4    3.5s  Who is the current CEO of Amazon?                       -> I couldn't do that: I couldn't read any web page for that.
+PASS  web  5    8.0s  Who is the current CEO of Tesla?                        -> The current CEO of Tesla is Elon Musk.
+PASS  web  6    5.1s  Who is the current president of France?                 -> The current President of France is Emmanuel Macron.
+FAIL  web  7    4.8s  Who won the 2022 FIFA World Cup?                        -> I couldn't do that: I couldn't read any web page for that.
+PASS  web  8    8.5s  Who won the 2023 Cricket World Cup?                     -> Australia won the 2023 Cricket World Cup.
+PASS  web  9    5.7s  Who won the men's singles at Wimbledon in 2023?         -> Carlos Alcaraz won the men's singles title at Wimbledon in 2023.
+PASS  web 10    6.7s  Who won the Nobel Peace Prize in 2023?                  -> Narges Mohammadi won the Nobel Peace Prize in 2023.
+FAIL  web 11    4.9s  What is the latest stable version of Python?            -> I couldn't do that: I found pages but could not summarise them: Cloud brain error 422: {"detail":"Invalid mess
+FAIL  web 12    7.5s  What is the weather in Karachi today?                   -> I couldn't do that: I found pages but could not summarise them: Cloud brain error 422: {"detail":"Invalid mess
+FAIL  web 13    1.9s  How much is one US dollar in Pakistani rupees right now -> I couldn't do that: I couldn't read any web page for that.
+FAIL  web 14    1.9s  What is the price of one bitcoin in US dollars right no -> I couldn't do that: I couldn't read any web page for that.
+FAIL  web 15    2.0s  What is the latest news about NASA?                     -> I couldn't do that: I couldn't read any web page for that.
+PASS  web 16    5.1s  Who is the current Secretary-General of the United Nati -> António Guterres is the current Secretary‑General of the United Nations.
+FAIL  web 17    2.0s  Who is the current head coach of the Pakistan men's cri -> I couldn't do that: I couldn't read any web page for that.
+PASS  web 18    8.8s  What is today's top headline in technology?             -> Today's top technology headline is: “Malware now uses AI to autonomously profile and rank victims by value — ‘
+PASS  web 19    6.2s  What is the latest iPhone model?                        -> The newest iPhone models are the iPhone 18 Pro and iPhone 18 Pro Max, introduced alongside the folding iPhone 
+PASS  web 20    7.1s  Who is the current Prime Minister of the United Kingdom -> The current Prime Minister of the United Kingdom is Andy Burnham.
+PASS  memory       0.1s  remember my name is Nabiha                              -> Okay, I'll remember: my name is Nabiha
+PASS  memory       0.0s  what do you remember about me?                          -> Here is what I remember: my name is Nabiha.
+PASS  memory       1.3s  what is my name?                                        -> Your name is Nabiha.
+{"chat": {"correct": 19, "total": 20}, "web": {"correct": 12, "total": 20}, "memory": {"correct": 3, "total": 3}}
