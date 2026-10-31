@@ -75,7 +75,9 @@ def main() -> int:
 
     def plans():
         planner, got = GroqPlanner(client=client), []
-        for cmd, tool in PLAN_CASES:
+        for i, (cmd, tool) in enumerate(PLAN_CASES):
+            if i:
+                time.sleep(65)  # one plan is ~7k tokens; the free tier allows 8k tokens/min per organization
             res = planner.plan(PlannerContext(command=cmd, registry=registry))
             assert res.validation.ok, (cmd, res.validation.errors)
             assert res.plan.steps and res.plan.steps[0].tool == tool, (cmd, [s.tool for s in res.plan.steps])
