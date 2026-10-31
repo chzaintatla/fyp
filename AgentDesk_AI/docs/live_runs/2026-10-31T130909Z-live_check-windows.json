@@ -1,0 +1,30 @@
+{
+  "recorded_at": "2026-10-31T130909Z",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.10",
+  "categories": [
+    "gui",
+    "read",
+    "sandbox"
+  ],
+  "rows": [
+    {
+      "tool": "open_application",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "notepad launcher pid=None; notepad.exe running=True, then terminated"
+    },
+    {
+      "tool": "play_youtube_video",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "output={\"query\": \"lofi hip hop radio\", \"title\": \"lofi hip hop radio 😴 sad & sleepy beats\", \"url\": \"https://..."
+    },
+    {
+      "tool": "compose_email",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "mailto draft (not sent); launch reported (window not inspected)"
+    }
+  ]
+}

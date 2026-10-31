@@ -37,6 +37,7 @@ import shutil
 import sys
 import tempfile
 import threading
+import time
 import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -255,7 +256,7 @@ def p_package_search(env: Env) -> Outcome:
 # ---------------------------------------------------------------- gui probes
 def _launched(result: ToolResult) -> bool:
     out = result.output or {}
-    return bool(out.get("launched") or out.get("launch_requested") or out.get("pid"))
+    return bool(out.get("launched") or out.get("launch_requested") or out.get("draft_opened") or out.get("pid"))
 
 
 def _gui(env: Env, name: str, args: dict, what: str) -> Outcome:
@@ -267,16 +268,18 @@ def p_open_application(env: Env) -> Outcome:
     r, v = env.run("open_application", {"app_name": "notepad"})
     pid = (r.output or {}).get("pid")
     alive = False
-    if pid:
-        try:
-            import psutil
+    try:
+        import psutil
 
-            alive = psutil.pid_exists(pid)
-            if alive:
-                psutil.Process(pid).terminate()  # close only the process we started
-        except Exception:  # noqa: BLE001 - evidence only
-            pass
-    return judge(r, v, bool(pid) and alive, f"notepad pid={pid} alive={alive}, then terminated")
+        # Windows 11 Notepad is a Store app: the launcher pid exits and a new notepad.exe takes over.
+        started = [p for p in psutil.process_iter(["name", "create_time"])
+                   if (p.info["name"] or "").lower() == "notepad.exe" and p.info["create_time"] >= time.time() - 60]
+        alive = bool(started) or bool(pid and psutil.pid_exists(pid))
+        for p in started:
+            p.terminate()  # close only notepad processes started during this check
+    except Exception:  # noqa: BLE001 - evidence only
+        pass
+    return judge(r, v, alive, f"notepad launcher pid={pid}; notepad.exe running={alive}, then terminated")
 
 
 def p_open_folder(env: Env) -> Outcome:

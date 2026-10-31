@@ -1,0 +1,206 @@
+{
+  "recorded_at": "2026-10-31T130818Z",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.10",
+  "categories": [
+    "gui",
+    "media",
+    "network",
+    "read",
+    "sandbox"
+  ],
+  "rows": [
+    {
+      "tool": "create_folder",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "is_dir(work)=True"
+    },
+    {
+      "tool": "write_text_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "disk content == written (27 chars)"
+    },
+    {
+      "tool": "read_text_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "returned content == disk content"
+    },
+    {
+      "tool": "edit_text_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "disk content now 'AgentDesk live check: edited'"
+    },
+    {
+      "tool": "list_folder",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "note.txt listed"
+    },
+    {
+      "tool": "find_files",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "note.txt found"
+    },
+    {
+      "tool": "find_paths",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "candidates=[\"C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Temp\\\\agentdesk_live_igp6j85z\\\\work\"]"
+    },
+    {
+      "tool": "copy_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "source kept, copy has identical bytes"
+    },
+    {
+      "tool": "rename_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "copy.txt -> renamed.txt on disk"
+    },
+    {
+      "tool": "move_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "file now only in moved/"
+    },
+    {
+      "tool": "compress_folder",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "zip members=['note.txt']"
+    },
+    {
+      "tool": "extract_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "extracted note.txt bytes == original"
+    },
+    {
+      "tool": "delete_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "gone from disk, trash record present"
+    },
+    {
+      "tool": "list_trash",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "trash ids=['b61bf96147f34b88aca2f56ca783de98']"
+    },
+    {
+      "tool": "restore_file",
+      "category": "sandbox",
+      "status": "PASS",
+      "evidence": "restored to original path with original content"
+    },
+    {
+      "tool": "manage_system_setting",
+      "category": "read",
+      "status": "PASS",
+      "evidence": "volume read=100"
+    },
+    {
+      "tool": "control_desktop",
+      "category": "read",
+      "status": "PASS",
+      "evidence": "inspect output={\"completed_steps\": [{\"action\": \"inspect\", \"active_window\": \"agenticdeskb-backend ・ Web Service ・ Re..."
+    },
+    {
+      "tool": "control_browser",
+      "category": "read",
+      "status": "BLOCKED",
+      "evidence": "no extension connected to this process: Browser extension connect nahi hai. Chrome/Edge mein Agent X Browser Bridge load karein."
+    },
+    {
+      "tool": "application_package",
+      "category": "read",
+      "status": "PASS",
+      "evidence": "output={\"details\": \"Name         Id                   Version Match\\n--------------------------------------..."
+    },
+    {
+      "tool": "open_application",
+      "category": "gui",
+      "status": "FAIL",
+      "evidence": "notepad pid=24776 alive=False, then terminated (independent check FAILED)"
+    },
+    {
+      "tool": "open_folder",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "Explorer on sandbox/work; launch reported (window not inspected)"
+    },
+    {
+      "tool": "open_file",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "default editor on note.txt; launch reported (window not inspected)"
+    },
+    {
+      "tool": "open_url",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "browser on example.com; launch reported (window not inspected)"
+    },
+    {
+      "tool": "web_search",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "browser search page; launch reported (window not inspected)"
+    },
+    {
+      "tool": "play_youtube_video",
+      "category": "gui",
+      "status": "FAIL",
+      "evidence": "tool error: Could not open the selected YouTube video: Error code from Windows: 0 - The operation completed successfully."
+    },
+    {
+      "tool": "compose_email",
+      "category": "gui",
+      "status": "FAIL",
+      "evidence": "mailto draft (not sent); launch reported (window not inspected) (independent check FAILED)"
+    },
+    {
+      "tool": "open_windows_settings",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "Settings home; launch reported (window not inspected)"
+    },
+    {
+      "tool": "take_screenshot",
+      "category": "gui",
+      "status": "PASS",
+      "evidence": "PNG in sandbox, 229683 bytes"
+    },
+    {
+      "tool": "download_web_content",
+      "category": "network",
+      "status": "PASS",
+      "evidence": "saved 577 chars containing 'Example Domain'"
+    },
+    {
+      "tool": "media_control",
+      "category": "media",
+      "status": "PASS",
+      "evidence": "toggled and restored: {\"app\": \"Chrome\", \"title\": \"Tere Mast Mast Do Nain - [Slowed+Reverb] Lofi | Rahat Fateh Al... -> {\"app\": \"Chrome\", \"title\": \"Tere Mast Mast Do Nain - [Slowed+Reverb] Lofi | Rahat Fateh Al..."
+    },
+    {
+      "tool": "whatsapp_open_chat",
+      "category": "messaging",
+      "status": "SKIP",
+      "evidence": "category 'messaging' not enabled (use --messaging)"
+    },
+    {
+      "tool": "winget_install",
+      "category": "install",
+      "status": "SKIP",
+      "evidence": "category 'install' not enabled (use --install)"
+    }
+  ]
+}
