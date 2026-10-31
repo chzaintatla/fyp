@@ -119,7 +119,10 @@ def _strict(schema: Any) -> Any:
                 props[name] = _nullable(prop)
         out["type"] = "object"
         out["properties"] = props
-        out["required"] = list(props)
+        if props:  # Groq rejects "required": [] on a no-argument tool
+            out["required"] = list(props)
+        else:
+            out.pop("required", None)
         out["additionalProperties"] = False
     return out
 

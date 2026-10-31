@@ -46,6 +46,7 @@ class GroqProvider(AIProvider):
         timeout_seconds: int = 30,
         max_retries: int = 2,
         client: Any | None = None,
+        key_pool: Any | None = None,
     ):
         if not api_key:
             raise AIConfigError(
@@ -59,8 +60,12 @@ class GroqProvider(AIProvider):
         self._timeout = timeout_seconds
         self._max_retries = max_retries
         self._client = client  # injectable for tests; otherwise built lazily
+        self._pool = key_pool
+        self._built_key: str | None = None
 
     def _get_client(self):
+        if self._pool is not None and self._built_key is not None and self._pool.current() != self._built_key:
+            self._client = None  # the pool moved to another key
         if self._client is not None:
             return self._client
         try:
@@ -69,7 +74,21 @@ class GroqProvider(AIProvider):
             raise AIConfigError(
                 "The 'groq' package is not installed. Run: pip install groq"
             ) from exc
-        return Groq(api_key=self._api_key, timeout=self._timeout, max_retries=0)
+        key = (self._pool.current() if self._pool is not None else None) or self._api_key
+        self._built_key = key if self._pool is not None else None
+        return Groq(api_key=key, timeout=self._timeout, max_retries=0)
+
+    def _pool_size(self) -> int:
+        return len(self._pool) if self._pool is not None else 0
+
+    def _switch_key(self, retry_delay: float | None, rejected: bool = False) -> bool:
+        """Move to the next key after a limit/rejection. True when another key can be used right now."""
+        if self._pool is None or self._built_key is None:
+            return False
+        usable = self._pool.drop(self._built_key) if rejected else self._pool.penalize(self._built_key, retry_delay)
+        if usable:
+            self._client = None
+        return usable
 
     # ------------------------------------------------------------------ tools
     @staticmethod
@@ -253,11 +272,19 @@ class GroqProvider(AIProvider):
             kwargs["parallel_tool_calls"] = False
 
         last_error: Exception | None = None
-        for attempt in range(1 + self._max_retries):
+        switches = 0
+        attempt = -1
+        while attempt < self._max_retries:
+            attempt += 1
+            client = self._get_client()
             try:
                 response = client.chat.completions.create(**kwargs)
                 return self._normalize(response)
             except AuthenticationError as exc:
+                if switches < self._pool_size() and self._switch_key(None, rejected=True):
+                    switches += 1
+                    attempt -= 1
+                    continue
                 raise AIConfigError(
                     "Groq rejected the API key. Check GROQ_API_KEY in backend/.env - "
                     "get a free key at https://console.groq.com/keys (no card required)."
@@ -271,6 +298,10 @@ class GroqProvider(AIProvider):
             except RateLimitError as exc:
                 last_error = exc
                 retry_delay = self._rate_limit_retry_delay(exc, attempt)
+                if switches < self._pool_size() and self._switch_key(retry_delay):
+                    switches += 1
+                    attempt -= 1  # a fresh key: no wait, and no retry used up
+                    continue
                 if (
                     attempt < self._max_retries
                     and retry_delay <= _MAX_RATE_LIMIT_RETRY_DELAY_SECONDS

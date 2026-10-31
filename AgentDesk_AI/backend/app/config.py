@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     # model IDs and availability change over time.
     ai_model: str = "openai/gpt-oss-120b"
     groq_api_key: str | None = None
+    # Extra keys (comma separated). When one hits its limit the next is used automatically (ai/key_pool.py).
+    groq_api_keys: str = ""
+    # Optional cloud brain (Render): planning/chat/speech run there, tools still run on this PC. See app/cloud_main.py.
+    cloud_brain_url: str = ""
+    cloud_brain_token: str | None = None
     openai_api_key: str | None = None
     gemini_api_key: str | None = None
     # Explicit opt-in: another provider may have separate billing/data handling.
@@ -46,6 +51,8 @@ class Settings(BaseSettings):
     groq_tts_model: str = "canopylabs/orpheus-v1-english"
     groq_tts_voice: str = "autumn"
     ai_max_retries: int = 2
+    # Strict-JSON planner rollout: legacy | shadow | structured (see orchestration/planner_mode.py).
+    planner_mode: str = "legacy"
     # Bound on agentic-loop tool steps per task (cost + runaway protection).
     agent_max_steps: int = 10
 
@@ -103,7 +110,16 @@ class Settings(BaseSettings):
 
     @property
     def groq_configured(self) -> bool:
-        return bool(self.groq_api_key)
+        return bool(self.groq_api_key or self.groq_api_keys.strip())
+
+    @property
+    def cloud_configured(self) -> bool:
+        return bool(self.cloud_brain_url.strip() and (self.cloud_brain_token or "").strip())
+
+    def resolved_groq_keys(self) -> list[str]:
+        from .ai.key_pool import parse_keys
+
+        return parse_keys(self.groq_api_key, self.groq_api_keys)
 
 
 @lru_cache

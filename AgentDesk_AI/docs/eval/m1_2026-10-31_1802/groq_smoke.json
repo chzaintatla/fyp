@@ -1,0 +1,20 @@
+[
+  {
+    "check": "chat",
+    "status": "PASS",
+    "detail": "gpt-oss-120b replied",
+    "seconds": 1.61
+  },
+  {
+    "check": "schema",
+    "status": "PASS",
+    "detail": "strict schema accepted by openai/gpt-oss-120b (32 tools, 20197 bytes)",
+    "seconds": 2.01
+  },
+  {
+    "check": "plans",
+    "status": "FAIL",
+    "detail": "AIRateLimitError: Groq rate limit reached; retry in about 53 s. Limits: https://console.groq.com/settings/limits.",
+    "seconds": 6.83
+  }
+]

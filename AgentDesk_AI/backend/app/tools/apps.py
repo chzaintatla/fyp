@@ -498,7 +498,11 @@ def _reuse_youtube_window(url: str) -> str | None:
         return None
     active = pyautogui.getActiveWindow()
     target = active if active in windows else windows[0]
-    target.activate()
+    try:
+        target.activate()
+    except Exception as exc:  # noqa: BLE001 - pygetwindow raises "Error code 0" even when activation worked
+        if "Error code from Windows: 0" not in str(exc):
+            raise
     pyautogui.hotkey("ctrl", "l")
     pyautogui.write(url, interval=0.005)
     pyautogui.press("enter")

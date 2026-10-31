@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import inspect
 import subprocess
+import sys
 from types import SimpleNamespace
 from urllib.parse import parse_qs, urlsplit
 
@@ -69,6 +70,7 @@ def test_media_verifier_reads_the_real_session(registry, monkeypatch, action, be
         assert v.evidence["after"]["title"]
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="asserts the non-Windows error path")
 def test_media_key_off_windows_fails_honestly(registry):
     tool = registry.get("media_control")
     with use_probe(ScriptedProbe()):
