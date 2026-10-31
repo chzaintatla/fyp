@@ -6,6 +6,21 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-10-31 — Session 13: Step 0 merge to main (v0.3.0)
+
+**Done:** merged `m1-cloud-brain`, `m2-voice`, `m3-avatars`, `m4-ui`, `m5-memory-chat` into `main` in that order (merge commits, no squash).
+Full backend + frontend unit suites after each merge: 736, 774, 831, 837, 918 backend tests passed (4 skipped) and 4, 11, 18, 21, 21 frontend tests.
+Browser tests (Edge) 14/14 on the M5 branch before the merge. Tagged `v0.3.0`.
+
+**Known issue (not fixed):** `tests/test_phase16_worker.py::test_apps_started_by_earlier_jobs_survive_a_later_kill` is flaky:
+about 3-4 failures in 20 runs, and the same rate on the original v0.2.0 commit `7a5f967`, so it is not new. In the failing runs the helper app
+started by the earlier job is already gone when the assertion runs although it is not in `killed_pids`. Root cause not found. It could be
+only a test race (the helper is a venv launcher process), or a real defect where an app the assistant opened closes when a later tool times out.
+Needs investigation before v1.0. One full-suite run during the M5 merge failed on it; the rerun passed (918).
+
+**Web answers target NOT met:** M5 live eval web 12/20 (target 18/20). Web search rebuild in progress on `m5-search` (user decision: Wikipedia
+REST API + Tavily; waiting for the contact email and the Tavily key).
+
 ### 2026-10-31 — Session 12: M5 Memory and conversation (branch `m5-memory-chat`)
 
 **Done**
