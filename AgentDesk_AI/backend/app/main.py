@@ -37,6 +37,7 @@ from .schemas import (
 from .tools.base import ToolContext
 from .tools.registry import ToolRegistry
 from .browser_bridge import router as browser_router, bridge
+from .voice.api import router as voice_router
 from . import state  # noqa: F401  (registers state-machine guards)
 
 settings = get_settings()
@@ -85,6 +86,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, lifespan=lifespan)
 app.include_router(browser_router)
+app.include_router(voice_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list({settings.frontend_origin, "http://localhost:5173", "http://127.0.0.1:5173"}),
@@ -96,7 +98,7 @@ app.add_middleware(
 
 _LOCAL_HOSTS = {"127.0.0.1", "localhost", "[::1]", "testserver"}
 _SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
-_PROTECTED_PREFIXES = ("/tasks", "/config", "/tools", "/usage", "/browser/connect-token", "/preferences", "/memory", "/metrics")
+_PROTECTED_PREFIXES = ("/tasks", "/config", "/tools", "/usage", "/browser/connect-token", "/preferences", "/memory", "/metrics", "/voice")
 
 
 @app.middleware("http")
@@ -236,6 +238,7 @@ def config_status() -> ConfigStatusOut:
         ai_configured=ai_configured,
         mock_mode=s.is_mock_mode,
         groq_configured=s.groq_configured,
+        speech_ready=s.groq_configured or s.cloud_configured,
         agent_max_steps=s.agent_max_steps,
         fallback_provider=s.ai_fallback_provider,
         cloud_mode=s.ai_cloud_mode,

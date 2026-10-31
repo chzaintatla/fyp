@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { spokenReply, isSpeechEcho, afterInterruption, finishOnce } from './voice';
+import { SpeechPlayer } from './speech/player';
+import { WhisperRecognition } from './speech/whisperRecognition';
+import { voiceApi, type VoiceOptions } from './api';
 import { ActionPreview } from './components/ActionPreview';
 import { Onboarding } from './components/Onboarding';
 import { Orb } from './components/Orb';
@@ -304,6 +307,17 @@ export default function App() {
   const startListeningRef = useRef<() => void>(() => {});
   const runCommandRef = useRef<(text: string) => Promise<void>>(async () => {});
   const drainVoiceQueueRef = useRef<() => void>(() => {});
+  // Server speech (Whisper in, Orpheus / edge-tts / SAPI out) when the backend has a speech service; else the browser's.
+  const speechReady = Boolean(config?.speech_ready);
+  const speechReadyRef = useRef(false);
+  speechReadyRef.current = speechReady;
+  const voiceOptionsRef = useRef<VoiceOptions>({ language: voiceLanguage, gender: 'female', voice_en: 'diana' });
+  voiceOptionsRef.current = { ...voiceOptionsRef.current, language: voiceLanguage };
+  const playerRef = useRef<SpeechPlayer | null>(null);
+  if (playerRef.current === null) playerRef.current = new SpeechPlayer(() => voiceOptionsRef.current);
+  const speechEndedAtRef = useRef(0);
+  const followUpTimerRef = useRef<number | null>(null);
+  const FOLLOW_UP_MS = 8000; // after a spoken reply, keep listening this long without a hotkey
 
   submittingRef.current = submitting;
   const busy = busyAction !== null || submitting;
@@ -495,10 +509,29 @@ export default function App() {
     voiceRestartRef.current = null;
     recognitionRef.current?.abort();
     recognitionRef.current = null;
+    playerRef.current?.stop();
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setVoiceMessage(
       queuedCount > 0 ? `${message} Cleared ${queuedCount} queued command(s).` : message,
     );
+  };
+
+  const beginFollowUp = () => {
+    voiceTaskActiveRef.current = false;
+    voiceWaitingForTaskRef.current = false;
+    if (recognitionRef.current) return;
+    handsFreeRef.current = true;
+    setHandsFree(true);
+    startListeningRef.current();
+    followUpTimerRef.current = window.setTimeout(() => {
+      followUpTimerRef.current = null;
+      if (voiceCommandRef.current || voiceDebounceRef.current !== null || voiceQueueRef.current.length) return;
+      handsFreeRef.current = false;
+      setHandsFree(false);
+      recognitionRef.current?.abort();
+      recognitionRef.current = null;
+      setListening(false);
+    }, FOLLOW_UP_MS);
   };
 
   const toggleVoiceInput = () => {
@@ -511,7 +544,8 @@ export default function App() {
       webkitSpeechRecognition?: SpeechRecognitionConstructor;
     };
     const Recognition = speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
-    if (!Recognition) {
+    const useWhisper = speechReadyRef.current && WhisperRecognition.supported;
+    if (!Recognition && !useWhisper) {
       setVoiceMessage('Voice input is not supported in this browser. Please use Chrome or type your command.');
       return;
     }
@@ -550,7 +584,23 @@ export default function App() {
 
     startListeningRef.current = () => {
       if (!handsFreeRef.current || recognitionRef.current) return;
-      const recognition = new Recognition();
+      if (followUpTimerRef.current !== null) {
+        window.clearTimeout(followUpTimerRef.current);
+        followUpTimerRef.current = null;
+      }
+      const recognition = (useWhisper ? new WhisperRecognition() : new Recognition!()) as unknown as SpeechRecognitionLike;
+      if (recognition instanceof WhisperRecognition) {
+        recognition.prompt = [prefs?.persona.name, 'Chrome, Notepad, Word, Excel, YouTube, WhatsApp'].filter(Boolean).join(', ');
+        recognition.onspeechstart = () => {
+          // Barge-in: the user began talking while the assistant was speaking.
+          if (!voiceSpeakingRef.current && !playerRef.current?.speaking) return;
+          interruptedSpeechRef.current = true;
+          voiceSpeakingRef.current = false;
+          playerRef.current?.stop();
+          speechFinishRef.current();
+          setVoiceMessage('Ji, sun raha hoon. Agli command batayein.');
+        };
+      }
       recognition.lang = voiceLanguage;
       recognition.continuous = true;
       recognition.interimResults = true;
@@ -559,12 +609,18 @@ export default function App() {
         const heard = Array.from({ length: event.results.length - event.resultIndex }, (_, offset) => event.results[event.resultIndex + offset][0].transcript.trim()).filter(Boolean).join(' ');
         // Ignore the assistant's own short reply if the microphone hears it.
         if (voiceSpeakingRef.current && isSpeechEcho(heard, spokenTextRef.current)) return;
+        if (heard && followUpTimerRef.current !== null) {
+          window.clearTimeout(followUpTimerRef.current);
+          followUpTimerRef.current = null;
+        }
         if (heard) setHeard([voiceCommandRef.current, heard].filter(Boolean).join(' '));
         if (heard && voiceSpeakingRef.current) {
           interruptedSpeechRef.current = true;
           voiceSpeakingRef.current = false;
           speechFinishRef.current();
-          window.speechSynthesis.cancel();
+          playerRef.current?.stop();
+          playerRef.current?.stop();
+          if ('speechSynthesis' in window) window.speechSynthesis.cancel();
           setVoiceMessage('Ji, sun raha hoon. Agli command batayein.');
         }
         const finalText = Array.from({ length: event.results.length - event.resultIndex }, (_, offset) => {
@@ -601,7 +657,8 @@ export default function App() {
             recognitionRef.current = null;
             setListening(false);
           }
-        }, 2200);
+        }, recognition instanceof WhisperRecognition ? 500 : 2200); // Whisper input is already a finished sentence
+        if (recognition instanceof WhisperRecognition) speechEndedAtRef.current = recognition.lastSpeechEndAt;
       };
       recognition.onerror = (event) => {
         if (!handsFreeRef.current) return;
@@ -667,15 +724,16 @@ export default function App() {
     };
     const message = spokenReply(activeTask, voiceLanguage);
     setLastReply(activeTask.plan_note && activeTask.status === 'completed' ? activeTask.plan_note : message);
-    if (!('speechSynthesis' in window) || prefs?.persona.speak_replies === false) {
+    const serverVoice = speechReadyRef.current;
+    if ((!serverVoice && !('speechSynthesis' in window)) || prefs?.persona.speak_replies === false) {
       if (handsFreeRef.current) finishVoiceTask();
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.lang = voiceLanguage;
     const epoch = ++speechEpochRef.current;
-    window.speechSynthesis.cancel();
+    playerRef.current?.stop();
+    playerRef.current?.stop();
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     spokenTextRef.current = message;
     voiceSpeakingRef.current = true;
     setSpeaking(true);
@@ -684,11 +742,42 @@ export default function App() {
       if (epoch !== speechEpochRef.current) return;
       voiceSpeakingRef.current = false;
       if (handsFreeRef.current) finishVoiceTask();
+      else if (serverVoice && listenModeRef.current === 'push_to_talk' && voiceTaskActiveRef.current && isTerminal) beginFollowUp();
     });
     speechFinishRef.current = finish;
+    if (handsFreeRef.current) startListeningRef.current();
+
+    if (serverVoice) {
+      // The phrase comes from the server so "Done" can only be said for a task the verifier confirmed.
+      void (async () => {
+        let text = message;
+        try {
+          text = await voiceApi.line({ task: activeTask, language: voiceLanguage });
+        } catch {
+          // keep the short built-in phrase
+        }
+        if (epoch !== speechEpochRef.current) return;
+        spokenTextRef.current = text;
+        setLastReply(activeTask.plan_note && activeTask.status === 'completed' ? activeTask.plan_note : text);
+        try {
+          await playerRef.current?.speak(text, () => {
+            const started = speechEndedAtRef.current;
+            if (started > 0) {
+              speechEndedAtRef.current = 0;
+              void voiceApi.latency('local', { first_word_played: performance.now() - started });
+            }
+          });
+        } finally {
+          finish();
+        }
+      })();
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = voiceLanguage;
     utterance.onend = finish;
     utterance.onerror = finish;
-    if (handsFreeRef.current) startListeningRef.current();
     try {
       window.speechSynthesis.speak(utterance);
     } catch {
@@ -696,6 +785,34 @@ export default function App() {
       finish();
     }
   }, [activeTask, voiceLanguage, prefs?.persona.speak_replies]);
+
+  // Spoken acknowledgement for tasks that take a moment ("Opening Chrome."), and a progress line for slow ones.
+  // Fast tasks never trigger either: the timer is cleared as soon as the task finishes.
+  const ackedTasks = useRef(new Set<string>());
+  useEffect(() => {
+    if (!speechReady || prefs?.persona.speak_replies === false || !activeTask) return;
+    if (!['planned', 'approved', 'executing'].includes(activeTask.status)) return;
+    const speakLine = async (key: string, body: Parameters<typeof voiceApi.line>[0]) => {
+      if (ackedTasks.current.has(key) || voiceSpeakingRef.current) return;
+      ackedTasks.current.add(key);
+      try {
+        await playerRef.current?.speak(await voiceApi.line(body));
+      } catch {
+        // an acknowledgement is optional
+      }
+    };
+    const first = activeTask.actions[0];
+    const ack = window.setTimeout(() => {
+      void speakLine(`${activeTask.id}:ack`, first ? { tool: first.tool_name, args: first.args, language: voiceLanguage } : { event: 'acknowledge', language: voiceLanguage });
+    }, 900);
+    const progress = window.setTimeout(() => {
+      void speakLine(`${activeTask.id}:progress`, { event: 'progress', language: voiceLanguage });
+    }, 4500);
+    return () => {
+      window.clearTimeout(ack);
+      window.clearTimeout(progress);
+    };
+  }, [activeTask?.id, activeTask?.status, speechReady, voiceLanguage, prefs?.persona.speak_replies]);
 
   // Keyboard: Ctrl+Space = microphone, Alt+1/2/3 = Assistant/Memory/Settings, "/" = command box.
   useEffect(() => {
@@ -725,6 +842,7 @@ export default function App() {
       if (voiceDebounceRef.current !== null) window.clearTimeout(voiceDebounceRef.current);
       if (voiceRestartRef.current !== null) window.clearTimeout(voiceRestartRef.current);
       recognitionRef.current?.abort();
+      playerRef.current?.stop();
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     },
     [],
@@ -915,6 +1033,7 @@ export default function App() {
                 onClick={() => {
                   interruptedSpeechRef.current = true;
                   speechFinishRef.current();
+                  playerRef.current?.stop();
                   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
                   startListeningRef.current();
                   setVoiceMessage('Bolna rok diya. Agli command batayein.');

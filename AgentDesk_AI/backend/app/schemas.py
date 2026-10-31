@@ -59,6 +59,7 @@ class ConfigStatusOut(BaseModel):
     ai_configured: bool
     mock_mode: bool
     groq_configured: bool = False
+    speech_ready: bool = False  # server-side speech (Whisper / Orpheus / edge-tts) can be used
     agent_max_steps: int = 10
     fallback_provider: str = "none"
     fallback_configured: bool = False
