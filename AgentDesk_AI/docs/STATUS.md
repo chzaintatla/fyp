@@ -23,7 +23,7 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 - Cloud brain URL set in `backend/.env` (git-ignored): chat through Render returned HTTP 200.
 
 **Tested how**
-- `pytest tests -q` -> 774 passed, 4 skipped, 0 failed (`tests/test_m2_voice.py`: 38). `npm test` 14 passed (incl. VAD, WAV), `npm run build` ok.
+- `pytest tests -q` -> 774 passed, 4 skipped, 0 failed (`tests/test_m2_voice.py`: 38). `npm test` 11 passed (incl. 7 new VAD/WAV), `npm run build` ok.
 - Real engines on this PC (`tts_probe.py`): edge-tts ur-PK-UzmaNeural / AsadNeural, hi-IN-SwaraNeural / MadhurNeural PASS (1.8-3.5 s per
   sentence, new connection each time); SAPI male (David) and female (Zira) PASS (~0.5 s); Orpheus FAIL: Groq org must accept the terms.
 - `voice_bench.py` (server side, cold synthesis, 30 runs, command text -> first sentence synthesized): p50 0.9 s, p90 1.56 s,
