@@ -2,21 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-slate-100 text-slate-900 antialiased;
+/* ---- design tokens (M4). Dark HUD by default; light via <html data-theme="light">. --accent follows the character. ---- */
+:root {
+  --bg: #070B14; --surface: #0E1524; --raised: #141D30; --line: rgba(120, 160, 255, 0.18);
+  --ink: #E8EEFF; --ink2: #9AA8C7; --accent: #38E1FF; --on-accent: #04202B;
+  --ok: #3EE69A; --warn: #FFB547; --bad: #FF5C6C; --on-ok: #052414;
+  color-scheme: dark;
 }
+:root[data-theme='light'] {
+  --bg: #EDF1F9; --surface: #FFFFFF; --raised: #F3F6FC; --line: rgba(30, 60, 120, 0.2);
+  --ink: #0E1730; --ink2: #46516B; --accent: #0A6F94; --on-accent: #FFFFFF;
+  --ok: #0B7A4B; --warn: #8A5200; --bad: #B3243A; --on-ok: #FFFFFF;
+  color-scheme: light;
+}
+html { font-size: 15px; }
+body { background: var(--bg); color: var(--ink); font-family: Inter, 'Segoe UI', system-ui, sans-serif; @apply antialiased; }
+h1, h2, h3 { font-family: 'Space Grotesk', Inter, 'Segoe UI', system-ui, sans-serif; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-/* Follow Windows/browser theme, including changes made by the local agent. */
-@media (prefers-color-scheme: dark) {
-  :root { color-scheme: dark; }
-  body { background: #0f172a; color: #e2e8f0; }
-  .bg-white, .bg-white\/95 { background-color: #1e293b; }
-  .bg-slate-50, .bg-slate-100 { background-color: #172033; }
-  .text-slate-900, .text-slate-800, .text-slate-700 { color: #e2e8f0; }
-  .text-slate-600, .text-slate-500 { color: #b4c1d4; }
-  .border-slate-200, .border-slate-300 { border-color: #475569; }
-  input, textarea, select { background-color: #0f172a; color: #f1f5f9; }
-}
+/* The components were written with Tailwind's slate/white palette; map it to the tokens so both themes stay consistent. */
+.bg-white, .bg-white\/95 { background-color: var(--surface); }
+.bg-white.shadow-sm, section.bg-white { backdrop-filter: blur(16px); box-shadow: inset 0 0 28px color-mix(in srgb, var(--accent) 8%, transparent); }
+.bg-slate-50, .bg-slate-100, .hover\:bg-slate-50:hover { background-color: var(--raised); }
+.text-slate-900, .text-slate-800, .text-slate-700 { color: var(--ink); }
+.text-slate-600, .text-slate-500, .text-slate-400 { color: var(--ink2); }
+.border-slate-200, .border-slate-300, .border { border-color: var(--line); }
+.ring-slate-300, .ring-slate-200 { --tw-ring-color: var(--line); }
+input, textarea, select { background-color: var(--raised); color: var(--ink); border-color: var(--line); }
+input::placeholder, textarea::placeholder { color: var(--ink2); }
+.bg-blue-700, .bg-indigo-600, .bg-indigo-700 { background-color: var(--accent); color: var(--on-accent) !important; }
+.ring-blue-700, .border-blue-700 { --tw-ring-color: var(--accent); border-color: var(--accent); }
+.bg-emerald-700, .bg-emerald-600 { background-color: var(--ok); color: var(--on-ok) !important; }
+.bg-red-700, .bg-red-600 { background-color: var(--bad); color: #fff !important; }
+.bg-amber-100, .bg-amber-50 { background-color: color-mix(in srgb, var(--warn) 16%, transparent); }
+.text-amber-800, .text-amber-900, .text-amber-700 { color: var(--warn); }
+.border-amber-300 { border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
+.bg-emerald-100, .bg-emerald-50 { background-color: color-mix(in srgb, var(--ok) 16%, transparent); }
+.text-emerald-800, .text-emerald-900, .text-emerald-700 { color: var(--ok); }
+.border-emerald-300 { border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
+.bg-red-100, .bg-red-50 { background-color: color-mix(in srgb, var(--bad) 16%, transparent); }
+.text-red-800, .text-red-900, .text-red-700 { color: var(--bad); }
+.border-red-300 { border-color: color-mix(in srgb, var(--bad) 50%, transparent); }
+.bg-indigo-50 { background-color: color-mix(in srgb, var(--accent) 12%, transparent); }
+.text-indigo-900 { color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
 
 /* ---------------------------------------------------------------- orb */
 .orb { transition: transform 200ms ease; }
@@ -70,3 +99,15 @@ body.mini-orb { background: transparent !important; overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .avatar *, .avatar { animation: none !important; }
 }
+
+/* remaining legacy colours -> tokens */
+.bg-blue-50, .bg-blue-100, .hover\:bg-blue-50:hover { background-color: color-mix(in srgb, var(--accent) 16%, transparent); }
+.text-blue-700, .text-blue-800, .text-blue-900, .hover\:text-blue-900:hover { color: var(--accent); }
+.border-blue-300, .border-blue-400, .border-blue-500, .hover\:border-blue-300:hover { border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+.bg-blue-800 { background-color: color-mix(in srgb, var(--accent) 80%, #000); color: var(--on-accent) !important; }
+.ring-blue-200, .ring-blue-300 { --tw-ring-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.ring-red-300 { --tw-ring-color: color-mix(in srgb, var(--bad) 50%, transparent); }
+.text-red-600 { color: var(--bad); }
+.bg-emerald-500 { background-color: var(--ok); }
+.text-white.bg-blue-700, .text-white.bg-emerald-700 { color: inherit; }
+kbd { background: var(--raised); }

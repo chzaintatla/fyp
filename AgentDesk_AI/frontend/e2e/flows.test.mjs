@@ -89,7 +89,7 @@ test('voice approval is reachable from the preview card ("Answer by voice")', as
 
 test('memory page: add, edit, delete; secrets refused', async () => {
   await withPage(async (page) => {
-    await page.keyboard.press('Alt+2');
+    await page.keyboard.press('Alt+3');
     await page.getByTestId('memory-page').waitFor();
     await page.getByLabel('New memory').fill('6th sem means D:\\6th sem');
     await page.getByRole('button', { name: 'Remember' }).click();
@@ -110,7 +110,7 @@ test('memory page: add, edit, delete; secrets refused', async () => {
 
 test('settings: persona name, strict policy and listen mode take effect', async () => {
   await withPage(async (page) => {
-    await page.keyboard.press('Alt+3');
+    await page.keyboard.press('Alt+4');
     await page.getByTestId('settings-page').waitFor();
     await page.getByLabel('Assistant name').fill('Zara');
     await page.getByRole('button', { name: 'Save persona' }).click();
@@ -144,7 +144,7 @@ test('mini orb page shows state and is a named, keyboard-reachable button', asyn
 
 test('every visible control has an accessible name', async () => {
   await withPage(async (page) => {
-    for (const key of ['Alt+1', 'Alt+2', 'Alt+3']) {
+    for (const key of ['Alt+1', 'Alt+2', 'Alt+3', 'Alt+4']) {
       await page.keyboard.press(key);
       await page.waitForTimeout(300);
       const unnamed = await page.evaluate(() => {

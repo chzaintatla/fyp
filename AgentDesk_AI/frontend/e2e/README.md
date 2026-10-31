@@ -17,3 +17,13 @@ npm run test:e2e
 | `flows.test.mjs` | keyboard-only flow with focus trap and inert background; high-risk card (red, Reject focused, Esc rejects, spoken "yes" refused); voice approval of medium risk; memory add/edit/delete + secret guard; settings (persona, strict policy, listen mode off); mini orb; accessible names on every control |
 
 The fake microphone means these tests do not measure speech recognition quality; see `docs/USABILITY_TEST.md` for the human test.
+
+## M4 additions
+
+| file | what it proves |
+|---|---|
+| `ui.test.mjs` | avatar selection (male/female, voices, reload), personality choice, avatar mood follows the voice state, approval flow, theme toggle, settings persistence, rail/bottom bar layout (1280 and 360 px), focus ring, mini mode |
+| `visual.test.mjs` | pixel snapshots of Home, dark and light, against `e2e/snapshots/` (`UPDATE_SNAPSHOTS=1` refreshes them) |
+| `ui_screens.mjs` | not a test: saves every page, both themes, at 100% and 150% scaling to `docs/ui/` and fails on sideways scroll |
+
+The tests use Microsoft Edge on Windows (`E2E_CHANNEL` overrides) and `AGENTDESK_PYTHON` for the backend.

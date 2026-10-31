@@ -108,6 +108,23 @@ export function SettingsPage({ prefs, config, usage, onSave }: SettingsPageProps
         </fieldset>
       </section>
 
+      <section aria-labelledby="speaking-heading" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h3 id="speaking-heading" className="font-semibold">Listening and speaking</h3>
+        <label className="mt-3 flex items-center gap-3 text-sm">
+          <span className="w-44">Follow-up window (seconds)</span>
+          <input type="range" min={0} max={15} value={prefs.follow_up_seconds} aria-label="Follow-up window in seconds" data-testid="follow-up"
+            onChange={(e) => void save({ follow_up_seconds: Number(e.target.value) }, 'Follow-up window saved.')} />
+          <span className="w-8 text-right" data-testid="follow-up-value">{prefs.follow_up_seconds}</span>
+        </label>
+        <p className="ml-1 text-xs text-slate-500">After a spoken reply the microphone stays open this long, so you can say "and close Notepad" without pressing the hotkey. 0 turns it off.</p>
+        <label className="mt-3 flex items-center gap-3 text-sm">
+          <span className="w-44">Speech volume</span>
+          <input type="range" min={0} max={100} value={prefs.speech_volume} aria-label="Speech volume" data-testid="speech-volume"
+            onChange={(e) => void save({ speech_volume: Number(e.target.value) }, 'Volume saved.')} />
+          <span className="w-8 text-right">{prefs.speech_volume}</span>
+        </label>
+      </section>
+
       <section aria-labelledby="provider-heading" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <h3 id="provider-heading" className="font-semibold">AI provider</h3>
         <p className="mt-1 text-sm text-slate-600">

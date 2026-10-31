@@ -13,6 +13,8 @@ export class SpeechPlayer {
   private ctx: AudioContext | null = null;
   private analyser: AnalyserNode | null = null;
   private currentResolve: (() => void) | null = null;
+  /** 0..1, applied to every sentence that plays. */
+  volume = 1;
 
   constructor(private getOptions: () => VoiceOptions) {}
 
@@ -81,6 +83,7 @@ export class SpeechPlayer {
     return new Promise((resolve) => {
       const audio = new Audio(URL.createObjectURL(blob));
       this.audio = audio;
+      audio.volume = Math.max(0, Math.min(1, this.volume));
       this.attachAnalyser(audio);
       const done = (ok: boolean) => {
         if (this.audio === audio) this.audio = null;

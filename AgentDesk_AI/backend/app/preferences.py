@@ -73,6 +73,8 @@ class Preferences(BaseModel):
     risk_policy: Literal["standard", "strict"] = "standard"
     memory_enabled: bool = True
     onboarded: bool = False
+    follow_up_seconds: int = Field(default=8, ge=0, le=15)  # keep listening this long after a spoken reply
+    speech_volume: int = Field(default=100, ge=0, le=100)
     conversation_cutoff: str | None = None   # ISO time; older turns are not used as memory
 
 
@@ -87,6 +89,8 @@ class PreferencesUpdate(BaseModel):
     risk_policy: Literal["standard", "strict"] | None = None
     memory_enabled: bool | None = None
     onboarded: bool | None = None
+    follow_up_seconds: int | None = Field(default=None, ge=0, le=15)
+    speech_volume: int | None = Field(default=None, ge=0, le=100)
 
 
 def get_preferences(db: Session) -> Preferences:

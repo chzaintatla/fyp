@@ -152,6 +152,8 @@ export interface Preferences {
   risk_policy: 'standard' | 'strict';
   memory_enabled: boolean;
   onboarded: boolean;
+  follow_up_seconds: number;
+  speech_volume: number;
   conversation_cutoff?: string | null;
 }
 
