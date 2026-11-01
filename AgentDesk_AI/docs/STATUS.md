@@ -6,6 +6,16 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-01 — Session 15: Step 1f, App.tsx split (no behaviour change)
+
+**Done:** `frontend/src/App.tsx` 1,417 -> 212 lines. Moved to `taskFormat.ts`, `components/{Spinner,ActionCard,AppHeader,CommandPanel,TaskPanel,TaskHistory}.tsx`,
+`speech/recognitionTypes.ts`, and hooks `useTasks`, `useAppData`, `useVoiceCore` (shared voice state/refs), `useVoiceInput` (microphone side), `useSpokenReplies`.
+The largest new file is 252 lines. The code was moved, not rewritten; one-off `stopSpeaking` handler extracted from the button.
+
+**Tested how:** `tsc --noEmit` clean; `npm test` 21/21; `npm run test:e2e` (Edge, real backend, includes pixel snapshots) 23/23; `npm run build` ok.
+
+**Not verified:** real microphone / real voice (the e2e microphone is faked). `src/api.ts` is still 347 lines (over the 300 limit; not part of App.tsx).
+
 ### 2026-10-31 — Session 14: M5 web search rebuild (branch `m5-search`, NOT merged, NOT yet measured live)
 
 **Decision (user, 2026-10-31):** option B. Wikipedia official REST API + Tavily, behind a `SearchProvider` interface; no scraping, no
