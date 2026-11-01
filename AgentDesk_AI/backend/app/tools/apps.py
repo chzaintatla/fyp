@@ -214,16 +214,23 @@ class OpenApplicationTool(BaseTool):
         return shortcuts
 
     def _match_start_menu_shortcut(self, app_name: str) -> Path | None:
+        from ..nlu import entity_match
+        self._last_score = 1.0
         ranked = self._rank_start_menu_shortcuts(app_name)
         if not ranked:
             return None
         best_score, paths = ranked[0]
-        unique = len(paths) == 1 and (len(ranked) == 1 or best_score - ranked[1][0] >= 0.08)
-        if unique and (best_score >= 0.99 or best_score >= 0.82):
+        unique = len(paths) == 1 and (len(ranked) == 1 or best_score - ranked[1][0] >= entity_match.GAP)
+        if unique and best_score >= entity_match.SAY:  # 0.60-0.85: opened, and the reply says what was understood
+            self._last_score = best_score
             return paths[0]
         return None
 
     def _rank_start_menu_shortcuts(self, app_name: str) -> list[tuple[float, list[Path]]]:
+        from ..nlu import correction_memory, entity_match
+        heard_as = correction_memory.current().get(entity_match._norm(app_name))
+        if heard_as:
+            app_name = heard_as  # the user corrected this spelling before: "fire fox" really means Firefox
         requested = self._canonical_app_name(app_name)
         queries = {
             normalized
@@ -253,7 +260,7 @@ class OpenApplicationTool(BaseTool):
                 return 0.95
             if query in label or label in query:
                 return 0.90
-            return SequenceMatcher(None, query, label).ratio()
+            return max(SequenceMatcher(None, query, label).ratio(), entity_match.score(query, label))
 
         scores = sorted(
             (
@@ -439,10 +446,10 @@ class OpenApplicationTool(BaseTool):
                 )
             if isinstance(exe, Path) and exe.suffix.lower() == ".lnk":
                 _platform.open_path_with_os(str(exe))
-                return ToolResult(
-                    success=True,
-                    output={"app": app, "matched_shortcut": exe.stem, "launched": True},
-                )
+                output = {"app": app, "matched_shortcut": exe.stem, "launched": True}
+                if getattr(self, "_last_score", 1.0) < 0.85:
+                    output.update({"heard": a.app_name, "understood": exe.stem})
+                return ToolResult(success=True, output=output)
             proc = _platform.launch_program(exe)
         except Exception as exc:  # noqa: BLE001 - report honestly
             return ToolResult(success=False, error=f"Could not launch '{app}': {exc}")

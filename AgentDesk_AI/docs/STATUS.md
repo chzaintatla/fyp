@@ -6,6 +6,30 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-02 — Session 22: Upgrade U1 (understanding): entity index, sound-alike matching, Whisper vocabulary, correction memory
+
+**Built (not committed)**
+- `nlu/entity_index.py`: names of installed apps (Start Menu, App Paths, Store apps via Get-StartApps, built-in aliases), recent files, Documents/Desktop/Downloads/Pictures/Videos/Music (depth 3), Explorer Quick Access. Names only; rebuilt in a background thread at start and every 10 min (`AGENTDESK_ENTITY_INDEX=0` turns it off; tests do). `add_external()` is the hook for browser page titles and contacts (NOT filled yet: needs the extension / U6).
+- `nlu/phonetic.py`: a Metaphone-style key written for this project (NOT full Double Metaphone: one key per word) + a Roman-Urdu/Hindi spelling folder (kh/k, aa/a, ee/i, oo/u, w/v, z/j) and the "kholo/khol do..." verbs.
+- `nlu/entity_match.py`: score = max(text similarity, sound similarity) with guards (half the words unmatched -> ask; "pad" must not match "notepad"; exact name beats Notepad++; exe names from App Paths weigh 0.9; duplicate spellings merged). `decide()` follows section 4.4: >= 0.85 and 0.08 ahead -> act; 0.60-0.85 -> act and say what was understood; below 0.60 or two close -> ask; high risk acts only on an exact name. Over 150 names a C-speed pre-filter picks ~40 names to score (test proves same answers).
+- Wired in: `open_application` ranking (and the 0.60 rule, reply carries `heard` / `understood`), `find_paths` / `find_files` scoring, `/voice/stt` (server adds your app, file and folder names to the Whisper prompt, <= 700 characters), planner (`NAME_CANDIDATES` top 3 as data + prompt rule 9).
+- Correction memory: "no, I said Firefox" / "nahi maine Firefox kaha tha" opens Firefox and stores `heard => meant` as a memory row of kind `alias` (shows on the Memory page, editable; nothing stored when memory is off). Used by `open_application` and the matcher.
+
+**Measured**
+- Text evaluation, 218 commands (74+34 mispronounced), fixture index with look-alike names (`tests/nlu_eval/u1_cases.py`, `scripts/eval_u1.py`, raw rows `docs/eval/u1_eval.json`):
+  DEV 153 cases (used while tuning): 100% target ok (incl. asking with the right candidate), 93.4% resolved without asking, 0 wrong actions, 0 wrong high-risk actions.
+  HOLDOUT 65 cases (run once after tuning; I did not retune after): 98.5% ok, 84.7% resolved without asking, 1 wrong action ("what's up app" -> WhatsApp, labelled NONE by me; arguably acceptable), 0 wrong high-risk actions.
+  The spec target (>= 95%, 0 wrong high-risk) is met ON THIS SET. The set is written by me and the fixture is small (59 apps, 20 files, 16 folders): it is evidence, not proof.
+- Real index on this PC: 1,764 names (226 apps, 1,448 files, 90 folders) built in 2.7 s in the background (Store apps 3.1 s and Quick Access 1.8 s are the slow sources); lookup median 3.6 ms, max 15 ms; planner hint over all names 105 ms; Whisper hint 688 characters.
+- `pytest tests -q` -> 1830 passed, 4 skipped (48 new in `tests/test_u1_entity.py`). Two known timing-sensitive subprocess tests (`test_phase9_reliability` kill test, `test_phase16_worker` kill test) failed in some full runs under load and pass alone.
+
+**NOT measured / not done**
+- Real accented or Urdu/Hindi SPEECH: the 218 cases are text. Whisper's own hearing of your voice with the new hint is untested: `scripts\check_u1.ps1` lists the spoken checks for you.
+- The Whisper hint effect is unmeasured (no A/B with real audio). The planner `NAME_CANDIDATES` were not run against Groq.
+- Files by type/folder/date hints ("the Word one in Documents", "from yesterday"), browser titles and contacts in the index: later milestones. Store (UWP) apps are in the index and the hint but `open_application` still launches only Start Menu shortcuts and known exes.
+- `risk_for_args`: a fuzzily matched Start Menu app now counts as a known app (low risk) from score 0.60; this is the spec's rule but it loosened the old 0.82.
+
+
 ### 2026-11-01 — Session 21: "Open the YouTube" failed (user screenshot)
 
 **Two bugs**

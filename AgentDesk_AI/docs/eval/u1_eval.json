@@ -1,0 +1,5216 @@
+{
+ "dev": {
+  "summary": {
+   "cases": 153,
+   "mispronounced": 74,
+   "target_ok_pct": 100.0,
+   "target_ok_mispronounced_pct": 100.0,
+   "auto_correct_pct_of_named": 93.4,
+   "asked_with_right_candidate": 18,
+   "misses": 0,
+   "wrong_actions": 0,
+   "wrong_high_risk_actions": 0
+  },
+  "rows": [
+   {
+    "kind": "app",
+    "heard": "firefox",
+    "expected": "Firefox",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Firefox",
+    "top": [
+     [
+      "Firefox",
+      1.0
+     ],
+     [
+      "PowerShell",
+      0.7055
+     ],
+     [
+      "Brave",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "fire fox",
+    "expected": "Firefox",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Firefox",
+    "top": [
+     [
+      "Firefox",
+      1.0
+     ],
+     [
+      "PowerShell",
+      0.595
+     ],
+     [
+      "Brave",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "fayer fox",
+    "expected": "Firefox",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Firefox",
+    "top": [
+     [
+      "Firefox",
+      0.8818
+     ],
+     [
+      "PowerShell",
+      0.582
+     ],
+     [
+      "VLC media player",
+      0.550044
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "firefocks",
+    "expected": "Firefox",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Firefox",
+    "top": [
+     [
+      "Firefox",
+      0.97
+     ],
+     [
+      "PowerShell",
+      0.7055
+     ],
+     [
+      "Brave",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "chrome",
+    "expected": "Google Chrome",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Google Chrome",
+    "top": [
+     [
+      "Google Chrome",
+      0.9
+     ],
+     [
+      "PyCharm",
+      0.7275
+     ],
+     [
+      "Steam",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "google chrome",
+    "expected": "Google Chrome",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Google Chrome",
+    "top": [
+     [
+      "Google Chrome",
+      1.0
+     ],
+     [
+      "PyCharm",
+      0.595
+     ],
+     [
+      "Calendar",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "crome",
+    "expected": "Google Chrome",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Google Chrome",
+      0.7275
+     ],
+     [
+      "PyCharm",
+      0.7275
+     ],
+     [
+      "Telegram",
+      0.7275
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "app",
+    "heard": "google krome",
+    "expected": "Google Chrome",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Google Chrome",
+    "top": [
+     [
+      "Google Chrome",
+      0.8696
+     ],
+     [
+      "Calculator",
+      0.595
+     ],
+     [
+      "Clock",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "chrome kholo",
+    "expected": "Google Chrome",
+    "mispronounced": false,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "Google Chrome",
+    "top": [
+     [
+      "Google Chrome",
+      0.9
+     ],
+     [
+      "PyCharm",
+      0.7275
+     ],
+     [
+      "Steam",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "note pad",
+    "expected": "Notepad",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Notepad",
+    "top": [
+     [
+      "Notepad",
+      1.0
+     ],
+     [
+      "Notepad++",
+      0.97
+     ],
+     [
+      "WordPad",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "not pad",
+    "expected": "Notepad",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Notepad",
+      0.97
+     ],
+     [
+      "Notepad++",
+      0.97
+     ],
+     [
+      "WordPad",
+      0.582
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "app",
+    "heard": "notepad",
+    "expected": "Notepad",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Notepad",
+    "top": [
+     [
+      "Notepad",
+      1.0
+     ],
+     [
+      "Notepad++",
+      0.97
+     ],
+     [
+      "WordPad",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "notepad kholo",
+    "expected": "Notepad",
+    "mispronounced": false,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "Notepad",
+    "top": [
+     [
+      "Notepad",
+      1.0
+     ],
+     [
+      "Notepad++",
+      0.97
+     ],
+     [
+      "WordPad",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "calculator",
+    "expected": "Calculator",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Calculator",
+    "top": [
+     [
+      "Calculator",
+      1.0
+     ],
+     [
+      "Calendar",
+      0.7055
+     ],
+     [
+      "File Explorer",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "calculater",
+    "expected": "Calculator",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Calculator",
+    "top": [
+     [
+      "Calculator",
+      0.97
+     ],
+     [
+      "Calendar",
+      0.7055
+     ],
+     [
+      "File Explorer",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "calc later",
+    "expected": "Calculator",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Calculator",
+    "top": [
+     [
+      "Calculator",
+      0.97
+     ],
+     [
+      "Calendar",
+      0.595
+     ],
+     [
+      "File Explorer",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "calculator kholo",
+    "expected": "Calculator",
+    "mispronounced": false,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "Calculator",
+    "top": [
+     [
+      "Calculator",
+      1.0
+     ],
+     [
+      "Calendar",
+      0.7055
+     ],
+     [
+      "File Explorer",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "vs cold",
+    "expected": "Visual Studio Code",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Visual Studio Code",
+    "top": [
+     [
+      "Visual Studio Code",
+      0.853578
+     ],
+     [
+      "Calendar",
+      0.582
+     ],
+     [
+      "Visual Studio 2022",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "v s code",
+    "expected": "Visual Studio Code",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Visual Studio Code",
+    "top": [
+     [
+      "Visual Studio Code",
+      0.99
+     ],
+     [
+      "Discord",
+      0.582
+     ],
+     [
+      "Figma",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "vs code",
+    "expected": "Visual Studio Code",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Visual Studio Code",
+    "top": [
+     [
+      "Visual Studio Code",
+      0.99
+     ],
+     [
+      "Discord",
+      0.582
+     ],
+     [
+      "Figma",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "visual studio coat",
+    "expected": "Visual Studio Code",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Visual Studio Code",
+    "top": [
+     [
+      "Visual Studio Code",
+      0.97
+     ],
+     [
+      "OBS Studio",
+      0.595
+     ],
+     [
+      "Visual Studio 2022",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "visual studio code",
+    "expected": "Visual Studio Code",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Visual Studio Code",
+    "top": [
+     [
+      "Visual Studio Code",
+      1.0
+     ],
+     [
+      "OBS Studio",
+      0.595
+     ],
+     [
+      "Visual Studio 2022",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "excel",
+    "expected": "Excel",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Excel",
+    "top": [
+     [
+      "Excel",
+      1.0
+     ],
+     [
+      "File Explorer",
+      0.776
+     ],
+     [
+      "PowerShell",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "exel",
+    "expected": "Excel",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Excel",
+    "top": [
+     [
+      "Excel",
+      0.97
+     ],
+     [
+      "File Explorer",
+      0.776
+     ],
+     [
+      "PowerShell",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "x cel",
+    "expected": "Excel",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Excel",
+    "top": [
+     [
+      "Excel",
+      0.9
+     ],
+     [
+      "Slack",
+      0.582
+     ],
+     [
+      "Visual Studio Code",
+      0.495
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "power point",
+    "expected": "PowerPoint",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "PowerPoint",
+    "top": [
+     [
+      "PowerPoint",
+      1.0
+     ],
+     [
+      "WordPad",
+      0.595
+     ],
+     [
+      "Adobe Acrobat",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "powerpoint",
+    "expected": "PowerPoint",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "PowerPoint",
+    "top": [
+     [
+      "PowerPoint",
+      1.0
+     ],
+     [
+      "WordPad",
+      0.7055
+     ],
+     [
+      "Adobe Acrobat",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "out look",
+    "expected": "Outlook",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Outlook",
+    "top": [
+     [
+      "Outlook",
+      1.0
+     ],
+     [
+      "Telegram",
+      0.582
+     ],
+     [
+      "Anki",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "outlook",
+    "expected": "Outlook",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Outlook",
+    "top": [
+     [
+      "Outlook",
+      1.0
+     ],
+     [
+      "Telegram",
+      0.6467
+     ],
+     [
+      "Anki",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "spotifi",
+    "expected": "Spotify",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Spotify",
+    "top": [
+     [
+      "Spotify",
+      0.97
+     ],
+     [
+      "Brave",
+      0.5543
+     ],
+     [
+      "Paint",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "spotify",
+    "expected": "Spotify",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Spotify",
+    "top": [
+     [
+      "Spotify",
+      1.0
+     ],
+     [
+      "Brave",
+      0.5543
+     ],
+     [
+      "Paint",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "spotify chalao",
+    "expected": "Spotify",
+    "mispronounced": false,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "Spotify",
+    "top": [
+     [
+      "Spotify",
+      0.9
+     ],
+     [
+      "Snipping Tool",
+      0.5969
+     ],
+     [
+      "PowerShell",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "whats app",
+    "expected": "WhatsApp",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "WhatsApp",
+    "top": [
+     [
+      "WhatsApp",
+      1.0
+     ],
+     [
+      "Photos",
+      0.8314
+     ],
+     [
+      "Word",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "watsapp",
+    "expected": "WhatsApp",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "WhatsApp",
+    "top": [
+     [
+      "WhatsApp",
+      0.9333
+     ],
+     [
+      "Photos",
+      0.8314
+     ],
+     [
+      "WordPad",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "whatsapp",
+    "expected": "WhatsApp",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "WhatsApp",
+    "top": [
+     [
+      "WhatsApp",
+      1.0
+     ],
+     [
+      "Photos",
+      0.7275
+     ],
+     [
+      "WordPad",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "tele gram",
+    "expected": "Telegram",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Telegram",
+    "top": [
+     [
+      "Telegram",
+      1.0
+     ],
+     [
+      "Docker Desktop",
+      0.595
+     ],
+     [
+      "Discord",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "telegraam",
+    "expected": "Telegram",
+    "mispronounced": true,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "Telegram",
+    "top": [
+     [
+      "Telegram",
+      0.97
+     ],
+     [
+      "Docker Desktop",
+      0.7275
+     ],
+     [
+      "Outlook",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "zoom",
+    "expected": "Zoom",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Zoom",
+    "top": [
+     [
+      "Zoom",
+      1.0
+     ],
+     [
+      "Photos",
+      0.4
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "zom",
+    "expected": "Zoom",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Zoom",
+    "top": [
+     [
+      "Zoom",
+      0.8571
+     ],
+     [
+      "Postman",
+      0.4
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "dis cord",
+    "expected": "Discord",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Discord",
+    "top": [
+     [
+      "Discord",
+      1.0
+     ],
+     [
+      "Adobe Acrobat",
+      0.5969
+     ],
+     [
+      "Docker Desktop",
+      0.5969
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "discord",
+    "expected": "Discord",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Discord",
+    "top": [
+     [
+      "Discord",
+      1.0
+     ],
+     [
+      "Docker Desktop",
+      0.7275
+     ],
+     [
+      "Task Manager",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "task manager",
+    "expected": "Task Manager",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Task Manager",
+    "top": [
+     [
+      "Task Manager",
+      1.0
+     ],
+     [
+      "Discord",
+      0.582
+     ],
+     [
+      "Calendar",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "task manger",
+    "expected": "Task Manager",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Task Manager",
+    "top": [
+     [
+      "Task Manager",
+      0.97
+     ],
+     [
+      "Discord",
+      0.582
+     ],
+     [
+      "Camera",
+      0.5
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "comand prompt",
+    "expected": "Command Prompt",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Command Prompt",
+    "top": [
+     [
+      "Command Prompt",
+      0.97
+     ],
+     [
+      "Adobe Acrobat",
+      0.5706
+     ],
+     [
+      "Control Panel",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "command prompt",
+    "expected": "Command Prompt",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Command Prompt",
+    "top": [
+     [
+      "Command Prompt",
+      1.0
+     ],
+     [
+      "Adobe Acrobat",
+      0.5706
+     ],
+     [
+      "Control Panel",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "power shell",
+    "expected": "PowerShell",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "PowerShell",
+    "top": [
+     [
+      "PowerShell",
+      1.0
+     ],
+     [
+      "Firefox",
+      0.582
+     ],
+     [
+      "PowerPoint",
+      0.5291
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "file explorar",
+    "expected": "File Explorer",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "File Explorer",
+    "top": [
+     [
+      "File Explorer",
+      0.97
+     ],
+     [
+      "Excel",
+      0.776
+     ],
+     [
+      "VLC media player",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "file explorer",
+    "expected": "File Explorer",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "File Explorer",
+    "top": [
+     [
+      "File Explorer",
+      1.0
+     ],
+     [
+      "Excel",
+      0.776
+     ],
+     [
+      "VLC media player",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "sniping tool",
+    "expected": "Snipping Tool",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Snipping Tool",
+    "top": [
+     [
+      "Snipping Tool",
+      0.97
+     ],
+     [
+      "Control Panel",
+      0.5173
+     ],
+     [
+      "Sublime Text",
+      0.5173
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "paint",
+    "expected": "Paint",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Paint",
+    "top": [
+     [
+      "Paint",
+      1.0
+     ],
+     [
+      "OneNote",
+      0.6467
+     ],
+     [
+      "PowerPoint",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "one note",
+    "expected": "OneNote",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "OneNote",
+    "top": [
+     [
+      "OneNote",
+      1.0
+     ],
+     [
+      "Notepad",
+      0.5714
+     ],
+     [
+      "Anki",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "adobe acrobatt",
+    "expected": "Adobe Acrobat",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Adobe Acrobat",
+    "top": [
+     [
+      "Adobe Acrobat",
+      0.97
+     ],
+     [
+      "Command Prompt",
+      0.5706
+     ],
+     [
+      "PowerPoint",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "steem",
+    "expected": "Steam",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Steam",
+    "top": [
+     [
+      "Steam",
+      0.97
+     ],
+     [
+      "Postman",
+      0.7275
+     ],
+     [
+      "Telegram",
+      0.6154
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "git hub desktop",
+    "expected": "GitHub Desktop",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "GitHub Desktop",
+    "top": [
+     [
+      "GitHub Desktop",
+      1.0
+     ],
+     [
+      "Docker Desktop",
+      0.595
+     ],
+     [
+      "Git Bash",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "post man",
+    "expected": "Postman",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Postman",
+    "top": [
+     [
+      "Postman",
+      1.0
+     ],
+     [
+      "Maps",
+      0.595
+     ],
+     [
+      "Steam",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "seven zip",
+    "expected": "7-Zip",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "7-Zip",
+      0.595
+     ],
+     [
+      "Skype",
+      0.485
+     ],
+     [
+      "Snipping Tool",
+      0.485
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "app",
+    "heard": "android studio",
+    "expected": "Android Studio",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Android Studio",
+    "top": [
+     [
+      "Android Studio",
+      1.0
+     ],
+     [
+      "OBS Studio",
+      0.595
+     ],
+     [
+      "Docker Desktop",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "pie charm",
+    "expected": "PyCharm",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "PyCharm",
+    "top": [
+     [
+      "PyCharm",
+      0.8622
+     ],
+     [
+      "Google Chrome",
+      0.582
+     ],
+     [
+      "Postman",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "slak",
+    "expected": "Slack",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Slack",
+    "top": [
+     [
+      "Slack",
+      0.97
+     ],
+     [
+      "Clock",
+      0.6467
+     ],
+     [
+      "Skype",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "v l c",
+    "expected": "VLC media player",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "VLC media player",
+    "top": [
+     [
+      "VLC media player",
+      0.88
+     ],
+     [
+      "Clock",
+      0.582
+     ],
+     [
+      "Figma",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "vlc",
+    "expected": "VLC media player",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "VLC media player",
+    "top": [
+     [
+      "VLC media player",
+      0.9
+     ],
+     [
+      "Clock",
+      0.6467
+     ],
+     [
+      "Figma",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "o b s studio",
+    "expected": "OBS Studio",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "OBS Studio",
+    "top": [
+     [
+      "OBS Studio",
+      1.0
+     ],
+     [
+      "Visual Studio 2022",
+      0.6
+     ],
+     [
+      "Visual Studio Code",
+      0.6
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "doker desktop",
+    "expected": "Docker Desktop",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Docker Desktop",
+    "top": [
+     [
+      "Docker Desktop",
+      0.97
+     ],
+     [
+      "Discord",
+      0.7275
+     ],
+     [
+      "Telegram",
+      0.7275
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "my sequel workbench",
+    "expected": "MySQL Workbench",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "MySQL Workbench",
+    "top": [
+     [
+      "MySQL Workbench",
+      0.97
+     ],
+     [
+      "Snipping Tool",
+      0.4565
+     ],
+     [
+      "Task Manager",
+      0.4565
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "control pannel",
+    "expected": "Control Panel",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Control Panel",
+    "top": [
+     [
+      "Control Panel",
+      0.97
+     ],
+     [
+      "Command Prompt",
+      0.5706
+     ],
+     [
+      "Windows Terminal",
+      0.5389
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "windows termnal",
+    "expected": "Windows Terminal",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Windows Terminal",
+    "top": [
+     [
+      "Windows Terminal",
+      0.97
+     ],
+     [
+      "Control Panel",
+      0.5389
+     ],
+     [
+      "Notepad",
+      0.4762
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "word",
+    "expected": "Word",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Word",
+    "top": [
+     [
+      "Word",
+      1.0
+     ],
+     [
+      "WordPad",
+      0.9
+     ],
+     [
+      "Photos",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "microsoft word",
+    "expected": "Word",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Word",
+    "top": [
+     [
+      "Word",
+      0.9
+     ],
+     [
+      "Microsoft Edge",
+      0.595
+     ],
+     [
+      "Microsoft Teams",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "wurd",
+    "expected": "Word",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Word",
+    "top": [
+     [
+      "Word",
+      0.97
+     ],
+     [
+      "WordPad",
+      0.7275
+     ],
+     [
+      "Photos",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "settings",
+    "expected": "Settings",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Settings",
+    "top": [
+     [
+      "Settings",
+      1.0
+     ],
+     [
+      "Sublime Text",
+      0.5969
+     ],
+     [
+      "Git Bash",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "setings",
+    "expected": "Settings",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Settings",
+    "top": [
+     [
+      "Settings",
+      0.97
+     ],
+     [
+      "Sublime Text",
+      0.5969
+     ],
+     [
+      "Git Bash",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "word pad",
+    "expected": "WordPad",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "WordPad",
+    "top": [
+     [
+      "WordPad",
+      1.0
+     ],
+     [
+      "Word",
+      0.9
+     ],
+     [
+      "PowerPoint",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "blorptastic",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Sublime Text",
+      0.6062
+     ],
+     [
+      "PowerPoint",
+      0.5543
+     ],
+     [
+      "Android Studio",
+      0.5173
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "app",
+    "heard": "zzqx",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Excel",
+      0.5543
+     ],
+     [
+      "Firefox",
+      0.485
+     ],
+     [
+      "Git Bash",
+      0.485
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "app",
+    "heard": "quantum flux editor",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Windows Terminal",
+      0.5543
+     ],
+     [
+      "File Explorer",
+      0.5105
+     ],
+     [
+      "Command Prompt",
+      0.485
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "app",
+    "heard": "visual studio",
+    "expected": "ASK:Visual Studio 2022",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Visual Studio 2022",
+      0.9
+     ],
+     [
+      "Visual Studio Code",
+      0.9
+     ],
+     [
+      "Sublime Text",
+      0.5969
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "file",
+    "heard": "fyp report",
+    "expected": "ASK:FYP Report final.docx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "FYP Report final.docx",
+      0.9
+     ],
+     [
+      "FYP Report old.docx",
+      0.9
+     ],
+     [
+      "FYP Report v2.docx",
+      0.9
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "file",
+    "heard": "fee wipe report",
+    "expected": "ASK:FYP Report final.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Final Presentation.pptx",
+      0.590931
+     ],
+     [
+      "FYP Report v2.docx",
+      0.582
+     ],
+     [
+      "FYP Report final.docx",
+      0.5514
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "file",
+    "heard": "f y p report",
+    "expected": "ASK:FYP Report v2.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "FYP Report final.docx",
+      0.9
+     ],
+     [
+      "FYP Report old.docx",
+      0.9
+     ],
+     [
+      "FYP Report v2.docx",
+      0.9
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "file",
+    "heard": "resume nabiha",
+    "expected": "Resume Nabiha.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Resume Nabiha.pdf",
+    "top": [
+     [
+      "Resume Nabiha.pdf",
+      0.9
+     ],
+     [
+      "Research Paper.pdf",
+      0.5
+     ],
+     [
+      "Final Presentation.pptx",
+      0.4242
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "resume nabiha pdf",
+    "expected": "Resume Nabiha.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Resume Nabiha.pdf",
+    "top": [
+     [
+      "Resume Nabiha.pdf",
+      1.0
+     ],
+     [
+      "Lab Manual.pdf",
+      0.594
+     ],
+     [
+      "Research Paper.pdf",
+      0.594
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "rezume nabiha",
+    "expected": "Resume Nabiha.pdf",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Resume Nabiha.pdf",
+    "top": [
+     [
+      "Resume Nabiha.pdf",
+      0.8148
+     ],
+     [
+      "Research Paper.pdf",
+      0.4286
+     ],
+     [
+      "Lab Manual.pdf",
+      0.4157
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "invoice march",
+    "expected": "Invoice March.xlsx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Invoice March.xlsx",
+    "top": [
+     [
+      "Invoice March.xlsx",
+      0.9
+     ],
+     [
+      "FYP Report final.docx",
+      0.548757
+     ],
+     [
+      "FYP Report v2.docx",
+      0.548757
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "in voice march",
+    "expected": "Invoice March.xlsx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Invoice March.xlsx",
+    "top": [
+     [
+      "Invoice March.xlsx",
+      0.9
+     ],
+     [
+      "FYP Report final.docx",
+      0.548757
+     ],
+     [
+      "FYP Report v2.docx",
+      0.548757
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "thesis chapter 1",
+    "expected": "Thesis Chapter 1.docx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Thesis Chapter 1.docx",
+    "top": [
+     [
+      "Thesis Chapter 1.docx",
+      0.9
+     ],
+     [
+      "Research Paper.pdf",
+      0.5333
+     ],
+     [
+      "Semester Schedule.pdf",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "thesis chapter one",
+    "expected": "Thesis Chapter 1.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Thesis Chapter 1.docx",
+      0.595
+     ],
+     [
+      "Tax Return.pdf",
+      0.5389
+     ],
+     [
+      "Research Paper.pdf",
+      0.5
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "file",
+    "heard": "lab manual",
+    "expected": "Lab Manual.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Lab Manual.pdf",
+    "top": [
+     [
+      "Lab Manual.pdf",
+      0.9
+     ],
+     [
+      "Class Timetable.xlsx",
+      0.4
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "lab manuel",
+    "expected": "Lab Manual.pdf",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Lab Manual.pdf",
+    "top": [
+     [
+      "Lab Manual.pdf",
+      0.7619
+     ],
+     [
+      "Class Timetable.xlsx",
+      0.4667
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "project proposal",
+    "expected": "Project Proposal.pptx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Project Proposal.pptx",
+    "top": [
+     [
+      "Project Proposal.pptx",
+      0.9
+     ],
+     [
+      "Research Paper.pdf",
+      0.485
+     ],
+     [
+      "FYP Report v2.docx",
+      0.4619
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "project proposel",
+    "expected": "Project Proposal.pptx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Project Proposal.pptx",
+    "top": [
+     [
+      "Project Proposal.pptx",
+      0.8235
+     ],
+     [
+      "Research Paper.pdf",
+      0.485
+     ],
+     [
+      "FYP Report v2.docx",
+      0.4619
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "attendance sheet",
+    "expected": "Attendance Sheet.xlsx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Attendance Sheet.xlsx",
+    "top": [
+     [
+      "Attendance Sheet.xlsx",
+      0.9
+     ],
+     [
+      "Python Notes.txt",
+      0.582
+     ],
+     [
+      "Meeting Notes.txt",
+      0.5514
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "attendence sheet",
+    "expected": "Attendance Sheet.xlsx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Attendance Sheet.xlsx",
+    "top": [
+     [
+      "Attendance Sheet.xlsx",
+      0.8235
+     ],
+     [
+      "Python Notes.txt",
+      0.582
+     ],
+     [
+      "Meeting Notes.txt",
+      0.5514
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "meeting notes",
+    "expected": "Meeting Notes.txt",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Meeting Notes.txt",
+    "top": [
+     [
+      "Meeting Notes.txt",
+      0.9
+     ],
+     [
+      "Thesis Chapter 1.docx",
+      0.590931
+     ],
+     [
+      "Python Notes.txt",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "meeting nodes",
+    "expected": "Meeting Notes.txt",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Meeting Notes.txt",
+    "top": [
+     [
+      "Meeting Notes.txt",
+      0.8148
+     ],
+     [
+      "Thesis Chapter 1.docx",
+      0.590931
+     ],
+     [
+      "Python Notes.txt",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "budget 2025",
+    "expected": "Budget 2025.xlsx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Budget 2025.xlsx",
+    "top": [
+     [
+      "Budget 2025.xlsx",
+      0.9
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "budget twenty twenty five",
+    "expected": "Budget 2025.xlsx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Python Notes.txt",
+      0.5291
+     ],
+     [
+      "Budget 2025.xlsx",
+      0.4909
+     ],
+     [
+      "Tax Return.pdf",
+      0.4409
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "file",
+    "heard": "cover letter",
+    "expected": "Cover Letter.docx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Cover Letter.docx",
+    "top": [
+     [
+      "Cover Letter.docx",
+      0.9
+     ],
+     [
+      "FYP Report old.docx",
+      0.523809
+     ],
+     [
+      "Tax Return.pdf",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "cover leter",
+    "expected": "Cover Letter.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Cover Letter.docx",
+    "top": [
+     [
+      "Cover Letter.docx",
+      0.8
+     ],
+     [
+      "FYP Report old.docx",
+      0.523809
+     ],
+     [
+      "Tax Return.pdf",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "semester schedule",
+    "expected": "Semester Schedule.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Semester Schedule.pdf",
+    "top": [
+     [
+      "Semester Schedule.pdf",
+      0.9143
+     ],
+     [
+      "Thesis Chapter 1.docx",
+      0.582
+     ],
+     [
+      "Attendance Sheet.xlsx",
+      0.564894
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "database assignment",
+    "expected": "Database Assignment.docx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Database Assignment.docx",
+    "top": [
+     [
+      "Database Assignment.docx",
+      0.9
+     ],
+     [
+      "Class Timetable.xlsx",
+      0.5128
+     ],
+     [
+      "Budget 2025.xlsx",
+      0.45193500000000003
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "data base assignment",
+    "expected": "Database Assignment.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Database Assignment.docx",
+    "top": [
+     [
+      "Database Assignment.docx",
+      0.9
+     ],
+     [
+      "Class Timetable.xlsx",
+      0.5
+     ],
+     [
+      "Budget 2025.xlsx",
+      0.45193500000000003
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "python notes",
+    "expected": "Python Notes.txt",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Python Notes.txt",
+    "top": [
+     [
+      "Python Notes.txt",
+      0.9
+     ],
+     [
+      "Database Assignment.docx",
+      0.5761799999999999
+     ],
+     [
+      "Meeting Notes.txt",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "pythan nots",
+    "expected": "Python Notes.txt",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Python Notes.txt",
+    "top": [
+     [
+      "Python Notes.txt",
+      0.75
+     ],
+     [
+      "Database Assignment.docx",
+      0.5761799999999999
+     ],
+     [
+      "Meeting Notes.txt",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "tax return",
+    "expected": "Tax Return.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Tax Return.pdf",
+    "top": [
+     [
+      "Tax Return.pdf",
+      0.9
+     ],
+     [
+      "Meeting Notes.txt",
+      0.590931
+     ],
+     [
+      "Python Notes.txt",
+      0.5761799999999999
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "research paper",
+    "expected": "Research Paper.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Research Paper.pdf",
+    "top": [
+     [
+      "Research Paper.pdf",
+      0.9
+     ],
+     [
+      "Resume Nabiha.pdf",
+      0.5714
+     ],
+     [
+      "Thesis Chapter 1.docx",
+      0.5161
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "final presentation",
+    "expected": "Final Presentation.pptx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Final Presentation.pptx",
+    "top": [
+     [
+      "Final Presentation.pptx",
+      0.9
+     ],
+     [
+      "FYP Report final.docx",
+      0.5128
+     ],
+     [
+      "Resume Nabiha.pdf",
+      0.4571
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "class timetable",
+    "expected": "Class Timetable.xlsx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Class Timetable.xlsx",
+    "top": [
+     [
+      "Class Timetable.xlsx",
+      0.9
+     ],
+     [
+      "Database Assignment.docx",
+      0.5128
+     ],
+     [
+      "Cover Letter.docx",
+      0.4565
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "class time table",
+    "expected": "Class Timetable.xlsx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Class Timetable.xlsx",
+    "top": [
+     [
+      "Class Timetable.xlsx",
+      0.9
+     ],
+     [
+      "Cover Letter.docx",
+      0.4565
+     ],
+     [
+      "Database Assignment.docx",
+      0.45
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "taxi receipt",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Tax Return.pdf",
+      0.595
+     ],
+     [
+      "Meeting Notes.txt",
+      0.590931
+     ],
+     [
+      "Python Notes.txt",
+      0.5761799999999999
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "file",
+    "heard": "holiday photos",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Database Assignment.docx",
+      0.5761799999999999
+     ],
+     [
+      "Cover Letter.docx",
+      0.523809
+     ],
+     [
+      "FYP Report old.docx",
+      0.523809
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "folder",
+    "heard": "documents",
+    "expected": "Documents",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Documents",
+    "top": [
+     [
+      "Documents",
+      1.0
+     ],
+     [
+      "Assignments",
+      0.6929
+     ],
+     [
+      "Downloads",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "documents wala folder",
+    "expected": "Documents",
+    "mispronounced": false,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "Documents",
+    "top": [
+     [
+      "Documents",
+      1.0
+     ],
+     [
+      "Assignments",
+      0.6929
+     ],
+     [
+      "Downloads",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "dokuments",
+    "expected": "Documents",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Documents",
+    "top": [
+     [
+      "Documents",
+      0.97
+     ],
+     [
+      "Assignments",
+      0.6929
+     ],
+     [
+      "Downloads",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "downloads",
+    "expected": "Downloads",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Downloads",
+    "top": [
+     [
+      "Downloads",
+      1.0
+     ],
+     [
+      "Documents",
+      0.6467
+     ],
+     [
+      "Lecture Slides",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "download",
+    "expected": "Downloads",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Downloads",
+    "top": [
+     [
+      "Downloads",
+      0.9412
+     ],
+     [
+      "Documents",
+      0.5291
+     ],
+     [
+      "Frontend",
+      0.5291
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "down loads",
+    "expected": "Downloads",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Downloads",
+    "top": [
+     [
+      "Downloads",
+      1.0
+     ],
+     [
+      "Documents",
+      0.582
+     ],
+     [
+      "Lecture Slides",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "desktop",
+    "expected": "Desktop",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Desktop",
+    "top": [
+     [
+      "Desktop",
+      1.0
+     ],
+     [
+      "Documents",
+      0.5291
+     ],
+     [
+      "Backup",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "desk top",
+    "expected": "Desktop",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Desktop",
+    "top": [
+     [
+      "Desktop",
+      1.0
+     ],
+     [
+      "Documents",
+      0.5291
+     ],
+     [
+      "Backup",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "pictures",
+    "expected": "Pictures",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Pictures",
+    "top": [
+     [
+      "Pictures",
+      1.0
+     ],
+     [
+      "Projects",
+      0.7055
+     ],
+     [
+      "Backend",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "pikchers",
+    "expected": "Pictures",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Pictures",
+    "top": [
+     [
+      "Pictures",
+      0.776
+     ],
+     [
+      "Projects",
+      0.5291
+     ],
+     [
+      "Backup",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "videos",
+    "expected": "Videos",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Videos",
+    "top": [
+     [
+      "Videos",
+      1.0
+     ],
+     [
+      "Downloads",
+      0.6467
+     ],
+     [
+      "Desktop",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "music",
+    "expected": "Music",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Music",
+    "top": [
+     [
+      "Music",
+      1.0
+     ],
+     [
+      "Desktop",
+      0.485
+     ],
+     [
+      "Documents",
+      0.4311
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "fyp",
+    "expected": "FYP",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "FYP",
+    "top": [
+     [
+      "FYP",
+      1.0
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "f y p",
+    "expected": "FYP",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "FYP",
+    "top": [
+     [
+      "FYP",
+      1.0
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "backend",
+    "expected": "Backend",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Backend",
+    "top": [
+     [
+      "Backend",
+      1.0
+     ],
+     [
+      "Pictures",
+      0.6467
+     ],
+     [
+      "Backup",
+      0.6154
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "back end",
+    "expected": "Backend",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Backend",
+    "top": [
+     [
+      "Backend",
+      1.0
+     ],
+     [
+      "Pictures",
+      0.582
+     ],
+     [
+      "Backup",
+      0.5538
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "frontend",
+    "expected": "Frontend",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Frontend",
+    "top": [
+     [
+      "Frontend",
+      1.0
+     ],
+     [
+      "Documents",
+      0.485
+     ],
+     [
+      "Downloads",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "front end",
+    "expected": "Frontend",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Frontend",
+    "top": [
+     [
+      "Frontend",
+      1.0
+     ],
+     [
+      "Documents",
+      0.4477
+     ],
+     [
+      "Downloads",
+      0.4477
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "university",
+    "expected": "University",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "University",
+    "top": [
+     [
+      "University",
+      1.0
+     ],
+     [
+      "Frontend",
+      0.485
+     ],
+     [
+      "Semester Five",
+      0.4348
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "yunivarsity",
+    "expected": "University",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "University",
+    "top": [
+     [
+      "University",
+      0.8571
+     ],
+     [
+      "Frontend",
+      0.485
+     ],
+     [
+      "Lecture Slides",
+      0.4157
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "assignments",
+    "expected": "Assignments",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Assignments",
+    "top": [
+     [
+      "Assignments",
+      1.0
+     ],
+     [
+      "Documents",
+      0.6929
+     ],
+     [
+      "Screenshots",
+      0.6062
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "assignment",
+    "expected": "Assignments",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Assignments",
+    "top": [
+     [
+      "Assignments",
+      0.9524
+     ],
+     [
+      "Documents",
+      0.5969
+     ],
+     [
+      "Screenshots",
+      0.5173
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "semester five",
+    "expected": "Semester Five",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Semester Five",
+    "top": [
+     [
+      "Semester Five",
+      1.0
+     ],
+     [
+      "Screenshots",
+      0.4348
+     ],
+     [
+      "University",
+      0.4348
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "semester 5",
+    "expected": "Semester Five",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Semester Five",
+      0.595
+     ],
+     [
+      "Screenshots",
+      0.5
+     ],
+     [
+      "Assignments",
+      0.4157
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "folder",
+    "heard": "projects",
+    "expected": "Projects",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Projects",
+    "top": [
+     [
+      "Projects",
+      1.0
+     ],
+     [
+      "Pictures",
+      0.7055
+     ],
+     [
+      "Backend",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "lecture slides",
+    "expected": "Lecture Slides",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Lecture Slides",
+    "top": [
+     [
+      "Lecture Slides",
+      1.0
+     ],
+     [
+      "Pictures",
+      0.5714
+     ],
+     [
+      "Downloads",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "lecture slide",
+    "expected": "Lecture Slides",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Lecture Slides",
+    "top": [
+     [
+      "Lecture Slides",
+      0.963
+     ],
+     [
+      "Pictures",
+      0.582
+     ],
+     [
+      "Screenshots",
+      0.5173
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "backup",
+    "expected": "Backup",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Backup",
+    "top": [
+     [
+      "Backup",
+      1.0
+     ],
+     [
+      "Backend",
+      0.6154
+     ],
+     [
+      "Desktop",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "screen shots",
+    "expected": "Screenshots",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Screenshots",
+    "top": [
+     [
+      "Screenshots",
+      1.0
+     ],
+     [
+      "Documents",
+      0.5969
+     ],
+     [
+      "Assignments",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "screenshots",
+    "expected": "Screenshots",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Screenshots",
+    "top": [
+     [
+      "Screenshots",
+      1.0
+     ],
+     [
+      "Assignments",
+      0.6062
+     ],
+     [
+      "Lecture Slides",
+      0.6062
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "zebra crossing",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Projects",
+      0.5543
+     ],
+     [
+      "Screenshots",
+      0.485
+     ],
+     [
+      "Pictures",
+      0.4775
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "risky",
+    "heard": "fyp report final",
+    "expected": "FYP Report final.docx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "FYP",
+      0.9
+     ],
+     [
+      "FYP Report final.docx",
+      0.9
+     ],
+     [
+      "FYP Report old.docx",
+      0.595
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "risky",
+    "heard": "fee wipe report final",
+    "expected": "ASK:FYP Report final.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "FYP Report final.docx",
+      0.7936
+     ],
+     [
+      "FYP Report v2.docx",
+      0.582
+     ],
+     [
+      "FYP Report old.docx",
+      0.5555
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "risky",
+    "heard": "resume nabiha pdf",
+    "expected": "Resume Nabiha.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Resume Nabiha.pdf",
+    "top": [
+     [
+      "Resume Nabiha.pdf",
+      1.0
+     ],
+     [
+      "Lab Manual.pdf",
+      0.594
+     ],
+     [
+      "Research Paper.pdf",
+      0.594
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "risky",
+    "heard": "rezume nabiha",
+    "expected": "ASK:Resume Nabiha.pdf",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Resume Nabiha.pdf",
+      0.8148
+     ],
+     [
+      "Screenshots",
+      0.4348
+     ],
+     [
+      "Research Paper.pdf",
+      0.4286
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "risky",
+    "heard": "invoice march",
+    "expected": "Invoice March.xlsx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Invoice March.xlsx",
+      0.9
+     ],
+     [
+      "University",
+      0.595
+     ],
+     [
+      "FYP Report final.docx",
+      0.548757
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "risky",
+    "heard": "in voice march",
+    "expected": "ASK:Invoice March.xlsx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Invoice March.xlsx",
+      0.9
+     ],
+     [
+      "University",
+      0.595
+     ],
+     [
+      "FYP Report final.docx",
+      0.548757
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "risky",
+    "heard": "backup",
+    "expected": "Backup",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Backup",
+    "top": [
+     [
+      "Backup",
+      1.0
+     ],
+     [
+      "Backend",
+      0.6154
+     ],
+     [
+      "Photo yesterday.jpg",
+      0.548757
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "risky",
+    "heard": "back up",
+    "expected": "Backup",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Backup",
+    "top": [
+     [
+      "Backup",
+      1.0
+     ],
+     [
+      "Backend",
+      0.5538
+     ],
+     [
+      "Photo yesterday.jpg",
+      0.48014999999999997
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "risky",
+    "heard": "tax return",
+    "expected": "Tax Return.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Tax Return.pdf",
+      0.9
+     ],
+     [
+      "Meeting Notes.txt",
+      0.590931
+     ],
+     [
+      "Python Notes.txt",
+      0.5761799999999999
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "risky",
+    "heard": "tax returns",
+    "expected": "ASK:Tax Return.pdf",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Tax Return.pdf",
+      0.8182
+     ],
+     [
+      "Cover Letter.docx",
+      0.5706
+     ],
+     [
+      "Documents",
+      0.5543
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "risky",
+    "heard": "taxi receipt",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Tax Return.pdf",
+      0.595
+     ],
+     [
+      "Meeting Notes.txt",
+      0.590931
+     ],
+     [
+      "Python Notes.txt",
+      0.5761799999999999
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "risky",
+    "heard": "lab manuel",
+    "expected": "ASK:Lab Manual.pdf",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Lab Manual.pdf",
+      0.7619
+     ],
+     [
+      "Class Timetable.xlsx",
+      0.4667
+     ],
+     [
+      "Backend",
+      0.4311
+     ]
+    ],
+    "outcome": "ok_asked"
+   }
+  ]
+ },
+ "holdout": {
+  "summary": {
+   "cases": 65,
+   "mispronounced": 34,
+   "target_ok_pct": 98.5,
+   "target_ok_mispronounced_pct": 100.0,
+   "auto_correct_pct_of_named": 84.7,
+   "asked_with_right_candidate": 12,
+   "misses": 0,
+   "wrong_actions": 1,
+   "wrong_high_risk_actions": 0
+  },
+  "rows": [
+   {
+    "kind": "app",
+    "heard": "fire foxx",
+    "expected": "Firefox",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Firefox",
+    "top": [
+     [
+      "Firefox",
+      0.9333
+     ],
+     [
+      "PowerShell",
+      0.5969
+     ],
+     [
+      "MySQL Workbench",
+      0.5389
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "mozilla firefox",
+    "expected": "Firefox",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Firefox",
+    "top": [
+     [
+      "Firefox",
+      0.9
+     ],
+     [
+      "PowerShell",
+      0.5543
+     ],
+     [
+      "MySQL Workbench",
+      0.5514
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "googel chrome",
+    "expected": "Google Chrome",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Google Chrome",
+    "top": [
+     [
+      "Google Chrome",
+      0.97
+     ],
+     [
+      "PyCharm",
+      0.595
+     ],
+     [
+      "Calendar",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "chromee",
+    "expected": "Google Chrome",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Google Chrome",
+      0.7275
+     ],
+     [
+      "PyCharm",
+      0.7275
+     ],
+     [
+      "Steam",
+      0.6467
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "app",
+    "heard": "notpad",
+    "expected": "Notepad",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Notepad",
+      0.97
+     ],
+     [
+      "Notepad++",
+      0.97
+     ],
+     [
+      "WordPad",
+      0.6467
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "app",
+    "heard": "note pat",
+    "expected": "Notepad",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Notepad",
+      0.97
+     ],
+     [
+      "Notepad++",
+      0.97
+     ],
+     [
+      "WordPad",
+      0.582
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "app",
+    "heard": "kalkulator",
+    "expected": "Calculator",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Calculator",
+    "top": [
+     [
+      "Calculator",
+      0.97
+     ],
+     [
+      "Calendar",
+      0.7055
+     ],
+     [
+      "File Explorer",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "calculator kholen",
+    "expected": "Calculator",
+    "mispronounced": false,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "Calculator",
+    "top": [
+     [
+      "Calculator",
+      1.0
+     ],
+     [
+      "Calendar",
+      0.7055
+     ],
+     [
+      "File Explorer",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "vee ess code",
+    "expected": "Visual Studio Code",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Visual Studio Code",
+    "top": [
+     [
+      "Visual Studio Code",
+      0.853578
+     ],
+     [
+      "Discord",
+      0.582
+     ],
+     [
+      "OBS Studio",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "vscode",
+    "expected": "Visual Studio Code",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Visual Studio Code",
+    "top": [
+     [
+      "Visual Studio Code",
+      0.99
+     ],
+     [
+      "Discord",
+      0.6467
+     ],
+     [
+      "Figma",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "excell",
+    "expected": "Excel",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Excel",
+    "top": [
+     [
+      "Excel",
+      0.97
+     ],
+     [
+      "File Explorer",
+      0.776
+     ],
+     [
+      "PowerShell",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "microsoft excel",
+    "expected": "Excel",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Excel",
+    "top": [
+     [
+      "Excel",
+      0.9
+     ],
+     [
+      "Microsoft Edge",
+      0.595
+     ],
+     [
+      "Microsoft Teams",
+      0.595
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "powerpoint kholo",
+    "expected": "PowerPoint",
+    "mispronounced": false,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "PowerPoint",
+    "top": [
+     [
+      "PowerPoint",
+      1.0
+     ],
+     [
+      "WordPad",
+      0.7055
+     ],
+     [
+      "Adobe Acrobat",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "power pint",
+    "expected": "PowerPoint",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "PowerPoint",
+    "top": [
+     [
+      "PowerPoint",
+      0.97
+     ],
+     [
+      "WordPad",
+      0.595
+     ],
+     [
+      "Paint",
+      0.5714
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "outlok",
+    "expected": "Outlook",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Outlook",
+    "top": [
+     [
+      "Outlook",
+      0.97
+     ],
+     [
+      "Telegram",
+      0.6467
+     ],
+     [
+      "Anki",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "spotifyy",
+    "expected": "Spotify",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Spotify",
+    "top": [
+     [
+      "Spotify",
+      0.97
+     ],
+     [
+      "Brave",
+      0.5543
+     ],
+     [
+      "Paint",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "what's up app",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "WhatsApp",
+    "top": [
+     [
+      "WhatsApp",
+      0.8889
+     ],
+     [
+      "WordPad",
+      0.5291
+     ],
+     [
+      "Photos",
+      0.5173
+     ]
+    ],
+    "outcome": "wrong_action"
+   },
+   {
+    "kind": "app",
+    "heard": "whatsap",
+    "expected": "WhatsApp",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "WhatsApp",
+    "top": [
+     [
+      "WhatsApp",
+      0.97
+     ],
+     [
+      "Photos",
+      0.7275
+     ],
+     [
+      "WordPad",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "telegram",
+    "expected": "Telegram",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Telegram",
+    "top": [
+     [
+      "Telegram",
+      1.0
+     ],
+     [
+      "Docker Desktop",
+      0.7275
+     ],
+     [
+      "Outlook",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "disc cord",
+    "expected": "Discord",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Discord",
+    "top": [
+     [
+      "Discord",
+      0.9333
+     ],
+     [
+      "Task Manager",
+      0.595
+     ],
+     [
+      "Visual Studio Code",
+      0.556875
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "zoom meeting",
+    "expected": "Zoom",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Zoom",
+    "top": [
+     [
+      "Zoom",
+      0.9
+     ],
+     [
+      "Settings",
+      0.5291
+     ],
+     [
+      "Snipping Tool",
+      0.48
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "tasks manager",
+    "expected": "Task Manager",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Task Manager",
+    "top": [
+     [
+      "Task Manager",
+      0.96
+     ],
+     [
+      "Docker Desktop",
+      0.485
+     ],
+     [
+      "Discord",
+      0.4775
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "commandprompt",
+    "expected": "Command Prompt",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Command Prompt",
+    "top": [
+     [
+      "Command Prompt",
+      1.0
+     ],
+     [
+      "Adobe Acrobat",
+      0.5706
+     ],
+     [
+      "Control Panel",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "powershel",
+    "expected": "PowerShell",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "PowerShell",
+    "top": [
+     [
+      "PowerShell",
+      0.97
+     ],
+     [
+      "Firefox",
+      0.7055
+     ],
+     [
+      "Excel",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "snipping toll",
+    "expected": "Snipping Tool",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Snipping Tool",
+    "top": [
+     [
+      "Snipping Tool",
+      0.97
+     ],
+     [
+      "Control Panel",
+      0.5173
+     ],
+     [
+      "Sublime Text",
+      0.5173
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "onenote",
+    "expected": "OneNote",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "OneNote",
+    "top": [
+     [
+      "OneNote",
+      1.0
+     ],
+     [
+      "Anki",
+      0.6467
+     ],
+     [
+      "Paint",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "git hub",
+    "expected": "GitHub Desktop",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "GitHub Desktop",
+    "top": [
+     [
+      "GitHub Desktop",
+      1.0
+     ],
+     [
+      "Git Bash",
+      0.582
+     ],
+     [
+      "Skype",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "postmen",
+    "expected": "Postman",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Postman",
+    "top": [
+     [
+      "Postman",
+      0.97
+     ],
+     [
+      "Steam",
+      0.7275
+     ],
+     [
+      "OBS Studio",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "7 zip",
+    "expected": "7-Zip",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "7-Zip",
+    "top": [
+     [
+      "7-Zip",
+      1.0
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "android studeo",
+    "expected": "Android Studio",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Android Studio",
+    "top": [
+     [
+      "Android Studio",
+      0.97
+     ],
+     [
+      "OBS Studio",
+      0.5833
+     ],
+     [
+      "Docker Desktop",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "slack",
+    "expected": "Slack",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Slack",
+    "top": [
+     [
+      "Slack",
+      1.0
+     ],
+     [
+      "Clock",
+      0.6467
+     ],
+     [
+      "Skype",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "obs",
+    "expected": "OBS Studio",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "OBS Studio",
+    "top": [
+     [
+      "OBS Studio",
+      0.9
+     ],
+     [
+      "Maps",
+      0.6467
+     ],
+     [
+      "Opera",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "docker",
+    "expected": "Docker Desktop",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Docker Desktop",
+    "top": [
+     [
+      "Docker Desktop",
+      1.0
+     ],
+     [
+      "Discord",
+      0.7275
+     ],
+     [
+      "Telegram",
+      0.7275
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "my sql workbench",
+    "expected": "MySQL Workbench",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "MySQL Workbench",
+    "top": [
+     [
+      "MySQL Workbench",
+      1.0
+     ],
+     [
+      "Snipping Tool",
+      0.4565
+     ],
+     [
+      "Task Manager",
+      0.4565
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "control panel",
+    "expected": "Control Panel",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Control Panel",
+    "top": [
+     [
+      "Control Panel",
+      1.0
+     ],
+     [
+      "Command Prompt",
+      0.5706
+     ],
+     [
+      "Windows Terminal",
+      0.5389
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "windows terminal",
+    "expected": "Windows Terminal",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Windows Terminal",
+    "top": [
+     [
+      "Windows Terminal",
+      1.0
+     ],
+     [
+      "Control Panel",
+      0.5389
+     ],
+     [
+      "PowerPoint",
+      0.48
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "wordpad",
+    "expected": "WordPad",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "WordPad",
+    "top": [
+     [
+      "WordPad",
+      1.0
+     ],
+     [
+      "Word",
+      0.9
+     ],
+     [
+      "PowerPoint",
+      0.7055
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "app",
+    "heard": "flibbertigibbet",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Visual Studio Code",
+      0.6467
+     ],
+     [
+      "WordPad",
+      0.5969
+     ],
+     [
+      "PowerPoint",
+      0.5543
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "file",
+    "heard": "fyp report",
+    "expected": "ASK:FYP Report final.docx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "FYP Report final.docx",
+      0.9
+     ],
+     [
+      "FYP Report old.docx",
+      0.9
+     ],
+     [
+      "FYP Report v2.docx",
+      0.9
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "file",
+    "heard": "resume of nabiha",
+    "expected": "Resume Nabiha.pdf",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Resume Nabiha.pdf",
+    "top": [
+     [
+      "Resume Nabiha.pdf",
+      0.9091
+     ],
+     [
+      "Research Paper.pdf",
+      0.4706
+     ],
+     [
+      "Final Presentation.pptx",
+      0.4103
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "invoice marsh",
+    "expected": "Invoice March.xlsx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Invoice March.xlsx",
+    "top": [
+     [
+      "Invoice March.xlsx",
+      0.7857
+     ],
+     [
+      "FYP Report final.docx",
+      0.548757
+     ],
+     [
+      "FYP Report v2.docx",
+      0.548757
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "thesis chapter won",
+    "expected": "Thesis Chapter 1.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Thesis Chapter 1.docx",
+      0.595
+     ],
+     [
+      "Semester Schedule.pdf",
+      0.5543
+     ],
+     [
+      "Research Paper.pdf",
+      0.5389
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "file",
+    "heard": "lab manual pdf",
+    "expected": "Lab Manual.pdf",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Lab Manual.pdf",
+    "top": [
+     [
+      "Lab Manual.pdf",
+      1.0
+     ],
+     [
+      "Research Paper.pdf",
+      0.594
+     ],
+     [
+      "Resume Nabiha.pdf",
+      0.594
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "project proposal slides",
+    "expected": "Project Proposal.pptx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Project Proposal.pptx",
+      0.595
+     ],
+     [
+      "Budget 2025.xlsx",
+      0.5223
+     ],
+     [
+      "FYP Report final.docx",
+      0.5223
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "file",
+    "heard": "attendance",
+    "expected": "Attendance Sheet.xlsx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Attendance Sheet.xlsx",
+    "top": [
+     [
+      "Attendance Sheet.xlsx",
+      0.9
+     ],
+     [
+      "Database Assignment.docx",
+      0.5761799999999999
+     ],
+     [
+      "Python Notes.txt",
+      0.523809
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "metting notes",
+    "expected": "Meeting Notes.txt",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Meeting Notes.txt",
+    "top": [
+     [
+      "Meeting Notes.txt",
+      0.8148
+     ],
+     [
+      "Thesis Chapter 1.docx",
+      0.590931
+     ],
+     [
+      "Python Notes.txt",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "cover later",
+    "expected": "Cover Letter.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Cover Letter.docx",
+    "top": [
+     [
+      "Cover Letter.docx",
+      0.776
+     ],
+     [
+      "FYP Report old.docx",
+      0.523809
+     ],
+     [
+      "Tax Return.pdf",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "python nots",
+    "expected": "Python Notes.txt",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Python Notes.txt",
+    "top": [
+     [
+      "Python Notes.txt",
+      0.8333
+     ],
+     [
+      "Database Assignment.docx",
+      0.5761799999999999
+     ],
+     [
+      "Meeting Notes.txt",
+      0.5706
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "final presentashun",
+    "expected": "Final Presentation.pptx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act_say",
+    "chosen": "Final Presentation.pptx",
+    "top": [
+     [
+      "Final Presentation.pptx",
+      0.8083
+     ],
+     [
+      "FYP Report final.docx",
+      0.5904
+     ],
+     [
+      "Cover Letter.docx",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "file",
+    "heard": "class timetable sheet",
+    "expected": "Class Timetable.xlsx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Class Timetable.xlsx",
+      0.595
+     ],
+     [
+      "Attendance Sheet.xlsx",
+      0.5263
+     ],
+     [
+      "Cover Letter.docx",
+      0.5105
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "file",
+    "heard": "grocery list",
+    "expected": "NONE",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Research Paper.pdf",
+      0.5706
+     ],
+     [
+      "Class Timetable.xlsx",
+      0.548757
+     ],
+     [
+      "Cover Letter.docx",
+      0.485
+     ]
+    ],
+    "outcome": "ok_refused"
+   },
+   {
+    "kind": "folder",
+    "heard": "documents folder",
+    "expected": "Documents",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Documents",
+    "top": [
+     [
+      "Documents",
+      1.0
+     ],
+     [
+      "Assignments",
+      0.6929
+     ],
+     [
+      "Downloads",
+      0.6467
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "downlods",
+    "expected": "Downloads",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Downloads",
+    "top": [
+     [
+      "Downloads",
+      0.97
+     ],
+     [
+      "Documents",
+      0.6467
+     ],
+     [
+      "Lecture Slides",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "desktop wala folder",
+    "expected": "Desktop",
+    "mispronounced": false,
+    "lang": "ur",
+    "decision": "act",
+    "chosen": "Desktop",
+    "top": [
+     [
+      "Desktop",
+      0.9
+     ],
+     [
+      "Downloads",
+      0.5173
+     ],
+     [
+      "Lecture Slides",
+      0.4565
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "picture",
+    "expected": "Pictures",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Pictures",
+    "top": [
+     [
+      "Pictures",
+      0.9333
+     ],
+     [
+      "Backend",
+      0.7275
+     ],
+     [
+      "Projects",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "fyp folder",
+    "expected": "FYP",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "FYP",
+    "top": [
+     [
+      "FYP",
+      1.0
+     ],
+     [
+      "Pictures",
+      0.5291
+     ],
+     [
+      "Downloads",
+      0.485
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "bak end",
+    "expected": "Backend",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Backend",
+    "top": [
+     [
+      "Backend",
+      0.9231
+     ],
+     [
+      "Pictures",
+      0.582
+     ],
+     [
+      "Documents",
+      0.5291
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "university folder",
+    "expected": "University",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "University",
+    "top": [
+     [
+      "University",
+      1.0
+     ],
+     [
+      "Frontend",
+      0.485
+     ],
+     [
+      "Lecture Slides",
+      0.4516
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "semester 5 folder",
+    "expected": "Semester Five",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Semester Five",
+      0.595
+     ],
+     [
+      "Screenshots",
+      0.5
+     ],
+     [
+      "Lecture Slides",
+      0.4516
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "folder",
+    "heard": "lecture sides",
+    "expected": "Lecture Slides",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Lecture Slides",
+    "top": [
+     [
+      "Lecture Slides",
+      0.963
+     ],
+     [
+      "Pictures",
+      0.582
+     ],
+     [
+      "Screenshots",
+      0.582
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "folder",
+    "heard": "screen shot",
+    "expected": "Screenshots",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "act",
+    "chosen": "Screenshots",
+    "top": [
+     [
+      "Screenshots",
+      0.9524
+     ],
+     [
+      "Backend",
+      0.582
+     ],
+     [
+      "Assignments",
+      0.5543
+     ]
+    ],
+    "outcome": "correct_auto"
+   },
+   {
+    "kind": "risky",
+    "heard": "fyp report v2",
+    "expected": "FYP Report v2.docx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "FYP",
+      0.9
+     ],
+     [
+      "FYP Report v2.docx",
+      0.9
+     ],
+     [
+      "FYP Report final.docx",
+      0.595
+     ]
+    ],
+    "outcome": "asked_with_right"
+   },
+   {
+    "kind": "risky",
+    "heard": "fee wipe report v2",
+    "expected": "ASK:FYP Report v2.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "FYP Report v2.docx",
+      0.776
+     ],
+     [
+      "FYP Report final.docx",
+      0.582
+     ],
+     [
+      "FYP Report old.docx",
+      0.5543
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "risky",
+    "heard": "cover later",
+    "expected": "ASK:Cover Letter.docx",
+    "mispronounced": true,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Cover Letter.docx",
+      0.776
+     ],
+     [
+      "Lecture Slides",
+      0.5543
+     ],
+     [
+      "Pictures",
+      0.5291
+     ]
+    ],
+    "outcome": "ok_asked"
+   },
+   {
+    "kind": "risky",
+    "heard": "database assignment",
+    "expected": "Database Assignment.docx",
+    "mispronounced": false,
+    "lang": "en",
+    "decision": "ask",
+    "chosen": null,
+    "top": [
+     [
+      "Database Assignment.docx",
+      0.9
+     ],
+     [
+      "Assignments",
+      0.595
+     ],
+     [
+      "Class Timetable.xlsx",
+      0.5128
+     ]
+    ],
+    "outcome": "asked_with_right"
+   }
+  ]
+ }
+}

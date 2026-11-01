@@ -113,6 +113,13 @@ def _resolve_existing_open_path(raw_path: str, is_dir: bool) -> Path | None:
     return resolved if resolved.is_file() else None
 
 
+def _sounds_like(spoken: str, name: str) -> float:
+    """Similarity that also counts sound-alike spellings ("fee wipe report" ~ "FYP Report"); 0 below 0.8 so it only adds matches."""
+    from ..nlu.entity_match import score
+    value = score(Path(spoken).name, Path(name).stem if "." in name else name)
+    return value if value >= 0.8 else 0.0
+
+
 def find_path_candidates(query: str, roots: list[Path], is_dir_only: bool = True) -> dict:
     """Bounded search; return all discovered matches rather than silently choosing one."""
     key = "".join(c for c in Path(query).name.casefold() if c.isalnum())
@@ -145,7 +152,7 @@ def find_path_candidates(query: str, roots: list[Path], is_dir_only: bool = True
                        and not (path / d).is_symlink() and not getattr(path / d, "is_junction", lambda: False)()]
             for name in (dirs if is_dir_only else files):
                 normalized = "".join(c for c in name.casefold() if c.isalnum())
-                score = 1.0 if key == normalized else SequenceMatcher(None, key, normalized).ratio()
+                score = 1.0 if key == normalized else max(SequenceMatcher(None, key, normalized).ratio(), _sounds_like(query, name))
                 if key in normalized:
                     score = max(score, 0.85)
                 if alias_key and alias_key == search_name_key(name) and key != normalized:
@@ -957,7 +964,7 @@ class FindFilesTool(BaseTool):
                     if query in label or label in query:
                         score = 0.95 if query == label else 0.8
                     else:
-                        score = SequenceMatcher(None, query, label).ratio()
+                        score = max(SequenceMatcher(None, query, label).ratio(), _sounds_like(a.name, path.name))
                     if score < 0.55:
                         continue
                     matches.append(

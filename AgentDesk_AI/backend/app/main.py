@@ -1,6 +1,7 @@
 """AgentDesk AI backend: FastAPI application and HTTP API."""
 from __future__ import annotations
 
+import os
 import platform
 import json
 import secrets
@@ -56,6 +57,9 @@ async def lifespan(app: FastAPI):
     warm_sapi()  # keep the Windows voice loaded: each sentence then takes ~50 ms instead of ~900 ms
     from .search import budget as _budget
     threading.Thread(target=_budget.warm, daemon=True).start()  # tokenizer download (first run only)
+    if os.environ.get("AGENTDESK_ENTITY_INDEX", "1") != "0":
+        from .nlu.entity_index import get_index
+        get_index().start()  # apps / recent files / folders, rebuilt every 10 minutes in the background
     # The launcher runs one server. Never leave a crashed task showing as active
     # or replay its possibly completed device/file operation after restart.
     with SessionLocal() as db:

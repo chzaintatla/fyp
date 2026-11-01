@@ -180,12 +180,27 @@ def _resolve(task, intent, registry):
     return _action("list_folder" if op == "list" else "open_folder" if intent["kind"] == "folder" else "open_file", {"path": source})
 
 
+def _apply_correction(db, spoken, recent):
+    """"No, I said Firefox": remember that the name heard last time meant Firefox, and open Firefox now."""
+    from ..nlu.correction_memory import learn, parse_correction
+    meant = parse_correction(spoken)
+    if not meant or recent is None:
+        return spoken
+    for action in reversed(list(recent.actions)):
+        if action.tool_name == "open_application":
+            heard = json.loads(action.args_json).get("app_name", "")
+            learn(db, heard, meant)
+            return f"open {meant}"
+    return spoken
+
+
 def prepare_local_request(db, task, registry):
     """Return a validated local plan, or None when cloud reasoning is appropriate."""
     from ..ai.command_intents import canonical_command, switch_followup
     from ..ai.speech_commands import clean_transcript
     recent = db.query(Task).filter(Task.id != task.id).order_by(Task.created_at.desc()).first()
     spoken = clean_transcript(task.command)  # Whisper ends sentences with "." and people say "open THE youtube": the parsers expect neither
+    spoken = _apply_correction(db, spoken, recent)
     routed = switch_followup(spoken, recent) or canonical_command(spoken)
     media = browser_plan(routed)
     if media is not None:
