@@ -104,3 +104,17 @@ def test_client_needs_url_and_token_and_hides_token():
     with pytest.raises(AIConfigError):
         CloudBrain("", "")
     assert TOKEN not in repr(CloudBrain("http://x", TOKEN))
+
+
+def test_foreign_database_url_cannot_break_the_cloud_brain():
+    """A postgresql:// DATABASE_URL (no driver installed on Render) used to make every /cloud/plan answer 500."""
+    import subprocess
+    import sys
+    code = ("import os; os.environ['DATABASE_URL']='postgresql://u:p@localhost/db'; os.environ['CLOUD_API_TOKEN']='a'*36\n"
+            "from fastapi.testclient import TestClient\nfrom app.cloud_main import app\n"
+            "r = TestClient(app).post('/cloud/plan', json={'command': 'open notepad'}, headers={'Authorization': 'Bearer ' + 'a'*36})\n"
+            "print(r.status_code)")
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, timeout=60,
+                         cwd=str(__import__("pathlib").Path(__file__).resolve().parent.parent),
+                         env={**__import__("os").environ, "AI_PROVIDER": "mock", "GROQ_API_KEYS": "", "CLOUD_BRAIN_URL": ""})
+    assert out.stdout.strip().splitlines()[-1] in {"200", "502", "503"}, out.stderr[-500:]   # anything but a crash (500)

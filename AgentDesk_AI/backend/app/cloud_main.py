@@ -23,6 +23,10 @@ from collections import deque
 from pathlib import Path
 from typing import Any
 
+# The cloud brain stores nothing. Some code it shares with the PC app builds a database engine when imported, and a
+# DATABASE_URL meant for another service (e.g. postgresql:// without its driver) made every /cloud/plan answer 500.
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
