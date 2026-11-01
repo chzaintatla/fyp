@@ -183,8 +183,10 @@ def _resolve(task, intent, registry):
 def prepare_local_request(db, task, registry):
     """Return a validated local plan, or None when cloud reasoning is appropriate."""
     from ..ai.command_intents import canonical_command, switch_followup
+    from ..ai.speech_commands import strip_end_punctuation
     recent = db.query(Task).filter(Task.id != task.id).order_by(Task.created_at.desc()).first()
-    routed = switch_followup(task.command, recent) or canonical_command(task.command)
+    spoken = strip_end_punctuation(task.command)  # Whisper ends sentences with "." which the parsers do not expect
+    routed = switch_followup(spoken, recent) or canonical_command(spoken)
     media = browser_plan(routed)
     if media is not None:
         return media

@@ -22,6 +22,15 @@ FILLERS = set("please kindly meri mera mere my the turn set to by kar karo kardo
 NEGATIONS = {"not", "no", "never", "dont", "don't", "nahi", "nahin", "mat", "नहीं", "मत", "نہیں", "مت"}
 
 
+_END_PUNCTUATION = re.compile(r"[\s.,;:!?،۔।؟…]+$")
+
+
+def strip_end_punctuation(text):
+    """Drop the sentence punctuation a speech-to-text service adds ("... in Documents.") before the command parsers see it."""
+    stripped = _END_PUNCTUATION.sub("", (text or "").strip())
+    return stripped or (text or "").strip()
+
+
 def normalize_speech(text):
     text = unicodedata.normalize("NFKC", text).casefold().replace("़", "")
     for pattern, replacement in [

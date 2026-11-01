@@ -16,6 +16,7 @@ sys.path.insert(0, str(BACKEND_DIR))
 
 # --- isolated sandbox for the whole test session ------------------------------
 SESSION_TMP = Path(tempfile.mkdtemp(prefix="agentdesk_tests_"))
+os.environ["AGENTDESK_SAPI_WORKER"] = "0"  # tests do not keep a PowerShell voice running; test_sapi_worker turns it on itself
 os.environ["AI_PROVIDER"] = "mock"
 os.environ["AI_MODEL"] = "mock-test-model"
 os.environ.pop("OPENAI_API_KEY", None)

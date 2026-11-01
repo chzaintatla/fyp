@@ -6,6 +6,37 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-01 — Session 19: live voice test, issues found and fixed
+
+**How:** `backend/scripts/voice_live.py` runs the REAL voice pipeline against a sandbox copy of the app (temporary home and database) and prints every step with times:
+the command is spoken with the app's TTS, transcribed by Groq Whisper, run as a task (actions, risk, verification), a spoken "yes" is sent for approvals, the closing line is produced and spoken.
+Run it in a terminal; it plays the audio on your speakers. It writes `docs/VOICE_ISSUES.md` and `docs/eval/voice_live/`. NOT covered: your microphone, the page's voice-activity detection and playback.
+
+**Found by the first run (21 issues) and fixed**
+- V1 high: Whisper ends every transcript with "." and `create a folder called Lab in Documents.` was not understood (parsers expect no final period). `strip_end_punctuation` now runs before the local parsers.
+- V2 medium: that period was also stored in memory ("...12 December." and "December.." when read back). Stripped.
+- V3 high: every Urdu / Hindi reply was **silent audio returned as HTTP 200** (46-byte WAV): this PC's SAPI has only English voices. A silent clip now counts as a failure, `/voice/tts` answers 503, and the page speaks it with the browser voice.
+- V4 high: Urdu / Hindi "remember / what do you remember / forget" were not understood locally (0/20 of the Step 1e phrasings). Added the forms to the fast path (`tests/test_voice_live_fixes.py`).
+- V5 medium: a long "could not read that command" note was spoken as "Which one? See the screen.". Now "I didn't catch that, say it again"; a numbered list of candidates still says "which one".
+- V6 medium: a failed web answer read out `WIKIPEDIA_CONTACT_EMAIL ... docs/SEARCH_SETUP.md` for 13 seconds. Setup-style errors are now spoken as "it isn't set up yet, details on screen".
+- V7 medium: "list the files" / "show trash" said only "Done.". Now "Done. There are 5 items: a, b and c, 2 more." (4 languages).
+- V8 low: every assistant answer began with "Right away." (the persona's example catchphrase leaked into the prompt). Removed from the prompt; the UI text is unchanged.
+- V9 latency: each spoken sentence started a new PowerShell (~0.9 s). A persistent SAPI worker (`SapiWorker`, warmed at server start, falls back to the old path) makes it 25-160 ms.
+- Memory confirmations ("Okay, I'll remember: ...") were English for Urdu / Hindi users; now localized.
+- Whisper hint now includes "create a folder in Documents, Desktop, Downloads" (it once heard "in" as "&"; not reproducible, only a mitigation).
+
+**Environment problems found and fixed**
+- The launcher expects `backend\.venv` (from INSTALL.cmd) but it did not exist, so the app ran on the system Python 3.14, which lacks 12 required packages (groq, pycaw, screen-brightness-control, pywinauto, keyring, tiktoken, pypdf, python-docx, edge-tts, ...).
+  Created `backend\.venv` (Python 3.12, git-ignored) from `requirements.lock.txt` + `requirements.txt`; the server now runs on it.
+- `python-multipart` is needed to import the app (speech upload) but was only in `requirements-cloud.txt`: a clean install would not start. Added to `requirements.txt`; the five packages missing from `requirements.lock.txt` were appended to it (pinned to the installed versions).
+
+**Second run (after the fixes): 11 issues left, none critical, no high.** Spoken "yes" approved a medium-risk folder creation (verified) and did NOT approve a high-risk delete (stayed awaiting approval, told to click Approve).
+- No server voice for Urdu / Hindi replies (503, browser voice is used): edge-tts cannot reach `speech.platform.bing.com` from this network (intermittent) and Orpheus needs its terms accepted by the Groq org admin. English uses Windows SAPI (David / Zira / Hazel).
+- Latency end of speech -> first reply audio: 1.9-2.9 s for local commands, 4.3 s for a cloud answer, so about 1 in 2 are over the 2.5 s target; Whisper takes 1.1-2.6 s of it. (The 14 s and 4.6 s rows include a second spoken turn for the approval and a cold sandbox: harness artifacts.)
+- No spoken input for Urdu / Hindi could be tested: there is no Urdu / Hindi voice here to produce the audio. Those cases went in as text. Real Urdu / Hindi speech still needs a human test.
+
+**Tested how:** `pytest tests -q` -> 1761 passed, 4 skipped (new: `tests/test_voice_live_fixes.py`, 44); frontend `tsc` clean, `npm test` pass, `npm run build` ok.
+
 ### 2026-11-01 — Session 18: Step 1g, planner tool shortlist (decision: shortlist tools; fixes the HTTP 413)
 
 **Done**

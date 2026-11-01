@@ -244,7 +244,9 @@ def test_real_task_shape_from_the_api_is_recognised():
 
 def test_long_clarification_note_is_not_read_aloud():
     task = {"status": "awaiting_input", "plan_note": "x " * 200, "actions": []}
-    assert responses.line_for_task(task) == "Which one do you mean? See the choices on screen."
+    assert responses.line_for_task(task) == "I didn't catch that. Could you say it again?"  # a long plain note: not a choice
+    choices = {"status": "awaiting_input", "plan_note": "Which file?\n1. C:/a/report.docx\n2. C:/b/report.docx " + "x" * 120, "actions": []}
+    assert responses.line_for_task(choices) == "Which one do you mean? See the choices on screen."
     short = {"status": "awaiting_input", "plan_note": "Which Report file, Documents or Desktop?", "actions": []}
     assert responses.line_for_task(short) == "Which Report file, Documents or Desktop?"
 

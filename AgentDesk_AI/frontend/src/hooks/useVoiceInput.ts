@@ -134,7 +134,7 @@ export function useVoiceInput({ voice: v, prefs, voiceLanguage, setCommand, setB
       }
       const recognition = (useWhisper ? new WhisperRecognition() : new Recognition!()) as unknown as SpeechRecognitionLike;
       if (recognition instanceof WhisperRecognition) {
-        recognition.prompt = [prefs?.persona.name, 'Chrome, Notepad, Word, Excel, YouTube, WhatsApp'].filter(Boolean).join(', ');
+        recognition.prompt = [prefs?.persona.name, 'Chrome, Notepad, Word, Excel, YouTube, WhatsApp, create a folder in Documents, Desktop, Downloads'].filter(Boolean).join(', ');
         recognition.onspeechstart = () => {
           // Barge-in: the user began talking while the assistant was speaking.
           if (!v.voiceSpeakingRef.current && !v.playerRef.current?.speaking) return;

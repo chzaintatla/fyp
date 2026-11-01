@@ -611,7 +611,9 @@ def _nlu_fallback(command: str, registry: ToolRegistry) -> Plan | None:
     from ..nlu import THRESHOLD, match, validate_plan
     from ..nlu.schema import STEP_REF
 
-    result = match(command)
+    from ..ai.speech_commands import strip_end_punctuation
+
+    result = match(strip_end_punctuation(command))
     plan = result.plan
     if plan is None or result.confidence < THRESHOLD or plan.intent in _NLU_FALLBACK_INTENTS_SKIP or not plan.steps:
         return None

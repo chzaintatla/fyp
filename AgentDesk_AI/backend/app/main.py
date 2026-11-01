@@ -52,6 +52,8 @@ async def lifespan(app: FastAPI):
     init_db()
     log_event("server_start")
     threading.Thread(target=voice_api.get_chain, daemon=True).start()  # first spoken line should not pay setup
+    from .voice.tts import warm_sapi
+    warm_sapi()  # keep the Windows voice loaded: each sentence then takes ~50 ms instead of ~900 ms
     from .search import budget as _budget
     threading.Thread(target=_budget.warm, daemon=True).start()  # tokenizer download (first run only)
     # The launcher runs one server. Never leave a crashed task showing as active

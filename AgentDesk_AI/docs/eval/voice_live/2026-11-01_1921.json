@@ -1,0 +1,693 @@
+{
+ "lines": [
+  {
+   "t": "19:19:14.783",
+   "tag": "SETUP",
+   "text": "sandbox app up; speech_ready=True provider=groq home=C:\\Users\\HP\\AppData\\Local\\Temp\\agentdesk_voicelive_y639drgm\\home"
+  },
+  {
+   "t": "19:19:17.521",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 160942 bytes, 3.6s, 2700 ms)"
+  },
+  {
+   "t": "19:19:23.751",
+   "tag": "STT",
+   "text": "heard: “Create a folder called Lab in Documents.”   (1616 ms, word accuracy 100%)"
+  },
+  {
+   "t": "19:19:23.914",
+   "tag": "TASK",
+   "text": "status=awaiting_input  note: Folder ka simple naam aur parent ka exact path batayein; misal: create folder Lab in Documents."
+  },
+  {
+   "t": "19:19:23.915",
+   "tag": "ISSUE",
+   "text": "[medium] expected a confirmation card, task is awaiting_input"
+  },
+  {
+   "t": "19:19:23.915",
+   "tag": "ISSUE",
+   "text": "[high] expected ['create_folder'], got no tool (status awaiting_input)"
+  },
+  {
+   "t": "19:19:23.919",
+   "tag": "LINE",
+   "text": "reply: “Folder ka simple naam aur parent ka exact path batayein; misal: create folder Lab in Documents.”"
+  },
+  {
+   "t": "19:19:24.883",
+   "tag": "TTS",
+   "text": "sapi/female  367710 bytes  8.3s  964 ms"
+  },
+  {
+   "t": "19:19:33.636",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 11501 ms"
+  },
+  {
+   "t": "19:19:33.636",
+   "tag": "ISSUE",
+   "text": "[medium] 11501 ms from end of speech to first audio (target 2500)"
+  },
+  {
+   "t": "19:19:34.647",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 76522 bytes, 1.7s, 1011 ms)"
+  },
+  {
+   "t": "19:19:38.057",
+   "tag": "STT",
+   "text": "heard: “Show trash”   (1255 ms, word accuracy 100%)"
+  },
+  {
+   "t": "19:19:38.430",
+   "tag": "TASK",
+   "text": "status=completed  note: Kaam complete: list trash."
+  },
+  {
+   "t": "19:19:38.430",
+   "tag": "ACTION",
+   "text": "list_trash {}  risk=low status=succeeded verified=True"
+  },
+  {
+   "t": "19:19:38.434",
+   "tag": "LINE",
+   "text": "reply: “Done.”"
+  },
+  {
+   "t": "19:19:39.389",
+   "tag": "TTS",
+   "text": "sapi/female  61094 bytes  1.4s  956 ms"
+  },
+  {
+   "t": "19:19:41.155",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 4353 ms"
+  },
+  {
+   "t": "19:19:41.155",
+   "tag": "ISSUE",
+   "text": "[medium] 4353 ms from end of speech to first audio (target 2500)"
+  },
+  {
+   "t": "19:19:42.115",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 121484 bytes, 2.8s, 959 ms)"
+  },
+  {
+   "t": "19:19:47.073",
+   "tag": "STT",
+   "text": "heard: “List the files in documents”   (1804 ms, word accuracy 100%)"
+  },
+  {
+   "t": "19:19:47.132",
+   "tag": "TASK",
+   "text": "status=completed  note: Kaam complete: list folder."
+  },
+  {
+   "t": "19:19:47.132",
+   "tag": "ACTION",
+   "text": "list_folder {\"path\": \"~/Documents\"}  risk=low status=succeeded verified=True"
+  },
+  {
+   "t": "19:19:47.136",
+   "tag": "LINE",
+   "text": "reply: “Done.”"
+  },
+  {
+   "t": "19:19:48.075",
+   "tag": "TTS",
+   "text": "sapi/female  61094 bytes  1.4s  940 ms"
+  },
+  {
+   "t": "19:19:49.824",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 4556 ms"
+  },
+  {
+   "t": "19:19:49.825",
+   "tag": "ISSUE",
+   "text": "[medium] 4556 ms from end of speech to first audio (target 2500)"
+  },
+  {
+   "t": "19:19:50.748",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 127880 bytes, 2.9s, 923 ms)"
+  },
+  {
+   "t": "19:19:55.138",
+   "tag": "STT",
+   "text": "heard: “What is the capital of France?”   (1083 ms, word accuracy 100%)"
+  },
+  {
+   "t": "19:19:56.195",
+   "tag": "TASK",
+   "text": "status=completed  note: Right away. The capital of France is Paris."
+  },
+  {
+   "t": "19:19:56.200",
+   "tag": "LINE",
+   "text": "reply: “Right away. The capital of France is Paris.”"
+  },
+  {
+   "t": "19:19:57.081",
+   "tag": "TTS",
+   "text": "sapi/female  68146 bytes  1.5s  879 ms"
+  },
+  {
+   "t": "19:19:58.991",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 4936 ms"
+  },
+  {
+   "t": "19:19:58.991",
+   "tag": "ISSUE",
+   "text": "[medium] 4936 ms from end of speech to first audio (target 2500)"
+  },
+  {
+   "t": "19:20:00.005",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 149258 bytes, 3.4s, 1013 ms)"
+  },
+  {
+   "t": "19:20:05.187",
+   "tag": "STT",
+   "text": "heard: “Remember my exam is on 12 December.”   (1414 ms, word accuracy 86%)"
+  },
+  {
+   "t": "19:20:05.249",
+   "tag": "TASK",
+   "text": "status=completed  note: Kaam complete: memory remember."
+  },
+  {
+   "t": "19:20:05.249",
+   "tag": "ACTION",
+   "text": "memory_remember {\"text\": \"my exam is on 12 December.\"}  risk=low status=succeeded verified=True"
+  },
+  {
+   "t": "19:20:05.254",
+   "tag": "LINE",
+   "text": "reply: “Okay, I'll remember: my exam is on 12 December.”"
+  },
+  {
+   "t": "19:20:06.191",
+   "tag": "TTS",
+   "text": "sapi/female  216498 bytes  4.9s  938 ms"
+  },
+  {
+   "t": "19:20:11.522",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 7750 ms"
+  },
+  {
+   "t": "19:20:11.522",
+   "tag": "ISSUE",
+   "text": "[medium] 7750 ms from end of speech to first audio (target 2500)"
+  },
+  {
+   "t": "19:20:12.524",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 122154 bytes, 2.8s, 1000 ms)"
+  },
+  {
+   "t": "19:20:16.769",
+   "tag": "STT",
+   "text": "heard: “What do you remember about me?”   (1110 ms, word accuracy 100%)"
+  },
+  {
+   "t": "19:20:16.803",
+   "tag": "TASK",
+   "text": "status=completed  note: Kaam complete: memory recall."
+  },
+  {
+   "t": "19:20:16.803",
+   "tag": "ACTION",
+   "text": "memory_recall {}  risk=low status=succeeded verified=True"
+  },
+  {
+   "t": "19:20:16.807",
+   "tag": "LINE",
+   "text": "reply: “Here is what I remember: my exam is on 12 December..”"
+  },
+  {
+   "t": "19:20:17.712",
+   "tag": "TTS",
+   "text": "sapi/female  199072 bytes  4.5s  905 ms"
+  },
+  {
+   "t": "19:20:22.642",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 6983 ms"
+  },
+  {
+   "t": "19:20:22.642",
+   "tag": "ISSUE",
+   "text": "[medium] 6983 ms from end of speech to first audio (target 2500)"
+  },
+  {
+   "t": "19:20:23.612",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 104296 bytes, 2.4s, 969 ms)"
+  },
+  {
+   "t": "19:20:27.653",
+   "tag": "STT",
+   "text": "heard: “Delete the folder lab”   (1259 ms, word accuracy 100%)"
+  },
+  {
+   "t": "19:20:27.685",
+   "tag": "TASK",
+   "text": "status=awaiting_input  note: Yeh naam nahi mila. File/folder ka exact path batayein."
+  },
+  {
+   "t": "19:20:27.685",
+   "tag": "ISSUE",
+   "text": "[high] expected ['delete_file'], got no tool (status awaiting_input)"
+  },
+  {
+   "t": "19:20:27.691",
+   "tag": "LINE",
+   "text": "reply: “Yeh naam nahi mila. File/folder ka exact path batayein.”"
+  },
+  {
+   "t": "19:20:28.771",
+   "tag": "TTS",
+   "text": "sapi/female  109814 bytes  2.5s  1079 ms"
+  },
+  {
+   "t": "19:20:31.704",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 5310 ms"
+  },
+  {
+   "t": "19:20:31.704",
+   "tag": "ISSUE",
+   "text": "[medium] 5310 ms from end of speech to first audio (target 2500)"
+  },
+  {
+   "t": "19:20:32.654",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 187838 bytes, 4.3s, 949 ms)"
+  },
+  {
+   "t": "19:20:38.519",
+   "tag": "STT",
+   "text": "heard: “Documents mine test nom ka folder baneo”   (1209 ms, word accuracy 57%)"
+  },
+  {
+   "t": "19:20:38.544",
+   "tag": "TASK",
+   "text": "status=awaiting_input  note: Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein."
+  },
+  {
+   "t": "19:20:38.544",
+   "tag": "ISSUE",
+   "text": "[medium] expected a confirmation card, task is awaiting_input"
+  },
+  {
+   "t": "19:20:38.545",
+   "tag": "ISSUE",
+   "text": "[high] expected ['create_folder'], got no tool (status awaiting_input)"
+  },
+  {
+   "t": "19:20:38.550",
+   "tag": "LINE",
+   "text": "reply: “کون سا؟ اسکرین پر دیکھیں۔”"
+  },
+  {
+   "t": "19:20:39.470",
+   "tag": "TTS",
+   "text": "sapi/female  46 bytes  0.0s  920 ms"
+  },
+  {
+   "t": "19:20:39.470",
+   "tag": "ISSUE",
+   "text": "[high] the roman reply is SILENT (46 bytes, HTTP 200)"
+  },
+  {
+   "t": "19:20:39.470",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 2160 ms"
+  },
+  {
+   "t": "19:20:40.444",
+   "tag": "SPEAK",
+   "text": "you say it  (sapi, 80712 bytes, 1.8s, 972 ms)"
+  },
+  {
+   "t": "19:20:43.974",
+   "tag": "STT",
+   "text": "heard: “Trash dick how?”   (1263 ms, word accuracy 50%)"
+  },
+  {
+   "t": "19:20:45.198",
+   "tag": "TASK",
+   "text": "status=completed  note: Right away. To delete a file named “dick”, locate it in File Explorer, right‑click and select “Delete”, then confirm the prompt."
+  },
+  {
+   "t": "19:20:45.198",
+   "tag": "ISSUE",
+   "text": "[high] expected ['list_trash'], got no tool (status completed)"
+  },
+  {
+   "t": "19:20:45.202",
+   "tag": "LINE",
+   "text": "reply: “Right away. To delete a file named “dick”, locate it in File Explorer, right‑click and select “Delete”, then confirm the prompt.”"
+  },
+  {
+   "t": "19:20:46.111",
+   "tag": "TTS",
+   "text": "sapi/female  68146 bytes  1.5s  910 ms"
+  },
+  {
+   "t": "19:20:47.991",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 5279 ms"
+  },
+  {
+   "t": "19:20:47.991",
+   "tag": "ISSUE",
+   "text": "[medium] 5279 ms from end of speech to first audio (target 2500)"
+  },
+  {
+   "t": "19:20:47.992",
+   "tag": "SPEAK",
+   "text": "(no spoken input for this language here; text goes straight to the task)"
+  },
+  {
+   "t": "19:20:48.044",
+   "tag": "TASK",
+   "text": "status=completed  note: Kaam complete: list folder."
+  },
+  {
+   "t": "19:20:48.044",
+   "tag": "ACTION",
+   "text": "list_folder {\"path\": \"~/Desktop\"}  risk=low status=succeeded verified=True"
+  },
+  {
+   "t": "19:20:48.048",
+   "tag": "LINE",
+   "text": "reply: “ہو گیا۔”"
+  },
+  {
+   "t": "19:20:48.974",
+   "tag": "TTS",
+   "text": "sapi/female  46 bytes  0.0s  926 ms"
+  },
+  {
+   "t": "19:20:48.975",
+   "tag": "ISSUE",
+   "text": "[high] the ur reply is SILENT (46 bytes, HTTP 200)"
+  },
+  {
+   "t": "19:20:48.975",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 983 ms"
+  },
+  {
+   "t": "19:20:48.975",
+   "tag": "SPEAK",
+   "text": "(no spoken input for this language here; text goes straight to the task)"
+  },
+  {
+   "t": "19:20:48.990",
+   "tag": "TASK",
+   "text": "status=awaiting_input  note: Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein."
+  },
+  {
+   "t": "19:20:48.992",
+   "tag": "ISSUE",
+   "text": "[high] expected ['memory_remember'], got no tool (status awaiting_input)"
+  },
+  {
+   "t": "19:20:48.995",
+   "tag": "LINE",
+   "text": "reply: “کون سا؟ اسکرین پر دیکھیں۔”"
+  },
+  {
+   "t": "19:20:49.891",
+   "tag": "TTS",
+   "text": "sapi/female  46 bytes  0.0s  896 ms"
+  },
+  {
+   "t": "19:20:49.892",
+   "tag": "ISSUE",
+   "text": "[high] the ur reply is SILENT (46 bytes, HTTP 200)"
+  },
+  {
+   "t": "19:20:49.892",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 917 ms"
+  },
+  {
+   "t": "19:20:49.892",
+   "tag": "SPEAK",
+   "text": "(no spoken input for this language here; text goes straight to the task)"
+  },
+  {
+   "t": "19:20:49.943",
+   "tag": "TASK",
+   "text": "status=completed  note: Kaam complete: list folder."
+  },
+  {
+   "t": "19:20:49.943",
+   "tag": "ACTION",
+   "text": "list_folder {\"path\": \"~/Desktop\"}  risk=low status=succeeded verified=True"
+  },
+  {
+   "t": "19:20:49.948",
+   "tag": "LINE",
+   "text": "reply: “हो गया।”"
+  },
+  {
+   "t": "19:20:50.852",
+   "tag": "TTS",
+   "text": "sapi/female  46 bytes  0.0s  905 ms"
+  },
+  {
+   "t": "19:20:50.853",
+   "tag": "ISSUE",
+   "text": "[high] the hi reply is SILENT (46 bytes, HTTP 200)"
+  },
+  {
+   "t": "19:20:50.853",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 961 ms"
+  },
+  {
+   "t": "19:20:50.854",
+   "tag": "SPEAK",
+   "text": "(no spoken input for this language here; text goes straight to the task)"
+  },
+  {
+   "t": "19:20:50.879",
+   "tag": "TASK",
+   "text": "status=awaiting_input  note: Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein."
+  },
+  {
+   "t": "19:20:50.879",
+   "tag": "ISSUE",
+   "text": "[high] expected ['memory_remember'], got no tool (status awaiting_input)"
+  },
+  {
+   "t": "19:20:50.883",
+   "tag": "LINE",
+   "text": "reply: “कौन सा? स्क्रीन पर देखें।”"
+  },
+  {
+   "t": "19:20:51.813",
+   "tag": "TTS",
+   "text": "sapi/female  46 bytes  0.0s  930 ms"
+  },
+  {
+   "t": "19:20:51.813",
+   "tag": "ISSUE",
+   "text": "[high] the hi reply is SILENT (46 bytes, HTTP 200)"
+  },
+  {
+   "t": "19:20:51.813",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 960 ms"
+  },
+  {
+   "t": "19:20:51.813",
+   "tag": "SPEAK",
+   "text": "(no spoken input for this language here; text goes straight to the task)"
+  },
+  {
+   "t": "19:20:51.845",
+   "tag": "TASK",
+   "text": "status=failed  note: Searching the web.  ERROR: Web answers need a search provider: set WIKIPEDIA_CONTACT_EMAIL and/or store a Tavily key (see docs/SEARCH_SETUP.md)."
+  },
+  {
+   "t": "19:20:51.845",
+   "tag": "ACTION",
+   "text": "web_answer {\"query\": \"आज का मौसम कैसा है\"}  risk=low status=failed verified=False error=Web answers need a search provider: set WIKIPEDIA_CONTACT_EMAIL and/or store a Tavily key (see docs/SEARCH_SETUP.md)."
+  },
+  {
+   "t": "19:20:51.850",
+   "tag": "LINE",
+   "text": "reply: “नहीं हो सका: Web answers need a search provider: set WIKIPEDIA_CONTACT_EMAIL and/or store a Tavily key (see docs/SEARCH_SETUP.md).”"
+  },
+  {
+   "t": "19:20:52.892",
+   "tag": "TTS",
+   "text": "sapi/female  576896 bytes  13.1s  1042 ms"
+  },
+  {
+   "t": "19:21:06.331",
+   "tag": "TIME",
+   "text": "end of speech -> first reply audio ready: 14517 ms"
+  }
+ ],
+ "issues": [
+  {
+   "severity": "medium",
+   "area": "approval",
+   "case": 1,
+   "summary": "expected a confirmation card, task is awaiting_input",
+   "evidence": "Create a folder called Lab in Documents."
+  },
+  {
+   "severity": "high",
+   "area": "understanding",
+   "case": 1,
+   "summary": "expected ['create_folder'], got no tool (status awaiting_input)",
+   "evidence": "command 'Create a folder called Lab in Documents.'; error None; note 'Folder ka simple naam aur parent ka exact path batayein; misal: create folder Lab in Documents.'"
+  },
+  {
+   "severity": "medium",
+   "area": "latency",
+   "case": 1,
+   "summary": "11501 ms from end of speech to first audio (target 2500)",
+   "evidence": "create a folder called Lab in Documents"
+  },
+  {
+   "severity": "medium",
+   "area": "latency",
+   "case": 2,
+   "summary": "4353 ms from end of speech to first audio (target 2500)",
+   "evidence": "show trash"
+  },
+  {
+   "severity": "medium",
+   "area": "latency",
+   "case": 3,
+   "summary": "4556 ms from end of speech to first audio (target 2500)",
+   "evidence": "list the files in Documents"
+  },
+  {
+   "severity": "medium",
+   "area": "latency",
+   "case": 4,
+   "summary": "4936 ms from end of speech to first audio (target 2500)",
+   "evidence": "what is the capital of France"
+  },
+  {
+   "severity": "medium",
+   "area": "latency",
+   "case": 5,
+   "summary": "7750 ms from end of speech to first audio (target 2500)",
+   "evidence": "remember my exam is on twelve December"
+  },
+  {
+   "severity": "medium",
+   "area": "latency",
+   "case": 6,
+   "summary": "6983 ms from end of speech to first audio (target 2500)",
+   "evidence": "what do you remember about me"
+  },
+  {
+   "severity": "high",
+   "area": "understanding",
+   "case": 7,
+   "summary": "expected ['delete_file'], got no tool (status awaiting_input)",
+   "evidence": "command 'Delete the folder lab'; error None; note 'Yeh naam nahi mila. File/folder ka exact path batayein.'"
+  },
+  {
+   "severity": "medium",
+   "area": "latency",
+   "case": 7,
+   "summary": "5310 ms from end of speech to first audio (target 2500)",
+   "evidence": "delete the folder Lab"
+  },
+  {
+   "severity": "medium",
+   "area": "approval",
+   "case": 8,
+   "summary": "expected a confirmation card, task is awaiting_input",
+   "evidence": "Documents mine test nom ka folder baneo"
+  },
+  {
+   "severity": "high",
+   "area": "understanding",
+   "case": 8,
+   "summary": "expected ['create_folder'], got no tool (status awaiting_input)",
+   "evidence": "command 'Documents mine test nom ka folder baneo'; error None; note \"Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein.\""
+  },
+  {
+   "severity": "high",
+   "area": "tts",
+   "case": 8,
+   "summary": "the roman reply is SILENT (46 bytes, HTTP 200)",
+   "evidence": "engine sapi"
+  },
+  {
+   "severity": "high",
+   "area": "understanding",
+   "case": 9,
+   "summary": "expected ['list_trash'], got no tool (status completed)",
+   "evidence": "command 'Trash dick how?'; error None; note 'Right away. To delete a file named “dick”, locate it in File Explorer, right‑click and select “Delete”, then confirm the prompt.'"
+  },
+  {
+   "severity": "medium",
+   "area": "latency",
+   "case": 9,
+   "summary": "5279 ms from end of speech to first audio (target 2500)",
+   "evidence": "trash dikhao"
+  },
+  {
+   "severity": "high",
+   "area": "tts",
+   "case": 10,
+   "summary": "the ur reply is SILENT (46 bytes, HTTP 200)",
+   "evidence": "engine sapi"
+  },
+  {
+   "severity": "high",
+   "area": "understanding",
+   "case": 11,
+   "summary": "expected ['memory_remember'], got no tool (status awaiting_input)",
+   "evidence": "command 'یاد رکھو میرا امتحان بارہ دسمبر کو ہے'; error None; note \"Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein.\""
+  },
+  {
+   "severity": "high",
+   "area": "tts",
+   "case": 11,
+   "summary": "the ur reply is SILENT (46 bytes, HTTP 200)",
+   "evidence": "engine sapi"
+  },
+  {
+   "severity": "high",
+   "area": "tts",
+   "case": 12,
+   "summary": "the hi reply is SILENT (46 bytes, HTTP 200)",
+   "evidence": "engine sapi"
+  },
+  {
+   "severity": "high",
+   "area": "understanding",
+   "case": 13,
+   "summary": "expected ['memory_remember'], got no tool (status awaiting_input)",
+   "evidence": "command 'याद रखो मेरा एग्ज़ाम बारह दिसंबर को है'; error None; note \"Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein.\""
+  },
+  {
+   "severity": "high",
+   "area": "tts",
+   "case": 13,
+   "summary": "the hi reply is SILENT (46 bytes, HTTP 200)",
+   "evidence": "engine sapi"
+  }
+ ]
+}

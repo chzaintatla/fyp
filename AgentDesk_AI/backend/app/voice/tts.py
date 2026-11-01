@@ -7,13 +7,17 @@ so one unavailable model (e.g. Orpheus terms not accepted) costs one slow call, 
 from __future__ import annotations
 
 import asyncio
+import base64
+import io
 import logging
 import os
 import platform
+import queue
 import subprocess
 import tempfile
 import threading
 import time
+import wave
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -26,6 +30,18 @@ log = logging.getLogger(__name__)
 COOLDOWN = 300.0
 CACHE_SIZE = 64   # repeated phrases ("Done. Chrome is open.") are served without a new synthesis
 Engine = Callable[[str, str], tuple[bytes, str]]
+
+
+def is_silent(audio: bytes, mime: str) -> bool:
+    """A clip with (almost) no sound. SAPI returns an empty WAV, with no error, for text its voices cannot read
+    (this PC has only English voices, so every Urdu / Hindi sentence came back as 46 bytes of silence)."""
+    if "wav" not in (mime or ""):
+        return False
+    try:
+        with wave.open(io.BytesIO(audio)) as clip:
+            return clip.getnframes() < max(1, clip.getframerate() // 50)  # a valid WAV shorter than 20 ms
+    except (wave.Error, EOFError):
+        return False  # not a WAV we can read: leave the judgement to the player
 
 ORPHEUS_VOICES = {"female": ("autumn", "diana", "hannah"), "male": ("austin", "daniel", "troy")}
 DEFAULT_URDU = {"female": "ur-PK-UzmaNeural", "male": "ur-PK-AsadNeural"}
@@ -110,6 +126,9 @@ class TTSChain:
                 self._trip(name, exc)
                 errors.append(f"{name}: {type(exc).__name__}")
                 continue
+            if audio and is_silent(audio, mime):
+                errors.append(f"{name}: silent")  # not an engine failure: no cool-down, the next engine or the browser voice speaks
+                continue
             if audio:
                 clip = Clip(audio, mime, name, voice, text)
                 if self.cache:
@@ -180,15 +199,131 @@ $s.Dispose()
 """
 
 
+# One long-lived PowerShell that keeps System.Speech loaded: starting a new PowerShell for every sentence cost ~0.9 s each
+# (the largest part of the reply delay). Requests are one line "gender|base64(out path)|base64(text)"; the text never
+# becomes script text. It exits by itself when the server closes its stdin.
+_SAPI_WORKER = r"""
+$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Speech
+$s = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$names = @{}
+foreach ($g in 'Male', 'Female') {
+  $m = $s.GetInstalledVoices() | Where-Object { $_.Enabled -and $_.VoiceInfo.Gender.ToString() -eq $g } | Select-Object -First 1
+  if ($m) { $names[$g] = $m.VoiceInfo.Name }
+}
+[Console]::Out.WriteLine('READY'); [Console]::Out.Flush()
+while ($null -ne ($line = [Console]::In.ReadLine())) {
+  try {
+    $parts = $line.Split('|')
+    $out = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($parts[1]))
+    $text = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($parts[2]))
+    if ($names.ContainsKey($parts[0])) { $s.SelectVoice($names[$parts[0]]) }
+    $s.SetOutputToWaveFile($out)
+    $s.Speak($text)
+    $s.SetOutputToNull()
+    [Console]::Out.WriteLine('OK')
+  } catch {
+    [Console]::Out.WriteLine('ERR ' + $_.Exception.Message.Replace("`r", ' ').Replace("`n", ' '))
+  }
+  [Console]::Out.Flush()
+}
+"""
+
+
+class SapiWorker:
+    """Talks to the persistent PowerShell above. Any problem raises, and `sapi_engine` then uses the one-shot path."""
+
+    def __init__(self) -> None:
+        self._proc: subprocess.Popen | None = None
+        self._lines: "queue.Queue[str]" = queue.Queue()
+        self._lock = threading.Lock()
+
+    def _reader(self, proc: subprocess.Popen) -> None:
+        for raw in iter(proc.stdout.readline, b""):
+            self._lines.put(raw.decode("utf-8", "replace").strip())
+        self._lines.put("EOF")
+
+    def _stop(self) -> None:
+        proc, self._proc = self._proc, None
+        if proc is not None:
+            try:
+                proc.kill()
+            except OSError:
+                pass
+
+    def _start(self, timeout: float = 40.0) -> None:
+        self._lines = queue.Queue()
+        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        self._proc = subprocess.Popen(["powershell", "-NoProfile", "-NonInteractive", "-Command", _SAPI_WORKER], stdin=subprocess.PIPE,
+                                      stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, creationflags=flags)
+        threading.Thread(target=self._reader, args=(self._proc,), daemon=True).start()
+        try:
+            if self._lines.get(timeout=timeout) != "READY":
+                raise RuntimeError("the SAPI worker did not start")
+        except queue.Empty as exc:
+            self._stop()
+            raise TimeoutError("the SAPI worker did not start in time") from exc
+
+    def warm(self) -> None:
+        with self._lock:
+            if self._proc is None or self._proc.poll() is not None:
+                self._start()
+
+    def speak(self, text: str, gender: str, timeout: float = 20.0) -> bytes:
+        with self._lock:
+            if self._proc is None or self._proc.poll() is not None:
+                self._start()
+            with tempfile.TemporaryDirectory() as tmp:
+                out = Path(tmp) / "speech.wav"
+                b64 = lambda value: base64.b64encode(value.encode("utf-8")).decode("ascii")  # noqa: E731
+                try:
+                    self._proc.stdin.write(f"{gender}|{b64(str(out))}|{b64(text)}\n".encode("ascii"))
+                    self._proc.stdin.flush()
+                    reply = self._lines.get(timeout=timeout)
+                except (OSError, queue.Empty) as exc:
+                    self._stop()
+                    raise RuntimeError("the SAPI worker did not answer") from exc
+                if reply != "OK":
+                    if reply == "EOF":
+                        self._stop()
+                    raise RuntimeError(f"the SAPI worker failed: {reply[:120]}")
+                return out.read_bytes()
+
+    def close(self) -> None:
+        with self._lock:
+            self._stop()
+
+
+SAPI_WORKER = SapiWorker()
+
+
+def warm_sapi() -> None:
+    """Start the persistent voice in the background (called once when the server starts) so the first reply is not slow."""
+    if platform.system() != "Windows" or os.environ.get("AGENTDESK_SAPI_WORKER", "1") == "0":
+        return
+    threading.Thread(target=lambda: _quiet(SAPI_WORKER.warm), daemon=True).start()
+
+
+def _quiet(call) -> None:
+    try:
+        call()
+    except Exception as exc:  # noqa: BLE001 - warming is best effort
+        log.warning("SAPI worker could not start (%s); each sentence will start its own PowerShell", type(exc).__name__)
+
+
 def sapi_engine() -> Engine:
-    """Offline Windows voice. Text goes through environment variables, never into the script text."""
+    """Offline Windows voice. Text goes through the persistent worker (base64), or environment variables on the one-shot path."""
     def run(text: str, voice: str) -> tuple[bytes, str]:
         if platform.system() != "Windows":
             raise RuntimeError("SAPI is only available on Windows")
         gender = "Male" if str(voice).lower() == "male" else "Female"
+        if os.environ.get("AGENTDESK_SAPI_WORKER", "1") != "0":
+            try:
+                return SAPI_WORKER.speak(text, gender), "audio/wav"
+            except Exception as exc:  # noqa: BLE001 - fall back to the slower one-shot PowerShell below
+                log.warning("SAPI worker failed (%s: %s); using a one-shot PowerShell", type(exc).__name__, str(exc)[:80])
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "speech.wav"
-            import os
             env = {**os.environ, "AGENTDESK_SAPI_OUT": str(out), "AGENTDESK_SAPI_TEXT": text, "AGENTDESK_SAPI_GENDER": gender}
             subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command", _SAPI_SCRIPT.format()],
                            env=env, check=True, capture_output=True, timeout=20)

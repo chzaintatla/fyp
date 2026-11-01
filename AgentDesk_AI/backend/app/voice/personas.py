@@ -76,7 +76,9 @@ def personality_prompt(personality: str, user_name: str = "", custom_description
     style = resolve_style(personality, formality, humour)
     tone = next(p for p in PERSONALITIES if p["id"] == style)
     length = [text for floor, text in _ALLOWED_VERBOSITY if verbosity >= floor][-1]
-    lines = [f"Speaking style: {tone['tone']}. {tone['style']}. {length}"]
+    manner = re.sub(r'\s*\(".*?"\)', "", tone["tone"])  # the UI shows a catchphrase example ("Right away."): the model must not copy it
+    lines = [f"Speaking style: {manner}. {tone['style']}. {length}",
+             "Begin with the answer itself. Do not open with an acknowledgement such as 'Right away' or 'Sure'."]
     if user_name:
         lines.append(f"The user's name is {_clean(user_name, 40)!r}; use it sparingly.")
     if personality == "custom" and custom_description.strip():

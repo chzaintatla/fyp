@@ -7,6 +7,7 @@ Languages: "en", "roman" (Roman Urdu), "ur" (Urdu script), "hi" (Hindi).
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Any, NamedTuple
 
 from . import personas
@@ -36,7 +37,12 @@ _T: dict[str, dict[str, str]] = {
                         "ur": "کون سا؟ اسکرین پر دیکھیں۔", "hi": "कौन सा? स्क्रीन पर देखें।"},
     "not_understood": {"en": "I didn't catch that. Could you say it again?", "roman": "Samajh nahi aaya, dobara kahein.",
                        "ur": "سمجھ نہیں آیا، دوبارہ کہیں۔", "hi": "समझ नहीं आया, दोबारा कहें।"},
+    # a failure whose reason is a setup instruction (environment variable names, file paths): never read those out loud
+    "failure_setup": {"en": "I couldn't do that because it isn't set up yet. The details are on screen.",
+                      "roman": "Yeh abhi set up nahi hai. Tafseel screen par hai.",
+                      "ur": "یہ ابھی سیٹ اپ نہیں ہے۔ تفصیل اسکرین پر ہے۔", "hi": "यह अभी सेट अप नहीं है। विवरण स्क्रीन पर है।"},
 }
+_SETUP_HINT = re.compile(r"\b[A-Z][A-Z0-9]{2,}(?:_[A-Z0-9]+)+\b|docs[\\/]|\.md\b|\.env\b")
 
 # tool -> language -> (acknowledge, success detail); {app} {query} are filled from the action's args.
 _TOOL: dict[str, dict[str, tuple[str, str]]] = {
@@ -186,11 +192,13 @@ def line_for_task(task: dict[str, Any], language: str = "en", personality: "str 
         note = " ".join(str(task.get("plan_note") or "").split())
         if 0 < len(note) <= 110:  # a long note is a screen message, not something to read out
             return line("clarify", language, personality, question=note)
-        return line("clarify_generic", language, personality)
+        if re.search(r"(?m)^\s*1[.)]", str(task.get("plan_note") or "")):  # a numbered list of candidates on screen
+            return line("clarify_generic", language, personality)
+        return line("not_understood", language, personality)  # a long "I could not read that command" note
     if status == "waiting_retry":
         return line("slow", language, personality)
     if status == "completed" and actions and all(_verified(a) for a in actions):
-        said = _tool_speech(actions)
+        said = _tool_speech(actions, _lang(language))
         if said:
             return said  # an answer or a read-out ("Here is what I remember...") is the reply itself
         return line("success", language, personality, detail=_success_detail(actions, language))
@@ -206,13 +214,43 @@ def line_for_task(task: dict[str, Any], language: str = "en", personality: "str 
         return line("cancelled", language, personality)
     reason = (task.get("error") or next((a.get("error") for a in actions if a.get("error")), None)
               or _failed_check(actions) or "it did not work")
+    if _SETUP_HINT.search(str(reason)):
+        return line("failure_setup", language, personality)
     return line("failure", language, personality, reason=_one_sentence(reason))
 
 
-def _tool_speech(actions: list[dict[str, Any]]) -> str:
+_MEMORY_SPEECH = {  # the memory tools word their `spoken` output in English: say it in the user's language
+    "remember": {"roman": "Theek hai, yaad rakhoonga: {text}", "ur": "ٹھیک ہے، یاد رکھوں گا: {text}", "hi": "ठीक है, याद रखूँगा: {text}"},
+    "already": {"roman": "Yeh pehle se yaad hai.", "ur": "یہ پہلے سے یاد ہے۔", "hi": "यह पहले से याद है।"},
+    "forget": {"roman": "Theek hai, bhool gaya: {text}", "ur": "ٹھیک ہے، بھول گیا: {text}", "hi": "ठीक है, भूल गया: {text}"},
+    "recall": {"roman": "Mujhe yaad hai: {text}.", "ur": "مجھے یاد ہے: {text}۔", "hi": "मुझे याद है: {text}।"},
+    "empty": {"roman": "Aap ke baare mein abhi kuch save nahi hai.", "ur": "آپ کے بارے میں ابھی کچھ محفوظ نہیں۔",
+              "hi": "आपके बारे में अभी कुछ सेव नहीं है।"},
+}
+
+
+def _memory_speech(action: dict[str, Any], lang: str) -> str:
+    output = (action.get("result") or {}).get("output") or {}
+    tool = action.get("tool_name")
+    if lang == "en" or tool not in ("memory_remember", "memory_recall", "memory_forget"):
+        return ""
+    if tool == "memory_remember":
+        key, text = ("already", "") if output.get("already_saved") else ("remember", output.get("text", ""))
+    elif tool == "memory_forget":
+        key, text = "forget", (output.get("deleted") or {}).get("text", "")
+    else:
+        items = [str(i) for i in output.get("items") or []]
+        key, text = ("recall", "; ".join(items[:5])) if items else ("empty", "")
+    return _MEMORY_SPEECH[key][lang].format(text=text)
+
+
+def _tool_speech(actions: list[dict[str, Any]], lang: str = "en") -> str:
     """The text a single verified action wants spoken (its `spoken` output), if any."""
     if len(actions) != 1:
         return ""
+    localized = _memory_speech(actions[0], lang)
+    if localized:
+        return localized
     return _answer_speech(str(((actions[0].get("result") or {}).get("output") or {}).get("spoken") or ""))
 
 
@@ -228,8 +266,37 @@ def _success_detail(actions: list[dict[str, Any]], language: str) -> str:
         return {"en": f"All {len(actions)} steps are finished.", "roman": f"Saray {len(actions)} steps mukammal.",
                 "ur": f"تمام {len(actions)} مراحل مکمل۔", "hi": f"सभी {len(actions)} चरण पूरे।"}[lang]
     action = actions[0] if actions else {}
+    listed = _listing(action, lang)
+    if listed:
+        return listed
     entry = _TOOL.get(action.get("tool_name", ""), {}).get(lang)
     return _fmt(entry[1], _slots_for(action.get("args") or {})) if entry else ""
+
+
+_LISTING = {  # (empty, "{n} items: {names}") per language
+    "en": ("It is empty.", "There are {n} items: {names}."), "roman": ("Yeh khali hai.", "{n} cheezein hain: {names}."),
+    "ur": ("یہ خالی ہے۔", "{n} چیزیں ہیں: {names}۔"), "hi": ("यह खाली है।", "{n} चीज़ें हैं: {names}।"),
+}
+_AND, _MORE = {"en": "and", "roman": "aur", "ur": "اور", "hi": "और"}, {"en": "{k} more", "roman": "{k} aur", "ur": "{k} مزید", "hi": "{k} और"}
+
+
+def _listing(action: dict[str, Any], lang: str) -> str:
+    """"Done." alone tells the user nothing after "list the files in Documents": say how many there are and the first few names."""
+    output = (action.get("result") or {}).get("output") or {}
+    if action.get("tool_name") == "list_folder":
+        names = [str(e.get("name", "")) for e in output.get("entries") or [] if e.get("name")]
+    elif action.get("tool_name") == "list_trash":
+        names = [Path(str(i.get("original_path", ""))).name for i in output.get("items") or [] if i.get("original_path")]
+    else:
+        return ""
+    empty, many = _LISTING[lang]
+    if not names:
+        return empty
+    shown = names[:3]
+    spoken = ", ".join(shown[:-1]) + f" {_AND[lang]} " + shown[-1] if len(shown) > 1 else shown[0]
+    if len(names) > 3:
+        spoken += ", " + _MORE[lang].format(k=len(names) - 3)
+    return many.format(n=len(names), names=spoken)
 
 
 def _approval_summary(language: str) -> str:
