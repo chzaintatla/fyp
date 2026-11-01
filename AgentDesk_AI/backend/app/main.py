@@ -42,6 +42,7 @@ from .browser_bridge import router as browser_router, bridge
 from .voice import api as voice_api
 from .voice.api import router as voice_router
 from . import state  # noqa: F401  (registers state-machine guards)
+from .nlu.entity_index import get_index  # imported here, not in lifespan: a first import from the start-up threads can deadlock
 
 settings = get_settings()
 
@@ -58,7 +59,6 @@ async def lifespan(app: FastAPI):
     from .search import budget as _budget
     threading.Thread(target=_budget.warm, daemon=True).start()  # tokenizer download (first run only)
     if os.environ.get("AGENTDESK_ENTITY_INDEX", "1") != "0":
-        from .nlu.entity_index import get_index
         get_index().start()  # apps / recent files / folders, rebuilt every 10 minutes in the background
     # The launcher runs one server. Never leave a crashed task showing as active
     # or replay its possibly completed device/file operation after restart.
