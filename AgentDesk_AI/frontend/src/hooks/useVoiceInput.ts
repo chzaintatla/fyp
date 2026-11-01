@@ -1,5 +1,5 @@
 import type { MutableRefObject } from 'react';
-import { authMessage, hasApiToken, type Preferences } from '../api';
+import { authMessage, hasApiToken, voiceApi, type Preferences } from '../api';
 import { afterInterruption, isSpeechEcho } from '../voice';
 import { WhisperRecognition } from '../speech/whisperRecognition';
 import type { SpeechRecognitionConstructor, SpeechRecognitionLike } from '../speech/recognitionTypes';
@@ -201,8 +201,11 @@ export function useVoiceInput({ voice: v, prefs, voiceLanguage, setCommand, setB
             v.recognitionRef.current = null;
             v.setListening(false);
           }
-        }, recognition instanceof WhisperRecognition ? 500 : 2200); // Whisper input is already a finished sentence
-        if (recognition instanceof WhisperRecognition) v.speechEndedAtRef.current = recognition.lastSpeechEndAt;
+        }, recognition instanceof WhisperRecognition ? 120 : 2200); // Whisper input is already a finished sentence (a command was held 500 ms before)
+        if (recognition instanceof WhisperRecognition) {
+          v.speechEndedAtRef.current = recognition.lastSpeechEndAt;
+          if (recognition.lastSpeechEndAt > 0) void voiceApi.latency('local', { transcribed: performance.now() - recognition.lastSpeechEndAt });
+        }
       };
       recognition.onerror = (event) => {
         if (!v.handsFreeRef.current) return;

@@ -78,6 +78,43 @@ class LineIn(BaseModel):
     slots: dict[str, Any] = {}
 
 
+class AckIn(BaseModel):
+    command: str = Field(min_length=1, max_length=2000)
+    language: str = "en"
+    personality: str = Field(default="assistant", pattern="^(assistant|mentor|friend|coach|custom)$")
+    user_name: str = Field(default="", max_length=40)
+    formality: int = Field(default=50, ge=0, le=100)
+    humour: int = Field(default=50, ge=0, le=100)
+
+
+# Tools whose early acknowledgement can never be wrong or alarming: they only open, show or read. Anything that
+# changes, deletes, sends or installs gets no early "Okay"; its confirmation comes after the plan and the approval.
+EARLY_ACK_TOOLS = {"open_application", "open_url", "open_folder", "open_file", "list_folder", "list_trash", "web_search",
+                   "play_youtube_video", "find_files", "find_paths", "memory_recall"}
+
+
+def quick_ack_text(command: str, language: str, who) -> str | None:
+    """"Opening chrome." from the local fast path alone (a few ms, no network, nothing executed); None when it is not a safe one-step open/show."""
+    from ..ai.speech_commands import clean_transcript
+    from ..nlu.local_matcher import THRESHOLD, match
+    from ..nlu.memory import ConversationMemory
+    found = match(clean_transcript(command), ConversationMemory())
+    steps = found.plan.steps if found.plan else []
+    if found.confidence < THRESHOLD or len(steps) != 1 or steps[0].tool not in EARLY_ACK_TOOLS:
+        return None
+    return responses.acknowledge_line(steps[0].tool, steps[0].args, language, who)
+
+
+@router.post("/ack")
+def early_ack(body: AckIn) -> dict:
+    """The acknowledgement for a command, ready before the task is even created, so it can be spoken while the task runs."""
+    who = responses.Voiceprint(body.personality, body.user_name, body.formality, body.humour)
+    try:
+        return {"text": quick_ack_text(body.command, body.language, who)}
+    except Exception:  # noqa: BLE001 - an acknowledgement is optional
+        return {"text": None}
+
+
 class LatencyIn(BaseModel):
     kind: str = Field(default="local", pattern="^(local|planned|chat)$")
     ms: dict[str, float]
@@ -179,6 +216,12 @@ def report_latency(body: LatencyIn) -> None:
     utt = latency.Utterance(body.kind)
     utt.marks = {"speech_end": 0.0, **{k: v / 1000 for k, v in body.ms.items() if k in latency.STAGES}}
     utt.finish()
+
+
+@router.get("/latency/stages")
+def latency_stages() -> list[dict]:
+    """Every measured stage against its section-7 budget (p50, p90, share within budget, ok / MISS)."""
+    return latency.stage_report()
 
 
 @router.get("/latency")

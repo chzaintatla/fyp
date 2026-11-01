@@ -1,0 +1,43 @@
+{
+ "commands": 250,
+ "answered_locally": 248,
+ "answered_locally_and_right_tools": 248,
+ "share_answered_pct": 99.2,
+ "share_right_pct": 99.2,
+ "by_language": {
+  "en": {
+   "n": 77,
+   "answered": 76,
+   "right": 76
+  },
+  "roman_ur": {
+   "n": 75,
+   "answered": 74,
+   "right": 74
+  },
+  "ur": {
+   "n": 49,
+   "answered": 49,
+   "right": 49
+  },
+  "hi": {
+   "n": 49,
+   "answered": 49,
+   "right": 49
+  }
+ },
+ "by_split": {
+  "dev": {
+   "n": 168,
+   "answered": 166,
+   "right": 166
+  },
+  "holdout": {
+   "n": 82,
+   "answered": 82,
+   "right": 82
+  }
+ },
+ "ms_p50": 0.16,
+ "ms_max": 5.61
+}

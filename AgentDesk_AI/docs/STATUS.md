@@ -6,6 +6,31 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-02 — Session 23: Upgrade U2 (speed): latency log with budgets, early acknowledgement, model routing, warm connection
+
+**Built (not committed)**
+- `voice/latency.py`: `BUDGET_MS` (section 7), `record_task` (server row per command: plan, execute_verify, total, route; no command text), `stage_report` (p50 / p90 / share within budget / ok or MISS). `executor.start_task` writes the row; `GET /voice/latency/stages`; `scripts/latency_report.py` prints the table from the app's real log. The browser now also reports `transcribed` and `ack_first_word`.
+- `POST /voice/ack`: "Opening Chrome." from the local fast path in under 1 ms, only for safe one-step open/show/read tools (`EARLY_ACK_TOOLS`); delete, volume, remember, multi-step and unknown commands get none. The page speaks it in parallel with the task (`useSpokenReplies.earlyAck`); the closing line waits for it to finish; the old 900 ms timer ack is skipped when the early one fired.
+- Model routing (`nlu/planner.py`): `is_complex()` (sequence words, long, "and" in a long sentence); simple -> gpt-oss-20b first, complex -> gpt-oss-120b first, the other is the fallback; the plan is validated either way. Two old tests asserted 120b-first and were updated.
+- Warm connection: Groq client keep-alive 90 s (httpx default is 5 s) + `ai/warm.py` pings a no-token endpoint every 50 s while the app was used in the last 30 min (measured: a request after 70 s idle 874 ms vs 330 ms warm; Groq closes an idle connection after about a minute). A rejected key is dropped and the next key tried.
+- Endpointing: VAD end silence 650 -> 450 ms, hold before sending a Whisper result 500 -> 120 ms. RISK: a sentence with a longer pause may be cut in two; needs a live test.
+- Bug found while testing: my edit scripts turned doubled backslashes into backspace characters (`\b` in regexes). The U1 "plus plus" rule (committed in 56d1dd3) never worked until now; fixed together with the new routing patterns.
+
+**Measured (this PC)**
+- `scripts/latency_u2.py`, 30 runs, sandbox app, read-only / sandbox-folder commands, apps NOT launched (`docs/eval/u2_latency.json`): Whisper p50 1112 ms (p90 1321); /voice/ack p50 6 ms; first TTS sentence p50 30 ms; plan p50 11 ms; execute + verify p50 20 ms (max 514); closing line + its TTS about 27 ms.
+  Estimated end of speech -> first acknowledgement audio (adds the configured 450 ms VAD silence and 120 ms hold, NOT measured in a browser): p50 1711 ms, p90 1790 ms -> **MISS of the 1.5 s budget** (1 of 18 within it). Only 18 of 30 commands got an early acknowledgement.
+  Estimated end of speech -> done: p50 1754 ms, p90 2009 ms, max 2816 ms; **30 of 30 under 5 s**.
+  Cause of the acknowledgement miss: Whisper alone takes 1.1 s here (network round trip about 330 ms); the spec assumed 0.5-0.8 s.
+- Fast path (`scripts/fastpath_coverage.py`, 250 first-turn gold commands): 99.2% answered locally with the right tools (dev 166/168, holdout 82/82), 0.16 ms median.
+- Model routing live (`scripts/model_routing_check.py`, 6 gold commands, `docs/eval/u2_models.json`): gpt-oss-20b 6/6 right tools, median 775 ms; gpt-oss-120b 6/6, median 1102 ms. Six commands only: it shows 20b is about 30% faster on these, not that it is as accurate in general.
+- Tests: full backend run 1861 passed, 2 failed (the two old model-order assertions, then updated; `tests/test_nlu.py` 56 passed), 4 skipped; 32 new tests in `tests/test_u2_speed.py`. Frontend `tsc` clean, `npm test` 21/21.
+
+**NOT measured / not done**
+- Launching an app and verifying it (the real cost of "Open Chrome"): not run, to avoid opening windows from a test; the app's own log fills it in during real use (`scripts\check_u2.ps1`, `latency_report.py`).
+- The microphone, browser and playback stages (only added as constants); the spoken early acknowledgement itself was not heard (the built-in browser blocks the microphone, and no audio was played).
+- Vision tasks and multi-step progress line within 5 s (U7 / U3). UIA tree cache (U4).
+- The Whisper stage misses its 1.1 s budget (p50 1.11 s, p90 1.32 s); it is the network, not the code.
+
 ### 2026-11-02 — Session 22: Upgrade U1 (understanding): entity index, sound-alike matching, Whisper vocabulary, correction memory
 
 **Built (not committed)**

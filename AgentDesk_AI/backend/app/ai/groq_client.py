@@ -118,6 +118,17 @@ def _status_code(exc: Exception) -> int | None:
     return code if isinstance(code, int) else None
 
 
+KEEPALIVE_SECONDS = 90   # httpx closes an idle connection after 5 s by default; a new TLS handshake costs 150-400 ms
+
+
+def _keepalive_http_client(timeout: float):
+    """The SDK's own client with a long keep-alive, so the next command reuses the open HTTPS connection."""
+    from groq import DefaultHttpxClient
+    import httpx
+    return DefaultHttpxClient(limits=httpx.Limits(max_connections=20, max_keepalive_connections=8, keepalive_expiry=KEEPALIVE_SECONDS),
+                              timeout=httpx.Timeout(timeout, connect=10.0))
+
+
 class GroqClient:
     """Shared Groq access for chat completions, transcription and speech."""
 
@@ -159,6 +170,7 @@ class GroqClient:
         self.tts_model = tts_model
         self.tts_voice = tts_voice
         self._client = client
+        self.last_used = 0.0   # time.monotonic() of the last request; the warm-up loop stops pinging when idle
         self._sleep = sleep
         self.usage = usage or UsageCounter()
 
@@ -201,8 +213,21 @@ class GroqClient:
             # SDK retries are disabled: this class owns the retry policy.
             key = (self._pool.current() if self._pool is not None else None) or self._api_key
             self._sdk_key = key if self._pool is not None else None
-            self._client = self._factory(key) if self._factory else Groq(api_key=key, timeout=self.timeout_seconds, max_retries=0)
+            self._client = self._factory(key) if self._factory else Groq(
+                api_key=key, timeout=self.timeout_seconds, max_retries=0, http_client=_keepalive_http_client(self.timeout_seconds))
         return self._client
+
+    def warm(self) -> float | None:
+        """Open (or refresh) the HTTPS connection with a request that costs no tokens. Returns its time in ms, None if it failed."""
+        started = time.perf_counter()
+        for _ in range(3):   # a key Groq rejects is dropped from the pool (as for a real request) and the next key is tried
+            try:
+                self._sdk().models.list()
+                return (time.perf_counter() - started) * 1000
+            except Exception as exc:  # noqa: BLE001 - warming is a courtesy; a real request reports real errors
+                if not (_status_code(exc) in (401, 403) and self._rotate("chat", None, rejected=True)):
+                    return None
+        return None
 
     def _rotate(self, kind: str, delay: float | None, rejected: bool = False) -> bool:
         """Switch to the next key after a limit (or rejection). True when another key can be used right now."""
@@ -252,6 +277,7 @@ class GroqClient:
             if attempt > self.max_retries:
                 break
             started = time.perf_counter()
+            self.last_used = time.monotonic()
             self.usage.add(kind, calls=1)
             try:
                 result = fn()

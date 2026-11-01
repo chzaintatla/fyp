@@ -339,6 +339,9 @@ export const voiceApi = {
   catalog: async () => (await (await voiceFetch('/voice/catalog', { method: 'GET' })).json()) as Catalog,
   line: async (body: { task?: TaskOut; tool?: string; args?: Record<string, unknown>; event?: string; language: string; personality?: string; user_name?: string; formality?: number; humour?: number }) =>
     ((await (await voiceFetch('/voice/line', jsonInit(body))).json()) as { text: string }).text,
+  /** The acknowledgement for a command, from the local fast path (no network, nothing executed); text is null when none is safe. */
+  ack: async (body: { command: string; language: string; personality?: string; user_name?: string; formality?: number; humour?: number }) =>
+    ((await (await voiceFetch('/voice/ack', jsonInit(body))).json()) as { text: string | null }).text,
   stt: async (wav: Uint8Array, language?: string, prompt?: string) => {
     const form = new FormData();
     form.append('audio', new Blob([wav as BlobPart], { type: 'audio/wav' }), 'speech.wav');

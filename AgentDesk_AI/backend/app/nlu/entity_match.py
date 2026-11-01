@@ -26,7 +26,7 @@ _SPLIT = re.compile(r"[^a-z0-9+#]+")
 
 def _norm(text: str, strip_noise: bool = True) -> str:
     t = re.sub(r"\.(?:lnk|url|exe)$", "", text.strip(), flags=re.I)
-    t = re.sub(r"plus\s+plus", "++", t, flags=re.I)
+    t = re.sub(r"\bplus\s+plus\b", "++", t, flags=re.I)
     words = " ".join(w for w in _SPLIT.split((_NOISE.sub(" ", t) if strip_noise else t).casefold()) if w)
     return words or " ".join(w for w in _SPLIT.split(t.casefold()) if w)
 

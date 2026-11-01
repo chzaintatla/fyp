@@ -6,10 +6,12 @@ interface Params {
   setBanner: (message: string | null) => void;
   /** Called when creating the task failed, so a voice command that was waiting for it can move on. */
   onCommandFailed: () => void;
+  /** Called with a new command the moment it is sent, before the task exists: the acknowledgement is spoken while the task runs. */
+  onCommandStart?: (command: string) => void;
 }
 
 /** The active task, the history list and every action that changes a task (run, approve, reject, undo, cancel...). */
-export function useTasks({ setBanner, onCommandFailed }: Params) {
+export function useTasks({ setBanner, onCommandFailed, onCommandStart }: Params) {
   const [command, setCommand] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [activeTask, setActiveTask] = useState<TaskOut | null>(null);
@@ -112,8 +114,10 @@ export function useTasks({ setBanner, onCommandFailed }: Params) {
     setSubmitting(true);
     setBanner(null);
     try {
-      const t = activeTask && ['awaiting_approval', 'awaiting_input'].includes(activeTask.status)
-        ? await api.replyTask(activeTask.id, trimmed)
+      const isReply = !!activeTask && ['awaiting_approval', 'awaiting_input'].includes(activeTask.status);
+      if (!isReply) onCommandStart?.(trimmed);
+      const t = isReply
+        ? await api.replyTask(activeTask!.id, trimmed)
         : await api.createTask(trimmed, crypto.randomUUID());
       setActiveTask(t);
       upsertHistory(t);

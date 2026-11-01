@@ -225,16 +225,16 @@ def test_groq_planner_sends_strict_schema_and_counts_usage(registry):
     fmt = call["response_format"]
     assert fmt["type"] == "json_schema" and fmt["json_schema"]["strict"] is True
     assert "tools" not in call and "stream" not in call
-    assert call["model"] == "openai/gpt-oss-120b"
+    assert call["model"] == "openai/gpt-oss-20b"   # U2: a simple command tries the small model first
     assert result.source == "groq" and result.usage == {"calls": 1, "prompt_tokens": 100, "completion_tokens": 20}
 
 
-def test_groq_planner_falls_back_to_20b_on_invalid_plan(registry):
+def test_groq_planner_falls_back_to_the_other_model_on_invalid_plan(registry):
     invented = dict(GOOD_PLAN, steps=[{"tool": "run_shell", "args": {}, "depends_on": None, "expected_outcome": ""}])
     client = FakeGroqClient(json.dumps(invented), json.dumps(GOOD_PLAN))
     result = GroqPlanner(client).plan(ctx(registry))
-    assert [c["model"] for c in client.calls] == ["openai/gpt-oss-120b", "openai/gpt-oss-20b"]
-    assert result.model == "openai/gpt-oss-20b" and "unknown tool" in result.errors[0]
+    assert [c["model"] for c in client.calls] == ["openai/gpt-oss-20b", "openai/gpt-oss-120b"]
+    assert result.model == "openai/gpt-oss-120b" and "unknown tool" in result.errors[0]
 
 
 def test_groq_planner_never_returns_an_invalid_plan(registry):

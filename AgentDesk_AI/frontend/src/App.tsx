@@ -25,7 +25,8 @@ export default function App() {
   const toggleVoiceRef = useRef<() => void>(() => {});
   const commandFailedRef = useRef<() => void>(() => {});
 
-  const tasks = useTasks({ setBanner, onCommandFailed: () => commandFailedRef.current() });
+  const commandStartRef = useRef<(command: string) => void>(() => {});
+  const tasks = useTasks({ setBanner, onCommandFailed: () => commandFailedRef.current(), onCommandStart: (c) => commandStartRef.current(c) });
   const { activeTask, command, setCommand, submitting, busy } = tasks;
   const { config, configError, prefs, catalog, theme, setTheme, savePreferences } =
     useAppData({ setBanner, setVoiceLanguage, loadHistory: tasks.loadHistory });
@@ -34,7 +35,8 @@ export default function App() {
     voice, prefs, voiceLanguage, setCommand, setBanner,
     submittingRef: tasks.submittingRef, runCommandRef: tasks.runCommandRef,
   });
-  useSpokenReplies({ voice, activeTask, prefs, voiceLanguage, beginFollowUp: input.beginFollowUp });
+  const { earlyAck } = useSpokenReplies({ voice, activeTask, prefs, voiceLanguage, beginFollowUp: input.beginFollowUp });
+  commandStartRef.current = earlyAck;
 
   // A voice command that was waiting for its task moves on when creating the task failed.
   commandFailedRef.current = () => {

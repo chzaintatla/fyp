@@ -8,7 +8,11 @@ import threading
 import time
 from pathlib import Path
 
-STAGES = ("speech_end", "transcribed", "understood", "first_audio_ready", "first_word_played", "done")
+STAGES = ("speech_end", "transcribed", "understood", "first_audio_ready", "ack_first_word", "first_word_played", "done")
+# Section 7 of the upgrade spec. Milliseconds from the end of the user's speech, except the server rows (plan / execute_verify / total),
+# which are measured inside the app from the moment the command arrives.
+BUDGET_MS = {"transcribed": 1100, "ack_first_word": 1500, "first_word_played": 2500, "done": 5000,
+             "plan_local": 100, "plan_cloud": 1200, "execute_verify": 2000, "total_local": 2500}
 _lock = threading.Lock()
 
 
@@ -41,6 +45,49 @@ class Utterance:
         with _lock, self.path.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(row) + "\n")
         return row
+
+
+def record_task(route: str, plan_ms: float, run_ms: float, path: Path | None = None) -> None:
+    """Server-side row for one command: how long planning took and how long running + verifying took (no command text)."""
+    p = path or log_path()
+    row = {"ts": round(time.time(), 3), "kind": "task", "route": route,
+           "ms": {"plan": round(plan_ms, 1), "execute_verify": round(run_ms, 1), "total": round(plan_ms + run_ms, 1)}}
+    try:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with _lock, p.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(row) + "\n")
+    except OSError:
+        pass  # a full disk must never fail a command
+
+
+def stage_report(path: Path | None = None) -> list[dict]:
+    """Per stage: runs, p50, p90 and the budget, with a MISS flag when the median or p90 is over it (never hidden)."""
+    p = path or log_path()
+    rows: list[dict] = []
+    if p.exists():
+        for line in p.read_text(encoding="utf-8").splitlines():
+            try:
+                rows.append(json.loads(line))
+            except ValueError:
+                continue
+    out: list[dict] = []
+
+    def add(name: str, values: list[float], budget: int | None) -> None:
+        if not values:
+            return
+        p50, p90 = percentile(values, 50), percentile(values, 90)
+        out.append({"stage": name, "runs": len(values), "p50_ms": round(p50, 1), "p90_ms": round(p90, 1), "budget_ms": budget,
+                    "within_budget": None if budget is None else sum(v <= budget for v in values) / len(values),
+                    "status": "n/a" if budget is None else ("ok" if p90 <= budget else "MISS")})
+
+    for stage in ("transcribed", "ack_first_word", "first_word_played", "done"):
+        add(stage, [r["ms"][stage] for r in rows if r.get("kind") != "task" and stage in r.get("ms", {})], BUDGET_MS[stage])
+    for route in ("local", "cloud"):
+        sel = [r["ms"] for r in rows if r.get("kind") == "task" and r.get("route") == route]
+        add(f"plan ({route})", [m["plan"] for m in sel], BUDGET_MS["plan_local" if route == "local" else "plan_cloud"])
+        add(f"execute_verify ({route})", [m["execute_verify"] for m in sel], BUDGET_MS["execute_verify"])
+        add(f"total in app ({route})", [m["total"] for m in sel], BUDGET_MS["total_local"] if route == "local" else None)
+    return out
 
 
 def percentile(values: list[float], pct: float) -> float:

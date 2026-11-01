@@ -1,0 +1,94 @@
+{
+ "summary": {
+  "openai/gpt-oss-20b": {
+   "n": 6,
+   "ms_p50": 774.5,
+   "right_tools": 6,
+   "errors": 0
+  },
+  "openai/gpt-oss-120b": {
+   "n": 6,
+   "ms_p50": 1102.0,
+   "right_tools": 6,
+   "errors": 0
+  }
+ },
+ "rows": {
+  "openai/gpt-oss-20b": [
+   {
+    "id": "en-026",
+    "ms": 2058,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "roman_ur-021",
+    "ms": 1023,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "roman_ur-041",
+    "ms": 383,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "en-012",
+    "ms": 773,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "roman_ur-002",
+    "ms": 448,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "en-001",
+    "ms": 776,
+    "right_tools": true,
+    "error": null
+   }
+  ],
+  "openai/gpt-oss-120b": [
+   {
+    "id": "en-026",
+    "ms": 1147,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "roman_ur-021",
+    "ms": 991,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "roman_ur-041",
+    "ms": 1472,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "en-012",
+    "ms": 1057,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "roman_ur-002",
+    "ms": 2652,
+    "right_tools": true,
+    "error": null
+   },
+   {
+    "id": "en-001",
+    "ms": 701,
+    "right_tools": true,
+    "error": null
+   }
+  ]
+ }
+}

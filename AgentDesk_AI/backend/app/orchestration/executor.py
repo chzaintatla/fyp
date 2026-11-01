@@ -18,6 +18,7 @@ State machine (tasks):
 from __future__ import annotations
 
 import concurrent.futures
+import contextvars
 import hashlib
 import json
 import time
@@ -360,7 +361,21 @@ def _run_with_timeout(tool, parsed_args, timeout_seconds: int) -> ToolResult:
         pool.shutdown(wait=False)
 
 
+_RUN_MS: contextvars.ContextVar[list | None] = contextvars.ContextVar("run_ms", default=None)
+
+
 def run_task(db: Session, task_id: str, registry: ToolRegistry, settings: Settings) -> Task:
+    """Execute and verify (see `_run_task`); adds the time to the current command's latency row when there is one."""
+    started = time.perf_counter()
+    try:
+        return _run_task(db, task_id, registry, settings)
+    finally:
+        box = _RUN_MS.get()
+        if box is not None:
+            box[0] += (time.perf_counter() - started) * 1000
+
+
+def _run_task(db: Session, task_id: str, registry: ToolRegistry, settings: Settings) -> Task:
     """Execute approved actions in order, verifying each one.
 
     Duplicate-execution prevention: terminal tasks are returned unchanged,
@@ -635,6 +650,27 @@ def _nlu_fallback(command: str, registry: ToolRegistry) -> Plan | None:
 
 
 def start_task(
+    db: Session, command: str, idempotency_key: str | None,
+    registry: ToolRegistry, settings: Settings,
+    auto_approve: bool = False,
+) -> Task:
+    """Create a task and start the right flow for the configured provider; logs plan / execute+verify times (no command text)."""
+    from ..voice import latency
+    box = [0.0]
+    token = _RUN_MS.set(box)
+    started = time.perf_counter()
+    try:
+        task = _start_task(db, command, idempotency_key, registry, settings, auto_approve)
+    finally:
+        _RUN_MS.reset(token)
+    total = (time.perf_counter() - started) * 1000
+    state = task.agent_state_json or ""
+    route = "local" if '"provider": "local"' in state or not state else "cloud"
+    latency.record_task(route, max(0.0, total - box[0]), box[0])
+    return task
+
+
+def _start_task(
     db: Session, command: str, idempotency_key: str | None,
     registry: ToolRegistry, settings: Settings,
     auto_approve: bool = False,

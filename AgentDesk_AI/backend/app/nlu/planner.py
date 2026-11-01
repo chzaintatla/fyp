@@ -18,6 +18,7 @@ that fails validation is never returned as usable.
 from __future__ import annotations
 
 import json
+import re
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -197,6 +198,9 @@ class StructuredChatPlanner(PlannerProvider):
 
     models: tuple[str, ...] = ()
 
+    def models_for(self, command: str) -> tuple[str, ...]:
+        return self.models
+
     @abstractmethod
     def _complete(self, messages, fmt, model) -> tuple[str | None, dict[str, int]]:
         """Return (content, {'prompt_tokens', 'completion_tokens'})."""
@@ -209,7 +213,7 @@ class StructuredChatPlanner(PlannerProvider):
         errors: list[str] = []
         started = time.perf_counter()
         last: Exception | None = None
-        for model in self.models:
+        for model in self.models_for(context.command):
             try:
                 usage["calls"] += 1
                 content, used = self._complete(messages, fmt, model)
@@ -229,8 +233,27 @@ class StructuredChatPlanner(PlannerProvider):
         raise last or AIError(f"{self.name}: no model configured")
 
 
+_SEQUENCE = re.compile(r"\b(?:and then|then|after that|afterwards|followed by|aur phir|phir|uske baad|baad mein)\b|और फिर|फिर|اور پھر|پھر", re.I)
+SMALL_MODEL, BIG_MODEL = "openai/gpt-oss-20b", "openai/gpt-oss-120b"
+
+
+def is_complex(command: str) -> bool:
+    """Several steps in one sentence ("... and then ...", a long request): worth the bigger model. Everything else is a simple plan."""
+    words = command.split()
+    return len(words) > 14 or bool(_SEQUENCE.search(command)) or (len(words) > 8 and bool(re.search(r"\b(?:and|aur|और|اور)\b", command, re.I)))
+
+
 class GroqPlanner(StructuredChatPlanner):
     name = "groq"
+
+    def models_for(self, command: str) -> tuple[str, ...]:
+        """gpt-oss-20b first for a simple plan (about twice as fast), gpt-oss-120b first for a multi-step one; the other is the fallback.
+
+        The plan is validated the same way whichever model wrote it, so a weaker answer is rejected and retried on the other model."""
+        if not {SMALL_MODEL, BIG_MODEL} <= set(self.models):
+            return self.models
+        rest = tuple(m for m in self.models if m not in (SMALL_MODEL, BIG_MODEL))
+        return ((BIG_MODEL, SMALL_MODEL) if is_complex(command) else (SMALL_MODEL, BIG_MODEL)) + rest
 
     def __init__(self, client=None, models: tuple[str, ...] = GROQ_MODELS, max_tokens: int = 900):
         if client is None:

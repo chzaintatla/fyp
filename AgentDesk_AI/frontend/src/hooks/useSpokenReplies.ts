@@ -15,6 +15,28 @@ interface Params {
 export function useSpokenReplies({ voice: v, activeTask, prefs, voiceLanguage, beginFollowUp }: Params) {
   const spokenTaskStates = useRef(new Set<string>());
   const ackedTasks = useRef(new Set<string>());
+  // The acknowledgement of the command being run (spoken in parallel with the task) and when it started.
+  const earlyRef = useRef<Promise<void> | null>(null);
+  const earlyAtRef = useRef(0);
+
+  /** Speak "Opening Chrome." the moment a command is sent, while the task is still being planned and run. */
+  const earlyAck = (command: string) => {
+    if (!v.speechReadyRef.current || prefs?.persona.speak_replies === false || v.voiceSpeakingRef.current) return;
+    const asked = performance.now();
+    earlyAtRef.current = Date.now();
+    earlyRef.current = (async () => {
+      try {
+        const text = await voiceApi.ack({ command, ...v.wording() });
+        if (!text) return;
+        await v.playerRef.current?.speak(text, () => {
+          const base = v.speechEndedAtRef.current;
+          void voiceApi.latency('local', { ack_first_word: base > 0 ? performance.now() - base : performance.now() - asked });
+        });
+      } catch {
+        // an acknowledgement is optional
+      }
+    })();
+  };
 
   useEffect(() => {
     if (!activeTask) return;
@@ -40,9 +62,11 @@ export function useSpokenReplies({ voice: v, activeTask, prefs, voiceLanguage, b
     }
 
     const epoch = ++v.speechEpochRef.current;
-    v.playerRef.current?.stop();
-    v.playerRef.current?.stop();
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    if (!earlyRef.current) {  // an acknowledgement still being spoken is finished first, not cut off
+      v.playerRef.current?.stop();
+      v.playerRef.current?.stop();
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    }
     v.spokenTextRef.current = message;
     v.voiceSpeakingRef.current = true;
     v.setSpeaking(true);
@@ -64,6 +88,11 @@ export function useSpokenReplies({ voice: v, activeTask, prefs, voiceLanguage, b
           text = await voiceApi.line({ task: activeTask, ...v.wording() });
         } catch {
           // keep the short built-in phrase
+        }
+        if (earlyRef.current) {
+          await Promise.race([earlyRef.current, new Promise((resolve) => window.setTimeout(resolve, 2500))]);
+          earlyRef.current = null;
+          v.playerRef.current?.stop();
         }
         if (epoch !== v.speechEpochRef.current) return;
         v.spokenTextRef.current = text;
@@ -111,6 +140,7 @@ export function useSpokenReplies({ voice: v, activeTask, prefs, voiceLanguage, b
     };
     const first = activeTask.actions[0];
     const ack = window.setTimeout(() => {
+      if (earlyRef.current || Date.now() - earlyAtRef.current < 8000) return;  // already acknowledged in parallel
       void speakLine(`${activeTask.id}:ack`, first ? { tool: first.tool_name, args: first.args, ...v.wording() } : { event: 'acknowledge', ...v.wording() });
     }, 900);
     const progress = window.setTimeout(() => {
@@ -121,4 +151,6 @@ export function useSpokenReplies({ voice: v, activeTask, prefs, voiceLanguage, b
       window.clearTimeout(progress);
     };
   }, [activeTask?.id, activeTask?.status, v.speechReady, voiceLanguage, prefs?.persona.speak_replies]);
+
+  return { earlyAck };
 }

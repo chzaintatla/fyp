@@ -11,7 +11,7 @@ export interface VadOptions {
   endSilenceMs: number;
 }
 
-export const DEFAULT_VAD: VadOptions = { threshold: 0.018, minSpeechMs: 160, endSilenceMs: 650 };
+export const DEFAULT_VAD: VadOptions = { threshold: 0.018, minSpeechMs: 160, endSilenceMs: 450 };
 
 /** Energy-based end-of-speech detector. Feed it one RMS value per audio frame. */
 export class VadSegmenter {
