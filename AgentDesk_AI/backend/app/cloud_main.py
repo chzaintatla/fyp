@@ -13,6 +13,7 @@ Environment (Render dashboard, never committed):
 """
 from __future__ import annotations
 
+import logging
 import os
 import secrets
 import tempfile
@@ -87,6 +88,13 @@ async def _config_error(_request: Request, exc: AIConfigError):
 @app.exception_handler(AIError)
 async def _ai_error(_request: Request, exc: AIError):
     return JSONResponse({"detail": str(exc)}, status_code=502)
+
+
+@app.exception_handler(Exception)
+async def _unexpected(request: Request, exc: Exception):
+    """Any other failure: log the traceback on the server and tell the (token-holding) caller which error it was, not just "500"."""
+    logging.getLogger("agentdesk.cloud").exception("unhandled error on %s", request.url.path)
+    return JSONResponse({"detail": f"Cloud brain internal error: {type(exc).__name__}: {str(exc)[:200]}"}, status_code=500)
 
 
 @app.get("/health")
