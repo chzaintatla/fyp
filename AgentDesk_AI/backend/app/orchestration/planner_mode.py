@@ -97,7 +97,7 @@ def structured_plan(command: str, registry, settings) -> Plan | None:
     if mode(settings) != "structured" or not _enabled(settings):
         return None
     plan, _info = _planner_plan(command, registry, settings)
-    if plan is None or (not plan.actions and not plan.note):
+    if plan is None or (not plan.actions and not plan.note and plan.intent != "chat"):
         return None
     if plan.actions:
         plan.note = plan.note or "Planner (strict JSON) ne plan tayyar kiya."

@@ -6,6 +6,26 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-01 — Session 16: Step 1e, routing behind the planner's `intent` (regex = fast path)
+
+**Done**
+- New planner intents `memory`, `summarise`, `web_answer` (next to the existing `chat`); `Plan.intent` carries the label; system prompt updated.
+- `conversation_flow.route_by_intent`: with `PLANNER_MODE=structured`, when the regex rules decide nothing, the strict planner's intent routes the command:
+  `chat` -> short spoken answer, `web_answer` / `memory` / `summarise` -> the planner's plan (tools, risk and approvals still decided by the server).
+  A label whose tools do not match (e.g. `memory` + `delete_file`) is not routed. `chat` and `web_answer` still need the user's cloud-answers permission.
+- Fast path fixed: the first run of the new phrasing tests found 23 real misroutes (memory questions such as "what did you save about me" sent to cloud chat; a URL containing "news" sent to web search).
+  `classify` now defers (returns None) on memory words and on URLs / file paths.
+- 360 phrasings (6 intents x 20 EN / 20 Roman Urdu / 10 Urdu / 10 Hindi) in `tests/routing_phrasings.py`; `tests/test_m5_routing.py`.
+
+**Tested how:** `pytest tests -q` (project venv) -> 1689 passed, 4 skipped (was 947). `python scripts/routing_report.py` -> `docs/eval/m5_routing_fastpath.json`.
+
+**Measured (regex fast path only, no model):** it decides 170 of 360 phrasings and routes 0 of them wrongly. By language it decides 94/120 English, 56/120 Roman Urdu,
+7/60 Urdu, 6/60 Hindi. The rest (190) are left to the planner. Caveat: the fast path was changed after a first run, so this is not a blind measurement.
+
+**NOT measured:** how well the real model labels intents for the 190 phrasings the regex leaves (the tests use a fake planner that returns the labelled intent).
+Nothing here was run against Groq. **Needs your decision:** in the default `legacy` mode the planner is not asked, so those 190 phrasings (most Urdu / Hindi memory commands)
+are not routed by intent; they go to the older Groq agent loop as before. Asking the planner for them in every mode costs one extra cloud call per unparsed command.
+
 ### 2026-11-01 — Session 15: Step 1f, App.tsx split (no behaviour change)
 
 **Done:** `frontend/src/App.tsx` 1,417 -> 212 lines. Moved to `taskFormat.ts`, `components/{Spinner,ActionCard,AppHeader,CommandPanel,TaskPanel,TaskHistory}.tsx`,

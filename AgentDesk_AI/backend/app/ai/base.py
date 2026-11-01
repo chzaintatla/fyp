@@ -17,6 +17,7 @@ class Plan(BaseModel):
     actions: list[PlanAction] = Field(default_factory=list)
     note: str | None = Field(default=None, description="Message for the user when no actions apply")
     mock: bool = Field(default=False, description="True when produced by the mock provider")
+    intent: str | None = Field(default=None, description="The planner's intent label (routing only; never used for risk)")
 
 
 class AIError(Exception):

@@ -1,0 +1,142 @@
+{
+  "note": "regex fast path only; misses go to the planner's intent. Phrasings were not tuned to the regex, but the fast path was changed after a first run found misroutes, so this is not a blind test.",
+  "per_intent": {
+    "memory_remember": {
+      "en": {
+        "phrasings": 20,
+        "fast_path_decided": 14,
+        "fast_path_wrong": 0
+      },
+      "roman": {
+        "phrasings": 20,
+        "fast_path_decided": 18,
+        "fast_path_wrong": 0
+      },
+      "ur": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      },
+      "hi": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      }
+    },
+    "memory_recall": {
+      "en": {
+        "phrasings": 20,
+        "fast_path_decided": 8,
+        "fast_path_wrong": 0
+      },
+      "roman": {
+        "phrasings": 20,
+        "fast_path_decided": 7,
+        "fast_path_wrong": 0
+      },
+      "ur": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      },
+      "hi": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      }
+    },
+    "memory_forget": {
+      "en": {
+        "phrasings": 20,
+        "fast_path_decided": 20,
+        "fast_path_wrong": 0
+      },
+      "roman": {
+        "phrasings": 20,
+        "fast_path_decided": 6,
+        "fast_path_wrong": 0
+      },
+      "ur": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      },
+      "hi": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      }
+    },
+    "summarise": {
+      "en": {
+        "phrasings": 20,
+        "fast_path_decided": 12,
+        "fast_path_wrong": 0
+      },
+      "roman": {
+        "phrasings": 20,
+        "fast_path_decided": 7,
+        "fast_path_wrong": 0
+      },
+      "ur": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      },
+      "hi": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      }
+    },
+    "web_answer": {
+      "en": {
+        "phrasings": 20,
+        "fast_path_decided": 20,
+        "fast_path_wrong": 0
+      },
+      "roman": {
+        "phrasings": 20,
+        "fast_path_decided": 20,
+        "fast_path_wrong": 0
+      },
+      "ur": {
+        "phrasings": 10,
+        "fast_path_decided": 6,
+        "fast_path_wrong": 0
+      },
+      "hi": {
+        "phrasings": 10,
+        "fast_path_decided": 6,
+        "fast_path_wrong": 0
+      }
+    },
+    "chat": {
+      "en": {
+        "phrasings": 20,
+        "fast_path_decided": 20,
+        "fast_path_wrong": 0
+      },
+      "roman": {
+        "phrasings": 20,
+        "fast_path_decided": 5,
+        "fast_path_wrong": 0
+      },
+      "ur": {
+        "phrasings": 10,
+        "fast_path_decided": 1,
+        "fast_path_wrong": 0
+      },
+      "hi": {
+        "phrasings": 10,
+        "fast_path_decided": 0,
+        "fast_path_wrong": 0
+      }
+    }
+  },
+  "totals": {
+    "phrasings": 360,
+    "fast_path_decided": 170,
+    "fast_path_wrong": 0
+  }
+}

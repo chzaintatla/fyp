@@ -42,7 +42,12 @@ CONVENTIONS
   (intent "whatsapp_draft"). Never claim it was sent.
 - If a required value is missing (which file, which address, where), set needs_clarification true,
   intent "clarify", no steps, and ask ONE short question.
-- Greetings and thanks: intent "chat", no steps.
+- Greetings, thanks, small talk and questions answerable from general knowledge: intent "chat", no steps.
+- "Remember ...", "forget ...", "what do you remember about me": intent "memory" with one step
+  memory_remember, memory_forget or memory_recall.
+- "Summarise <https URL or full file path>": intent "summarise" with summarise_page or summarise_file.
+- Questions that need current facts (news, weather, prices, scores, "latest ..."): intent "web_answer" with
+  one web_answer step whose query is the question.
 - Optional arguments you do not need are null.
 - "confidence": your honest probability (0-1) that the plan is what the user meant.
 

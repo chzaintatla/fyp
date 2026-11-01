@@ -674,6 +674,9 @@ def start_task(
             return plan_task(db, task, registry, settings, preplanned=Plan(note="Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein."))
     structured = planner_mode.structured_plan(command, registry, settings)
     if structured is not None:
+        routed = conversation_flow.route_by_intent(db, task, structured, command, registry, settings, auto_approve=auto_approve)
+        if routed is not None:
+            return routed
         task.agent_state_json = json.dumps({"provider": "local", "matcher": "structured"})
         task = plan_task(db, task, registry, settings, auto_approve=auto_approve, preplanned=structured)
         if task.status == TaskStatus.APPROVED:

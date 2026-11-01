@@ -29,6 +29,7 @@ INTENTS: tuple[str, ...] = (
     "whatsapp_draft", "app_install",
     "write_file", "edit_file", "compress", "extract", "screenshot", "email_draft", "package_search",
     "download", "multi", "clarify", "unsupported", "chat",
+    "memory", "summarise", "web_answer",
 )
 LANGUAGES: tuple[str, ...] = ("en", "ur", "roman_ur", "hi")
 NO_STEP_INTENTS = {"clarify", "unsupported", "chat"}
@@ -65,7 +66,7 @@ class NLUPlan(BaseModel):
                 raise ValueError("Plan has unresolved step references; resolve paths before execution.")
             actions.append(PlanAction(tool=step.tool, args=args, rationale=step.expected_outcome))
         note = self.clarifying_question if self.needs_clarification else (self.reply or None)
-        return Plan(actions=actions, note=note)
+        return Plan(actions=actions, note=note, intent=self.intent)
 
 
 def clean_args(args: dict[str, Any]) -> dict[str, Any]:

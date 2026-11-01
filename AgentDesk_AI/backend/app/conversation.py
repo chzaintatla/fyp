@@ -148,16 +148,26 @@ _COMMAND_VERB = re.compile(
     r"install|uninstall|start|launch|run|kholo|band|banao|hatao|chalao|lagao|bhejo|kar do|karo|खोलो|बंद|बनाओ|चलाओ|کھولو|بند|بناؤ|چلاؤ)\b", re.I)
 
 
-def classify(command: str) -> str | None:
-    """'web' (needs current facts), 'chat' (answer from knowledge / small talk) or None (not a question: leave unchanged).
+# Text this fast path must NOT guess about: it mentions the user's memory, or names a page / file. The planner's intent
+# decides those (a memory question sent to the cloud chat, or a URL containing "news" sent to web search, were real misroutes).
+_DEFER = re.compile(
+    r"\babout me\b|\bon me\b|\bof mine\b|\bmy (?:memor(?:y|ies)|notes?)\b|\bremember\b|\bforget\b|\bsave[ds]?\b|\bstored?\b|"
+    r"yaad|bhool|bhul|mere b(?:aa|a)re|meray baray|میرے بارے|یاد|بھول|मेरे बारे|याद|भूल", re.I)
 
-    Called only after the command parsers had no answer, so a real command rarely reaches it; imperative verbs
-    still stay out of chat so a mistyped command is asked about instead of answered with a lecture.
+
+def classify(command: str) -> str | None:
+    """'web' (needs current facts), 'chat' (answer from knowledge / small talk) or None (not decided here).
+
+    This is the FAST PATH of question routing; with PLANNER_MODE=structured the planner's `intent` decides everything
+    it returns None for. Called only after the command parsers had no answer, so a real command rarely reaches it;
+    imperative verbs still stay out of chat so a mistyped command is asked about instead of answered with a lecture.
     """
     text = " ".join(command.strip().split())
     if len(text) < 2:
         return None
     if _COMMAND_VERB.match(text) and "?" not in text:
+        return None
+    if _DEFER.search(text) or _URL.search(text) or _WIN_PATH.search(text + " "):
         return None
     if _WEB.search(text):
         return "web"
