@@ -238,6 +238,25 @@ def p_desktop_inspect(env: Env) -> Outcome:
     return judge(r, v, bool(r.output), f"inspect output={_short(r.output, 100)}")
 
 
+def p_ui_inspect(env: Env) -> Outcome:
+    r, v = env.run("ui_inspect", {})
+    if not IS_WINDOWS and not r.success:
+        return Outcome(BLOCKED, f"not Windows: {_short(r.error, 100)}")
+    return judge(r, v, bool((r.output or {}).get("window")), f"window={_short((r.output or {}).get('window'), 60)} controls={(r.output or {}).get('count')}")
+
+
+def p_ui_act_read(env: Env) -> Outcome:
+    """ui_act in its read-only form: reads the first named control of the front window (never clicks, types or scrolls)."""
+    listed, _ = env.run("ui_inspect", {})
+    if not IS_WINDOWS and not listed.success:
+        return Outcome(BLOCKED, f"not Windows: {_short(listed.error, 100)}")
+    named = [c for c in (listed.output or {}).get("controls", []) if c.get("name") and not c.get("password")]
+    if not named:
+        return Outcome(BLOCKED, "the front window lists no named control")
+    r, v = env.run("ui_act", {"action": "read", "control": named[0]["name"], "id": named[0]["id"]})
+    return judge(r, v, bool((r.output or {}).get("text")), f"read {_short(named[0]['name'], 40)}")
+
+
 def _api_browser_inspect(base_url: str, client: Any = None) -> Outcome:
     """control_browser through the running server: the extension's socket lives in that process, not in this script.
 
@@ -492,6 +511,8 @@ PROBES: list[Probe] = [
     Probe("manage_system_setting", "read", p_system_get),
     Probe("control_desktop", "read", p_desktop_inspect),
     Probe("control_browser", "read", p_browser_inspect),
+    Probe("ui_inspect", "read", p_ui_inspect),
+    Probe("ui_act", "gui", p_ui_act_read),
     Probe("application_package", "read", p_package_search),
     Probe("open_application", "gui", p_open_application),
     Probe("open_folder", "gui", p_open_folder),

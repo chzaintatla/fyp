@@ -6,6 +6,26 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-02 — Session 25: Upgrade U4 (UI Automation layer): `ui_inspect` and `ui_act`
+
+**Built (not committed)**
+- `tools/uia_backend.py`: `UiaBackend` interface + `PywinautoBackend` (pywinauto UIA). A snapshot is at most 80 controls of one window {id, name, type, value, enabled, box, focused, checked, selected}, focused first, then named interactive ones, in reading order; scan limited to 900 elements / 1.5 s. Actions use the control's own patterns (Invoke, Toggle, SelectionItem, Value, Scroll), falling back to a click at the centre of the rectangle UI Automation reported for THAT control, the mouse wheel, or Page Down; no model-invented coordinates. A password field's value is never listed.
+- `tools/uia.py`: `ui_inspect` (low risk, 2 s cache) and `ui_act` (click / type / select / scroll / press_keys / read). Controls are found by NAME with the U1 sound-alike matcher, narrowed by the type the action needs (a label and its field share a name); two equal controls make the tool ASK ("Which one do you mean ...?", shown through the executor's needs_confirmation path), never guess.
+- Risk is set by the server: read and scroll low; click / type / select / keys medium; clicking Pay / Buy / Delete / Submit / Install / Send / Uninstall ..., and Alt+F4 / Ctrl+W / Delete are high. A control whose real name is dangerous cannot be clicked on a plan that did not name it. Shell / admin windows get no input; password and secret-looking fields (password, card, CVV, PIN, OTP) are never read or typed.
+- Verification looks again: typing reads the field back, select checks the item, scroll checks the position or the screen, a click needs the window, a value or the focus to have changed (a click with no visible effect is reported as "cannot say it worked"), a closed window counts as the effect of a click or key.
+- Registered in the tool registry, the planner shortlist (with `ui_inspect`/`ui_act` paired), a new `ui_control` intent and a prompt rule (native tools first). Planner request tokens still fit: median 3.2k, p95 3.7k (limit 8k).
+
+**Tested how**
+- `tests/test_u4_uia.py` (63 tests) on a fake desktop of 7 apps (`tests/helpers/fake_uia.py`): 51 scripted actions over Notepad, Explorer, Settings, Calculator, Word, Excel, Chrome all as expected (incl. 4 that must be refused or reported unverified), plus risk, ambiguity, shell and password refusal, cache, key mapping.
+- LIVE on this PC (`scripts/uia_live.py`, `docs/eval/u4_live.json`): the real backend drives its own Calculator, a Notepad tab on a temp file, an Explorer window on a temp folder, Settings and a Chrome page. First run 0/31 (a wrong wrapper call and duplicate control names), then fixed; runs 2 to 4: 28/33, 30/32, **32/33 (97.0%)**: calculator 9/9 (7+8 reads 15, misheard name "clea" -> Clear), notepad 7/7, settings 5/5, chrome 7/7, explorer 4/5 (Alt+Up did not change the window; left as a failure). These fixes were made against the same scenarios, so 97% is not a blind number.
+- Read-only on your real windows: Explorer 80 controls (truncated) in 1.1 s, Chrome 33 in 0.6 s, the Claude window 4 controls (an Electron app that exposes little).
+
+**NOT tested / not done**
+- Word and Excel: not installed on this PC (only the logic is covered by the fake desktop). The target 50 live actions: 33 were run.
+- The planner (LLM) choosing `ui_inspect` then `ui_act` was not run against Groq; no examples were added to the few-shot file.
+- The element cache lives per server process; heavy apps (a browser page with thousands of elements) are cut at 900 elements, so a control far down a big page may not be listed.
+- Layer 3 (vision) is U7.
+
 ### 2026-11-02 — Session 24: Upgrade U3 (agent loop + conversation): task session, conversation phrases, bounded re-check, "Anything else?"
 
 **Built (not committed)**

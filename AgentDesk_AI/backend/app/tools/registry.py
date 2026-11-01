@@ -15,6 +15,7 @@ from .system import system_tools
 from .web import web_tools
 from .memory import memory_tools
 from .knowledge import knowledge_tools
+from .uia import uia_tools
 
 
 class UnknownToolError(ValueError):
@@ -36,6 +37,7 @@ class ToolRegistry:
         tools.extend(media_tools(self.ctx))
         tools.extend(memory_tools(self.ctx))
         tools.extend(knowledge_tools(self.ctx))
+        tools.extend(uia_tools(self.ctx))
         self._tools: dict[str, BaseTool] = {t.name: t for t in tools}
 
     def get(self, name: str) -> BaseTool:

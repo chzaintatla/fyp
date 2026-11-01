@@ -462,7 +462,8 @@ def _run_task(db: Session, task_id: str, registry: ToolRegistry, settings: Setti
             candidates = [str(c) for c in output.get("candidates") or []][:3]
             asked = str(json.loads(failed_action.args_json or "{}").get("app_name", "")).strip()
             # a short question the user can read and hear, not the wording meant for the model
-            task.plan_note = (f"I couldn't find \"{asked}\". Did you mean {' or '.join(candidates)}? Say yes, or the exact name." if candidates else error)
+            question = output.get("question")   # tools that ask their own question (ui_act: "Which one do you mean ...?")
+            task.plan_note = (question if question else f"I couldn't find \"{asked}\". Did you mean {' or '.join(candidates)}? Say yes, or the exact name." if candidates else error)
             task.error = None
         else:
             task.status = TaskStatus.PARTIALLY_COMPLETED if verified_before else TaskStatus.FAILED

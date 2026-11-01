@@ -77,6 +77,8 @@ def test_registry_lists_all_tools(ctx: ToolContext):
         "summarise_file",
         "summarise_page",
         "take_screenshot",
+        "ui_act",
+        "ui_inspect",
         "web_answer",
         "web_search",
         "whatsapp_open_chat",

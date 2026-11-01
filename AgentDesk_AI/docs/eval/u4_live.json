@@ -1,0 +1,215 @@
+{
+ "summary": {
+  "run": 33,
+  "passed": 32,
+  "skipped": 0,
+  "pass_pct": 97.0,
+  "by_app": {
+   "calculator": "9/9",
+   "chrome": "7/7",
+   "explorer": "4/5",
+   "notepad": "7/7",
+   "settings": "5/5"
+  }
+ },
+ "rows": [
+  {
+   "app": "calculator",
+   "action": "click Seven",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "calculator",
+   "action": "click Plus",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "calculator",
+   "action": "click Eight",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "calculator",
+   "action": "click Equals",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "calculator",
+   "action": "read the display",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "calculator",
+   "action": "display shows 15",
+   "outcome": "PASS",
+   "detail": "read: Display is 15"
+  },
+  {
+   "app": "calculator",
+   "action": "click Clear (misheard: 'clea')",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "calculator",
+   "action": "press_keys 5",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "calculator",
+   "action": "read the display again",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "notepad",
+   "action": "type text",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "notepad",
+   "action": "read it back",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "notepad",
+   "action": "text matches",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "notepad",
+   "action": "press ctrl+a",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "notepad",
+   "action": "type empty (clear the text)",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "notepad",
+   "action": "inspect (read-only) a menu",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "notepad",
+   "action": "press ctrl+w (close our tab)",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "explorer",
+   "action": "click alpha.txt",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "explorer",
+   "action": "click beta.txt (misheard: 'beta text')",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "explorer",
+   "action": "read alpha.txt",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "explorer",
+   "action": "press alt+up (one folder up)",
+   "outcome": "FAIL",
+   "detail": "Nothing on screen changed after that, so I cannot say it worked."
+  },
+  {
+   "app": "explorer",
+   "action": "type in the search box",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "settings",
+   "action": "click Bluetooth & devices",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "settings",
+   "action": "press alt+left (back to Home)",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "settings",
+   "action": "scroll the page",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "settings",
+   "action": "read the first control",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "settings",
+   "action": "type in the search box",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "chrome",
+   "action": "type in the search box (with text)",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "chrome",
+   "action": "click Add item",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "chrome",
+   "action": "read the result",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "chrome",
+   "action": "scroll down",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "chrome",
+   "action": "scroll up",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "chrome",
+   "action": "click Sign in (jumps to the end of the page)",
+   "outcome": "PASS",
+   "detail": ""
+  },
+  {
+   "app": "chrome",
+   "action": "press ctrl+l (address bar)",
+   "outcome": "PASS",
+   "detail": ""
+  }
+ ]
+}

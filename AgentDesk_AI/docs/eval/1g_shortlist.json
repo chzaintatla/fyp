@@ -1,5 +1,5 @@
 {
-  "registry_tools": 38,
+  "registry_tools": 40,
   "limit_tokens_per_minute": 8000,
   "recall": {
     "dev": {
@@ -48,11 +48,11 @@
     "mean": 6.2,
     "max": 11
   },
-  "request_tokens_full_catalogue": 9332,
+  "request_tokens_full_catalogue": 10382,
   "request_tokens_shortlist": {
-    "median": 2979,
-    "p95": 3479,
-    "max": 3977
+    "median": 3213,
+    "p95": 3713,
+    "max": 4211
   },
   "note": "request tokens = prompt + examples + json schema (o200k_base, the gpt-oss tokenizer family), excluding the 900-token answer budget"
 }

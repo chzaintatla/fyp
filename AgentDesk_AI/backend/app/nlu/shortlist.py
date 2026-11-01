@@ -63,6 +63,12 @@ TRIGGERS: dict[str, str] = {
                        r"टैब|बंद|यूट्यूब|ब्राउज़र|براؤزر",
     "control_desktop": r"close|window|minimi[sz]e|maximi[sz]e|restore|switch|focus|bring|band|inspect|what'?s open|open windows|"
                        r"بند|ونڈو|छोटا|बड़ा|बंद|विंडो|ونڈوز",
+    "ui_inspect": r"click|press|tap|type|scroll|select|choose|tick|untick|toggle|button|field|menu|checkbox|dropdown|tab|link|sign ?in|log ?in|"
+                  r"what'?s on (?:the )?screen|what can i click|bold|italic|underline|column|row|cell|dabao|dabana|click karo|scroll karo|"
+                  r"likho|दबाओ|क्लिक|स्क्रॉल|سکرول|کلک|دباؤ",
+    "ui_act": r"click|press|tap|type|enter|scroll|select|choose|tick|untick|toggle|button|field|menu|checkbox|dropdown|link|sign ?in|log ?in|"
+              r"bold|italic|underline|column|row|cell|in (?:excel|word|paint|notepad|settings|calculator|spotify|whatsapp|teams|explorer)|"
+              r"dabao|dabana|click karo|scroll karo|likho|दबाओ|क्लिक|स्क्रॉल|سکرول|کلک|دباؤ",
     "compose_email": r"e-?mail|mail|compose|draft|ای ?میل|ईमेल|@\w",
     "whatsapp_open_chat": r"whats ?app|message|msg|text him|text her|واٹس ?ایپ|پیغام|व्हाट्स?ऐप|व्हाट्सएप|मैसेज",
     "memory_remember": r"remember|yaad|keep in mind|save (?:this )?(?:in|to) memory|(?:store|keep|make) a note|note that|یاد|याद",
@@ -76,7 +82,7 @@ TRIGGERS: dict[str, str] = {
 }
 _COMPILED = {tool: re.compile(r"(?<![\w])(?:" + pattern + r")", re.IGNORECASE) for tool, pattern in TRIGGERS.items()}
 # a tool that is usually planned together with another one
-PAIRS = {"winget_install": ("application_package",), "download_web_content": ("web_search",)}
+PAIRS = {"winget_install": ("application_package",), "download_web_content": ("web_search",), "ui_act": ("ui_inspect",), "ui_inspect": ("ui_act",)}
 
 
 def _scores(command: str, registry_names: set[str], extra: Iterable[str], last_tools: Iterable[str]) -> dict[str, int]:
