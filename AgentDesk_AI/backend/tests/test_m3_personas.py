@@ -52,9 +52,9 @@ def test_catalog_endpoint(client):
 
 # ------------------------------------------------------------------ persona validation
 def test_persona_defaults_and_old_rows_still_load():
-    assert Persona().avatar_id == "nova" and Persona().personality == "assistant"
+    assert Persona().avatar_id == "aria" and Persona().voice_en == "hannah" and Persona().personality == "assistant"
     old = {"persona": {"name": "Agent X", "language": "ur-PK", "style": "friendly", "speak_replies": True, "orb_color": "indigo"}}
-    assert Preferences.model_validate(old).persona.voice_en == "diana"
+    assert Preferences.model_validate(old).persona.voice_en == "hannah"
 
 
 @pytest.mark.parametrize("bad", [{"voice_en": "alloy"}, {"voice_ur": "rm -rf"}, {"personality": "pirate"}, {"avatar_id": "darth"},

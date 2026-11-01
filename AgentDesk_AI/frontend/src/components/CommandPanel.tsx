@@ -38,27 +38,32 @@ export function CommandPanel(p: Props) {
   const listenOff = prefs?.listen_mode === 'off';
   const orbAction = listenOff ? () => p.inputRef.current?.focus() : p.onToggleVoice;
   const orbHint = listenOff ? 'Press to type a command' : p.handsFree ? 'Press to stop listening' : 'Press or Ctrl+Space to speak';
+  // Until the saved character loads (or when it cannot), the default character (catalog index 1, Aria) is shown, not a blank orb.
+  const firstAvatar = p.catalog?.avatars[1] ?? p.catalog?.avatars[0];
+  const avatarId = prefs ? prefs.persona.avatar_id : firstAvatar?.id;
+  const avatarColor = prefs ? accentFor(prefs.persona, p.catalog) : firstAvatar?.color ?? '#38E1FF';
+  const avatarName = prefs?.persona.name ?? firstAvatar?.name ?? 'Agent X';
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex flex-col items-center gap-3 sm:flex-row sm:items-start">
-        {prefs && prefs.persona.show_avatar ? (
+        {avatarId && (prefs ? prefs.persona.show_avatar : true) ? (
           <div className="flex flex-col items-center gap-2">
             <button
               type="button"
               data-testid="orb"
               data-state={p.voiceState}
               onClick={orbAction}
-              aria-label={`${prefs.persona.name}: ${STATE_LABEL[p.voiceState]}. ${orbHint}`}
+              aria-label={`${avatarName}: ${STATE_LABEL[p.voiceState]}. ${orbHint}`}
               className="rounded-full outline-none focus-visible:ring-4 focus-visible:ring-blue-300"
             >
               <Avatar
-                id={prefs.persona.avatar_id}
-                color={accentFor(prefs.persona, p.catalog)}
+                id={avatarId}
+                color={avatarColor}
                 mood={moodFor(p.voiceState, p.activeTask?.status === 'completed' && !p.speaking)}
                 level={p.avatarLevel}
                 size={144}
-                image={prefs.persona.avatar_id === 'custom' ? loadCustomImage() : null}
-                label={`${prefs.persona.name}, ${STATE_LABEL[p.voiceState]}`}
+                image={avatarId === 'custom' ? loadCustomImage() : null}
+                label={`${avatarName}, ${STATE_LABEL[p.voiceState]}`}
               />
             </button>
             <p className="text-sm font-medium text-slate-700" aria-live="polite" data-testid="orb-label">{STATE_LABEL[p.voiceState]}</p>

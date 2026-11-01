@@ -202,7 +202,11 @@ export function apiToken(): string {
   }
 }
 
-export const hasApiToken = (): boolean => apiToken() !== '';
+// In development the Vite proxy adds the token to every API request itself (vite.config.ts), so a tab opened
+// without /#token=... still works and must not show the "no access token" warning.
+declare const __PROXY_AUTH__: boolean | undefined;
+const proxyAuth = typeof __PROXY_AUTH__ !== 'undefined' && __PROXY_AUTH__;
+export const hasApiToken = (): boolean => apiToken() !== '' || proxyAuth;
 
 /** The backend refused the request (401): this tab has no token, or an old one. */
 export class AuthError extends Error {}

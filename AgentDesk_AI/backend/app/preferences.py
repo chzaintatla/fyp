@@ -31,10 +31,10 @@ class Persona(BaseModel):
     orb_color: Literal["indigo", "emerald", "rose", "amber", "slate"] = "indigo"
     # M3: character. Changes how it looks, sounds and words things; never what it does (rule 3.9).
     user_name: str = Field(default="", max_length=40)
-    avatar_id: Literal["nova", "aria", "zara", "orion", "atlas", "kai", "custom"] = "nova"
+    avatar_id: Literal["nova", "aria", "zara", "orion", "atlas", "kai", "custom"] = "aria"   # catalog index 1: the default character
     show_avatar: bool = True                      # False = orb only
     gender: Literal["female", "male", "neutral"] = "female"
-    voice_en: str = "diana"
+    voice_en: str = "hannah"      # Aria's voice (personas.AVATARS)
     voice_ur: str = "ur-PK-UzmaNeural"
     voice_hi: str = "hi-IN-SwaraNeural"
     personality: Literal["assistant", "mentor", "friend", "coach", "custom"] = "assistant"
