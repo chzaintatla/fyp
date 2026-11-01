@@ -23,8 +23,12 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 7/60 Urdu, 6/60 Hindi. The rest (190) are left to the planner. Caveat: the fast path was changed after a first run, so this is not a blind measurement.
 
 **NOT measured:** how well the real model labels intents for the 190 phrasings the regex leaves (the tests use a fake planner that returns the labelled intent).
-Nothing here was run against Groq. **Needs your decision:** in the default `legacy` mode the planner is not asked, so those 190 phrasings (most Urdu / Hindi memory commands)
-are not routed by intent; they go to the older Groq agent loop as before. Asking the planner for them in every mode costs one extra cloud call per unparsed command.
+Nothing here was run against Groq.
+**Decision (user, 2026-11-01): ask the planner in every mode.** `planner_mode.routing_plan`: in `legacy` and `shadow` mode a command that the regex fast path and the local parsers did not understand
+is first labelled by the planner; only chat / memory / summarise / web_answer intents are routed, any other plan is discarded and the old Groq agent path runs as before.
+Cost: one extra cloud call per such command. Never asked in Local-only mode, in explicit-cloud mode (`AI_CLOUD_MODE`), or without a cloud key (tests prove each).
+`pytest tests -q` -> 1694 passed, 4 skipped. `test_phase9_reliability.py::test_kill_during_execution_then_restart_reports_honestly` (subprocess servers, 20 s timing window,
+mock provider, never reaches the planner) failed twice in full-suite runs while the machine was busy and 0 of 12 times alone; treated as a load-sensitive flake, root cause not investigated.
 
 ### 2026-11-01 — Session 15: Step 1f, App.tsx split (no behaviour change)
 

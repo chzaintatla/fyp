@@ -7,6 +7,8 @@ PLANNER_MODE (backend/.env):
               One cloud call per such command: opt-in only, and it needs a Groq key.
   structured  commands the local parsers did not understand are planned by the strict-JSON planner; if it fails or
               its plan cannot be used, the older Groq agent path runs exactly as before.
+In EVERY mode, a command nothing local understood is first labelled by the planner (`routing_plan`) so questions, memory
+commands and summaries are routed by intent; this is one extra cloud call and never happens in Local-only mode.
 
 Privacy: a shadow row holds a short hash of the command, never its text, paths or arguments. Risk and approvals
 are untouched: `plan_task` applies the server policy to every action whichever planner produced it.
@@ -102,6 +104,22 @@ def structured_plan(command: str, registry, settings) -> Plan | None:
     if plan.actions:
         plan.note = plan.note or "Planner (strict JSON) ne plan tayyar kiya."
     return plan
+
+
+ROUTED_INTENTS = {"chat", "memory", "summarise", "web_answer"}
+
+
+def routing_plan(command: str, registry, settings) -> Plan | None:
+    """The planner's plan when its intent is a conversation intent (chat / memory / summarise / web_answer), in ANY mode.
+
+    Asked only for commands the regex fast path and the local parsers left undecided, and only on the path where a cloud
+    call was already allowed (not in Local-only or explicit-cloud mode). Any other intent returns None and the caller
+    continues exactly as before; the plan is then discarded.
+    """
+    if not _enabled(settings):
+        return None
+    plan, _info = _planner_plan(command, registry, settings)
+    return plan if plan is not None and plan.intent in ROUTED_INTENTS else None
 
 
 def _record(row: dict[str, Any]) -> None:

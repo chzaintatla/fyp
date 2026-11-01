@@ -223,9 +223,57 @@ def test_a_planner_memory_plan_goes_through_normal_validation_and_risk(client, r
     assert status == TaskStatus.AWAITING_APPROVAL  # forget is medium risk: never silent
 
 
-def test_legacy_mode_does_not_call_the_planner_for_routing(client, reg, structured, cloud_chat):
+def _legacy():
+    return Settings(groq_api_key="k", ai_provider="groq", ai_cloud_mode="automatic")
+
+
+@pytest.mark.parametrize("mode", ["legacy", "shadow"])
+def test_every_mode_asks_the_planner_once_for_a_command_nothing_local_understood(mode, client, reg, structured, cloud_chat):
+    planner = structured(NLUPlan(intent="chat", confidence=0.9, reply="x"))
+    from app.database import SessionLocal
+    with SessionLocal() as db:
+        task = executor.start_task(db, "zindagi ka matlab samjhao dost", None, reg, Settings(**{**_legacy().model_dump(), "planner_mode": mode}))
+    assert planner.calls == 1 and task.status == TaskStatus.COMPLETED and task.plan_note == "Short answer. Second sentence."
+
+
+def test_legacy_mode_routes_an_urdu_memory_command_the_regex_cannot_read(client, reg, structured, cloud_chat):
+    planner = structured(NLUPlan(intent="memory", confidence=0.9, steps=[PlanStep(tool="memory_remember", args={"text": "امتحان بارہ دسمبر"})]))
+    from app.database import SessionLocal
+    with SessionLocal() as db:
+        task = executor.start_task(db, "میرا امتحان بارہ دسمبر کو ہے ذہن میں بٹھا لو", None, reg, _legacy())
+        tools, matcher = [a.tool_name for a in task.actions], task.agent_state_json
+    assert planner.calls == 1 and tools == ["memory_remember"] and "planner:memory" in matcher
+
+
+def test_a_non_conversation_intent_is_discarded_and_the_old_path_runs_as_before(client, reg, structured, cloud_chat, monkeypatch):
+    planner = structured(NLUPlan(intent="open_app", confidence=0.9, steps=[PlanStep(tool="open_application", args={"app_name": "chrome"})]))
+    seen = []
+    monkeypatch.setattr("app.orchestration.executor.get_provider", lambda settings: seen.append("agent") or (_ for _ in ()).throw(__import__("app.ai.base", fromlist=["AIError"]).AIError("stop")))
+    from app.database import SessionLocal
+    with SessionLocal() as db:
+        task = executor.start_task(db, "zindagi ka matlab samjhao dost", None, reg, _legacy())
+        status, tools = task.status, [a.tool_name for a in task.actions]
+    assert planner.calls == 1 and seen == ["agent"] and status == TaskStatus.FAILED and tools == []
+
+
+def test_local_only_and_explicit_cloud_mode_never_ask_the_planner(client, reg, structured, cloud_chat):
+    planner = structured(NLUPlan(intent="chat", confidence=0.9))
+    from app.database import SessionLocal
+    client.put("/preferences", json={"provider_mode": "local_only"})
+    try:
+        with SessionLocal() as db:
+            executor.start_task(db, "zindagi ka matlab samjhao dost", None, reg, _legacy())
+    finally:
+        client.put("/preferences", json={"provider_mode": "auto"})
+    with SessionLocal() as db:
+        executor.start_task(db, "zindagi ka matlab samjhao dost 2", None, reg,
+                            Settings(groq_api_key="k", ai_provider="groq", ai_cloud_mode="explicit"))
+    assert planner.calls == 0
+
+
+def test_without_a_cloud_key_the_planner_is_not_asked(client, reg, structured, cloud_chat):
     planner = structured(NLUPlan(intent="chat", confidence=0.9))
     from app.database import SessionLocal
     with SessionLocal() as db:
-        executor.start_task(db, "zindagi ka matlab samjhao dost", None, reg, Settings(groq_api_key="k", ai_provider="groq", ai_cloud_mode="automatic"))
+        executor.start_task(db, "zindagi ka matlab samjhao dost", None, reg, Settings(ai_provider="groq", ai_cloud_mode="automatic"))
     assert planner.calls == 0

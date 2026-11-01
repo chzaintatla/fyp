@@ -673,6 +673,12 @@ def start_task(
         if settings.ai_cloud_mode != "automatic" and not command.strip().casefold().startswith(("ai:", "research ", "explain ")):
             return plan_task(db, task, registry, settings, preplanned=Plan(note="Local agent ko yeh command clear nahi hui. App/file ka naam aur operation batayein. Detailed AI reasoning ke liye 'AI:' ya 'research' se request shuru karein."))
     structured = planner_mode.structured_plan(command, registry, settings)
+    if structured is None and planner_mode.mode(settings) != "structured":
+        structured = planner_mode.routing_plan(command, registry, settings)  # legacy / shadow: routing intents only
+        routed = conversation_flow.route_by_intent(db, task, structured, command, registry, settings, auto_approve=auto_approve) if structured else None
+        if routed is not None:
+            return routed
+        structured = None
     if structured is not None:
         routed = conversation_flow.route_by_intent(db, task, structured, command, registry, settings, auto_approve=auto_approve)
         if routed is not None:
