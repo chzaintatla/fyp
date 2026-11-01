@@ -28,6 +28,7 @@ Usage (from backend/):
     python scripts/live_check.py                    # sandbox + read-only
     python scripts/live_check.py --gui --network    # everything
     python scripts/live_check.py --only write_text_file --json
+    python scripts/live_check.py --api --only control_browser   # browser probe through the RUNNING app (extension paired there)
 """
 from __future__ import annotations
 
@@ -237,7 +238,43 @@ def p_desktop_inspect(env: Env) -> Outcome:
     return judge(r, v, bool(r.output), f"inspect output={_short(r.output, 100)}")
 
 
+def _api_browser_inspect(base_url: str, client: Any = None) -> Outcome:
+    """control_browser through the running server: the extension's socket lives in that process, not in this script.
+
+    Asks `/browser/status` first (is exactly one browser profile paired?), then runs the read-only command "list tabs"
+    as a normal task (it appears in the task history) and judges the verified result. Never sends input to a page.
+    """
+    import httpx
+
+    http = client or httpx.Client(base_url=base_url, timeout=90)
+    try:
+        status = http.get("/browser/status").json()
+    except (httpx.HTTPError, ValueError) as exc:
+        return Outcome(BLOCKED, f"the app is not reachable at {base_url} ({type(exc).__name__}): start it with START_AGENT_X.cmd")
+    if not status.get("connected"):
+        profiles = status.get("profiles", 0)
+        why = ("no browser extension is paired: open Chrome/Edge setup from the app" if not profiles
+               else f"{profiles} browser profiles are connected: close the extra ones, exactly one is supported")
+        return Outcome(BLOCKED, why)
+    from app.security.token import load_or_create_token
+
+    try:
+        body = http.post("/tasks", json={"command": "list tabs"}, headers={"Authorization": "Bearer " + load_or_create_token()}).json()
+    except (httpx.HTTPError, ValueError) as exc:
+        return Outcome(FAIL, f"the app accepted the connection but the task failed to start ({type(exc).__name__})")
+    actions = body.get("actions") or []
+    action = actions[0] if actions else {}
+    if body.get("status") != "completed" or action.get("tool_name") != "control_browser":
+        return Outcome(FAIL, f"task ended {body.get('status')}: {_short(body.get('error') or body.get('plan_note') or action.get('error'))}")
+    verification = action.get("verification") or {}
+    tabs = (verification.get("evidence") or {}).get("tabs")
+    ok = action.get("status") == "succeeded" and verification.get("passed") is True and isinstance(tabs, int)
+    return Outcome(PASS if ok else FAIL, f"{tabs} tabs, verified by the extension reply" if ok else f"verification did not pass: {_short(verification)}")
+
+
 def p_browser_inspect(env: Env) -> Outcome:
+    if env.state.get("api"):
+        return _api_browser_inspect(env.state["api"], env.state.get("api_client"))
     r, v = env.run("control_browser", {"action": "inspect"})
     blocked = external(r, ("extension", "browser"))
     if blocked:
@@ -559,6 +596,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--whatsapp-phone", help="your own number (+country code): pre-fills a test message, never sent")
     parser.add_argument("--install-id", help="exact WinGet ID to really install (high risk; e.g. a small tool you want)")
     parser.add_argument("--record", action="store_true", help="save the run with evidence to docs/live_runs/")
+    parser.add_argument("--api", nargs="?", const="http://127.0.0.1:8000", metavar="URL",
+                        help="probe control_browser through the running app (default http://127.0.0.1:8000)")
     args = parser.parse_args(argv)
 
     enabled = {"sandbox"} | ({"read"} if not args.no_read else set())
@@ -569,7 +608,7 @@ def main(argv: list[str] | None = None) -> int:
     enabled |= {"messaging"} if args.whatsapp_phone else set()
     enabled |= {"install"} if args.install_id else set()
     sandbox = Path(tempfile.mkdtemp(prefix="agentdesk_live_")) if args.keep else None
-    options = {"whatsapp_phone": args.whatsapp_phone, "install_id": args.install_id}
+    options = {"whatsapp_phone": args.whatsapp_phone, "install_id": args.install_id, "api": args.api}
     rows = run_checks(enabled, set(args.only) if args.only else None, sandbox, options=options)
     if args.record:
         record(rows, enabled)

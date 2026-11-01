@@ -107,6 +107,8 @@ def structured_plan(command: str, registry, settings) -> Plan | None:
 
 
 ROUTED_INTENTS = {"chat", "memory", "summarise", "web_answer"}
+ROUTING_BACKOFF_SECONDS = 300.0
+_routing_blocked_until = 0.0  # monotonic time; set after a failed routing call so a broken planner is not retried per command
 
 
 def routing_plan(command: str, registry, settings) -> Plan | None:
@@ -116,9 +118,15 @@ def routing_plan(command: str, registry, settings) -> Plan | None:
     call was already allowed (not in Local-only or explicit-cloud mode). Any other intent returns None and the caller
     continues exactly as before; the plan is then discarded.
     """
-    if not _enabled(settings):
+    global _routing_blocked_until
+    if not _enabled(settings) or time.monotonic() < _routing_blocked_until:
         return None
-    plan, _info = _planner_plan(command, registry, settings)
+    plan, info = _planner_plan(command, registry, settings)
+    if info.get("error") and plan is None:
+        # Rate limit, oversized prompt (HTTP 413 on the free tier), cloud brain down...: stop asking for a while.
+        _routing_blocked_until = time.monotonic() + ROUTING_BACKOFF_SECONDS
+        return None
+    _routing_blocked_until = 0.0
     return plan if plan is not None and plan.intent in ROUTED_INTENTS else None
 
 

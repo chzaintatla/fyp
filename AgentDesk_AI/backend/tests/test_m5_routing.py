@@ -277,3 +277,28 @@ def test_without_a_cloud_key_the_planner_is_not_asked(client, reg, structured, c
     with SessionLocal() as db:
         executor.start_task(db, "zindagi ka matlab samjhao dost", None, reg, Settings(ai_provider="groq", ai_cloud_mode="automatic"))
     assert planner.calls == 0
+
+
+# ------------------------------------------------------------------ a failing planner must not slow every command
+def test_a_failing_planner_is_not_asked_again_for_five_minutes_and_recovers(reg, monkeypatch):
+    from app.orchestration import planner_mode
+    calls = []
+    clock = [1000.0]
+    monkeypatch.setattr(planner_mode.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(planner_mode, "_routing_blocked_until", 0.0)
+    state = {"fail": True}
+
+    def fake(command, registry, settings, llm_only=False):
+        calls.append(command)
+        if state["fail"]:
+            return None, {"error": "AIError"}
+        return Plan(intent="chat", note="hi"), {"error": ""}
+
+    monkeypatch.setattr(planner_mode, "_planner_plan", fake)
+    settings = Settings(groq_api_key="k")
+    assert planner_mode.routing_plan("a", reg, settings) is None and planner_mode.routing_plan("b", reg, settings) is None
+    assert calls == ["a"]  # the second command did not even try
+    clock[0] += planner_mode.ROUTING_BACKOFF_SECONDS + 1
+    state["fail"] = False
+    assert planner_mode.routing_plan("c", reg, settings).intent == "chat" and calls == ["a", "c"]
+    assert planner_mode.routing_plan("d", reg, settings).intent == "chat" and calls == ["a", "c", "d"]  # success clears the back-off

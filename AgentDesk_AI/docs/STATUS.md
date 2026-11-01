@@ -6,6 +6,29 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-01 — Session 17: Step 1g, planner comparison and live checks (BLOCKED: the planner cannot run on the free tier)
+
+**Done**
+- `live_check.py --api [URL]`: `control_browser` is probed through the RUNNING app (the extension's socket lives in the server process, not in the script): `/browser/status`, then the read-only task "list tabs", judged on the verified result. Tests with a fake transport (5).
+- `scripts/shadow_replay.py`: replays the single-turn gold commands (`tests/nlu_eval/commands.jsonl`, 238 items usable) through the OLD local path and the NEW strict planner, scores both against gold (tools and arguments), per language.
+  Resumable, paced to the token limit (65 s between calls), temporary database, ids only in the output. Tests with a fake planner (6).
+- `scripts/check_1g.ps1` for you: browser probe, WhatsApp draft (needs YOUR number), winget install (needs an exact ID you choose), optional shadow replay. BLOCKED / SKIP rows are not shown as PASS.
+- Back-off in `planner_mode.routing_plan`: after one failed planner call it is not asked again for 5 minutes (found below; the every-mode routing was otherwise adding failing calls to every unparsed command).
+
+**Measured live (this PC, 2026-11-01)**
+- `control_browser --api`: **BLOCKED**, `/browser/status` = connected false, 0 profiles: no browser extension is paired right now. Not a pass.
+- Shadow pilot, 5 commands (`docs/eval/1g_shadow_pilot/`): old local path 5/5 correct (tools and args); new planner **0/5, every call failed**.
+- Why: (1) the strict planner request is about **9.3k tokens** (system 2.3k + examples/user 0.6k + JSON schema 6.5k for 38 tools); Groq's free tier allows 8k tokens/minute, so BOTH models answer HTTP 413 "request too large".
+  It was ~7.1k in M1 and has grown with the new tools. (2) The Render cloud brain answers `/cloud/plan` with HTTP 500 (cause unknown: needs the Render logs).
+  So the planner is not usable on the current limits at all, and the 200-command old-vs-new comparison is **NOT done**.
+
+**Not done / needs you**
+- Planner request must fit under 8k tokens (or a higher Groq tier). Options: shortlist the tools sent per command, drop the strict schema for a catalogue plus server-side validation, or a paid tier. This is a design/cost decision.
+- `whatsapp_open_chat` and `winget_install` live checks: run `scripts\check_1g.ps1 -WhatsAppPhone <your number> -InstallId <package id>` on your PC (they need your number and a real install).
+- Pair the Chrome/Edge extension, then rerun the browser check. Check why Render `/cloud/plan` returns 500.
+
+**Tested how:** `pytest tests -q` (project venv) -> 1706 passed, 4 skipped.
+
 ### 2026-11-01 — Session 16: Step 1e, routing behind the planner's `intent` (regex = fast path)
 
 **Done**
