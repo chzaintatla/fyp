@@ -6,6 +6,25 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-02 — Session 24: Upgrade U3 (agent loop + conversation): task session, conversation phrases, bounded re-check, "Anything else?"
+
+**Built (not committed)**
+- `orchestration/session.py`: the task session (goal, steps done with verified flag, current app, open items such as "waiting for approval", `awaiting`), stored as a preference row, expires after 90 s idle, updated after every command and run (`GET /voice/session`, `POST /voice/session/close`). After a VERIFIED result `awaiting = "anything_else"`; a failure, a question or an approval never sets it.
+- `orchestration/session_commands.py`: whole-utterance phrases in English, Roman Urdu, Urdu and Hindi, checked before any command parser: stop (cancels the running / waiting task = kill switch, closes the session), wait (cancels nothing), repeat, read it to me, undo (the same verified rollback as the Undo button), and "no / that's all / thanks / bas shukriya" or "yes" ONLY right after "Anything else?". "go back" is left to the browser commands.
+- `/voice/line` appends "Anything else?" (4 languages) to the closing line of the task the session is about (not to long read-outs); setting `anything_else` (Settings checkbox, default on); follow-up window default 8 -> 10 s.
+- Bounded re-check (`executor._observe_and_retry`): when a step ran but its check did not see the result, it is repeated up to 2 times ONLY for tools that are safe to repeat (open_application, open_folder, list_folder, list_trash, find_files, find_paths); create / write / delete / send / install / settings are never repeated by the server; the result records `attempts` and a final failure says "(tried 3 times)".
+- Frontend: after a spoken reply the microphone re-opens only while the session is open ("that's all" returns to idle); silence for the follow-up window closes the session. Barge-in on speech start already existed (`onspeechstart` stops the player at once).
+
+**Tested how**
+- `tests/test_u3_conversation.py`: 48 tests including 10 scripted multi-turn conversations (result -> anything else -> no; repeat twice; create -> undo -> nothing to undo; stop cancels a waiting approval; wait cancels nothing; Roman Urdu closing; a plain "no" is not swallowed; retry succeeds for open_application on the second check; create_folder is never retried; read it -> yes -> idle expiry). All pass.
+- Live on the running backend (text, through the dev proxy): "show trash" -> session open, awaiting anything_else, spoken line "Done. It is empty. Anything else?"; "no thanks" -> "Okay, I'm here if you need me." and the session is closed.
+- Full backend suite and frontend: see the report below / `scripts\check_u3.ps1`.
+
+**NOT tested / not done**
+- No spoken conversation was run (the built-in browser has no microphone): the re-opening microphone, barge-in within 300 ms and the spoken "Anything else?" need the live checks in `scripts\check_u3.ps1`.
+- The 300 ms barge-in time was not measured (only the code path exists).
+- Dictation mode (email, U6), "undo" for tools without a checkpoint (it says there is nothing it can undo), and a re-plan by the cloud model after a failed step in the local path (only the existing Groq agent loop observes and re-plans; the local path re-checks, then reports).
+
 ### 2026-11-02 — Session 23: Upgrade U2 (speed): latency log with budgets, early acknowledgement, model routing, warm connection
 
 **Built (not committed)**

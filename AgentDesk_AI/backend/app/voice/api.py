@@ -154,12 +154,40 @@ def tts(body: TtsIn) -> Response:
     return Response(clip.audio, media_type=clip.mime, headers={"X-TTS-Engine": clip.engine, "X-TTS-Voice": clip.voice})
 
 
+ANYTHING_ELSE = {"en": "Anything else?", "roman": "Aur kuch?", "ur": "اور کچھ؟", "hi": "और कुछ?"}
+
+
+def _with_anything_else(db: Session, task: dict, text: str, language: str) -> str:
+    """After a verified result of the task the session is about, ask "Anything else?" (one short question; long read-outs are left alone)."""
+    from ..orchestration import session
+    state = session.current(db)
+    if (state is None or state.awaiting != "anything_else" or state.last_task_id != task.get("id")
+            or task.get("status") != "completed" or len(text) > 220):
+        return text
+    return f"{text.rstrip()} {ANYTHING_ELSE[responses._lang(language)]}"
+
+
+@router.get("/session")
+def task_session(db: Session = Depends(get_db)) -> dict:
+    """What the conversation is about right now (goal, steps done, current app, open items), or {"open": false}."""
+    from ..orchestration import session
+    state = session.current(db)
+    return {"open": True, **state.as_dict()} if state else {"open": False}
+
+
+@router.post("/session/close")
+def close_task_session(db: Session = Depends(get_db)) -> dict:
+    """The user stayed silent or said stop: return to idle."""
+    from ..orchestration import session
+    return {"closed": session.close(db)}
+
+
 @router.post("/line")
-def spoken_line(body: LineIn) -> dict:
+def spoken_line(body: LineIn, db: Session = Depends(get_db)) -> dict:
     """The phrase to speak. A task is turned into its closing line; "Done" appears only for verified tasks."""
     who = responses.Voiceprint(body.personality, body.user_name, body.formality, body.humour)
     if body.task is not None:
-        text = responses.line_for_task(body.task, body.language, who)
+        text = _with_anything_else(db, body.task, responses.line_for_task(body.task, body.language, who), body.language)
     elif body.tool:
         text = responses.acknowledge_line(body.tool, body.args, body.language, who)
     elif body.event in responses._T:

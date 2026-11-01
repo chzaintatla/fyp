@@ -6,7 +6,7 @@ import pytest
 
 def test_defaults(client):
     body = client.get("/preferences").json()
-    assert body["follow_up_seconds"] == 8 and body["speech_volume"] == 100
+    assert body["follow_up_seconds"] == 10 and body["speech_volume"] == 100
 
 
 def test_saved_and_read_back(client):

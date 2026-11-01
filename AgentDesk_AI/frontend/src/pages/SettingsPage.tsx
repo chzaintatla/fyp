@@ -118,6 +118,11 @@ export function SettingsPage({ prefs, config, usage, onSave }: SettingsPageProps
         </label>
         <p className="ml-1 text-xs text-slate-500">After a spoken reply the microphone stays open this long, so you can say "and close Notepad" without pressing the hotkey. 0 turns it off.</p>
         <label className="mt-3 flex items-start gap-2 text-sm">
+          <input type="checkbox" className="mt-1" checked={prefs.anything_else !== false} data-testid="anything-else"
+            onChange={(e) => void save({ anything_else: e.target.checked }, 'Saved.')} />
+          <span>Ask "Anything else?" after a finished task. <span className="block text-slate-500">The conversation then stays open until you say "no" or "that's all", or stay silent for the follow-up window.</span></span>
+        </label>
+        <label className="mt-3 flex items-start gap-2 text-sm">
           <input type="checkbox" className="mt-1" checked={prefs.cloud_answers === true} data-testid="cloud-answers"
             onChange={(e) => void save({ cloud_answers: e.target.checked }, 'Privacy setting saved.')} />
           <span>Answer questions with the cloud AI (Groq). <span className="block text-slate-500">When on, the question you ask (and, for web answers, text of the pages read) is sent to Groq. Commands for this PC are not affected. {prefs.cloud_answers === null && 'You have not chosen yet, so questions stay on this PC.'}</span></span>

@@ -75,7 +75,10 @@ export function useSpokenReplies({ voice: v, activeTask, prefs, voiceLanguage, b
       if (epoch !== v.speechEpochRef.current) return;
       v.voiceSpeakingRef.current = false;
       if (v.handsFreeRef.current) finishVoiceTask();
-      else if (serverVoice && v.followUpMs > 0 && v.listenModeRef.current === 'push_to_talk' && v.voiceTaskActiveRef.current && isTerminal) beginFollowUp();
+      else if (serverVoice && v.followUpMs > 0 && v.listenModeRef.current === 'push_to_talk' && v.voiceTaskActiveRef.current && isTerminal) {
+        // "No, that's all" closed the session: go back to idle instead of listening again. Any other reply keeps the conversation open.
+        void voiceApi.session().then((s) => { if (s.open) beginFollowUp(); }).catch(() => beginFollowUp());
+      }
     });
     v.speechFinishRef.current = finish;
     if (v.handsFreeRef.current) v.startListeningRef.current();

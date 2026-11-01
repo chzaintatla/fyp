@@ -368,7 +368,10 @@ def run_task(db: Session, task_id: str, registry: ToolRegistry, settings: Settin
     """Execute and verify (see `_run_task`); adds the time to the current command's latency row when there is one."""
     started = time.perf_counter()
     try:
-        return _run_task(db, task_id, registry, settings)
+        task = _run_task(db, task_id, registry, settings)
+        from . import session
+        session.wrap(db, task)
+        return task
     finally:
         box = _RUN_MS.get()
         if box is not None:
@@ -501,6 +504,30 @@ def _run_task(db: Session, task_id: str, registry: ToolRegistry, settings: Setti
 
 
 # ------------------------------------------------------------------ shared
+# Re-plan from what was observed. When a step ran but the check did not see the result (the window did not appear in time), repeating
+# is only safe for tools that do the same thing twice without harm: opening an app that is already open just brings it forward, and
+# listing a folder changes nothing. Everything else (create, write, delete, send, install, settings) is NEVER repeated by the server:
+# a second run could do the thing twice, so the failure is reported as it is and the user decides.
+RETRY_TOOLS = frozenset({"open_application", "open_folder", "list_folder", "list_trash", "find_files", "find_paths"})
+MAX_RETRIES = 2
+RETRY_WAIT_SECONDS = 1.0
+
+
+def _observe_and_retry(tool, parsed, settings: Settings, action_id: str, result: ToolResult, verification: Verification,
+                       stop_reason: str | None) -> tuple[ToolResult, Verification, str | None, int]:
+    attempts = 1
+    while (attempts <= MAX_RETRIES and tool.name in RETRY_TOOLS and stop_reason is None
+           and result.success and not verification.passed and not (result.output or {}).get("needs_confirmation")):
+        time.sleep(RETRY_WAIT_SECONDS)
+        log_event("action_retry", level=30, action_id=action_id, tool=tool.name, attempt=attempts + 1,
+                  detail="; ".join(verification.checks)[:200])
+        result, verification, stop_reason = _run_and_verify(tool, parsed, settings, action_id)
+        attempts += 1
+    if attempts > 1 and isinstance(result.output, dict):
+        result.output["attempts"] = attempts
+    return result, verification, stop_reason, attempts
+
+
 def _execute_single_action(db: Session, action: Action, tool, parsed, settings: Settings) -> None:
     """Run one approved action with timeout, then verify it. Commits.
 
@@ -536,6 +563,7 @@ def _execute_single_action(db: Session, action: Action, tool, parsed, settings: 
         db.commit()
         return
     result, verification, stop_reason = _run_and_verify(tool, parsed, settings, action.id)
+    result, verification, stop_reason, attempts = _observe_and_retry(tool, parsed, settings, action.id, result, verification, stop_reason)
     action.result_json = result.model_dump_json()
     if stop_reason in ("pause", "cancel"):
         action.verification_json = verification.model_dump_json()
@@ -563,6 +591,8 @@ def _execute_single_action(db: Session, action: Action, tool, parsed, settings: 
     else:
         action.status = ActionStatus.FAILED
         action.error = result.error or f"Verification failed: {'; '.join(verification.checks)}"
+        if attempts > 1:
+            action.error += f" (tried {attempts} times)"
     db.commit()
     log_event("action_end", level=20 if action.status == ActionStatus.SUCCEEDED else 30, task_id=action.task_id,
               action_id=action.id, tool=action.tool_name, status=action.status,
@@ -665,6 +695,9 @@ def start_task(
         _RUN_MS.reset(token)
     total = (time.perf_counter() - started) * 1000
     state = task.agent_state_json or ""
+    if '"matcher": "session"' not in state:
+        from . import session
+        session.wrap(db, task)   # goal, steps done, current app, open items; "Anything else?" after a verified result
     route = "local" if '"provider": "local"' in state or not state else "cloud"
     latency.record_task(route, max(0.0, total - box[0]), box[0])
     return task
@@ -685,7 +718,10 @@ def _start_task(
     if not created:
         return task  # idempotency key matched a task made by an earlier or concurrent request
     usage.record(db, "task", task.id)
-    from . import conversation_flow
+    from . import conversation_flow, session_commands
+    spoken_about_the_conversation = session_commands.try_handle(db, task, command, registry, settings)
+    if spoken_about_the_conversation is not None:
+        return spoken_about_the_conversation   # "repeat that", "undo", "no, that's all": never planned as a command
     handled = conversation_flow.try_conversation(db, task, command, registry, settings, auto_approve=auto_approve, before_local=True)
     if handled is not None:
         return handled

@@ -154,6 +154,7 @@ export interface Preferences {
   memory_enabled: boolean;
   onboarded: boolean;
   follow_up_seconds: number;
+  anything_else?: boolean;
   speech_volume: number;
   daily_greeting: boolean;
   cloud_answers: boolean | null;
@@ -339,6 +340,9 @@ export const voiceApi = {
   catalog: async () => (await (await voiceFetch('/voice/catalog', { method: 'GET' })).json()) as Catalog,
   line: async (body: { task?: TaskOut; tool?: string; args?: Record<string, unknown>; event?: string; language: string; personality?: string; user_name?: string; formality?: number; humour?: number }) =>
     ((await (await voiceFetch('/voice/line', jsonInit(body))).json()) as { text: string }).text,
+  /** What the conversation is about right now; `open` is false once the user said "that's all" or stayed silent. */
+  session: async () => (await (await voiceFetch('/voice/session', { method: 'GET' })).json()) as { open: boolean; goal?: string; current_app?: string | null; awaiting?: string | null },
+  closeSession: () => voiceFetch('/voice/session/close', jsonInit({})).catch(() => undefined),
   /** The acknowledgement for a command, from the local fast path (no network, nothing executed); text is null when none is safe. */
   ack: async (body: { command: string; language: string; personality?: string; user_name?: string; formality?: number; humour?: number }) =>
     ((await (await voiceFetch('/voice/ack', jsonInit(body))).json()) as { text: string | null }).text,

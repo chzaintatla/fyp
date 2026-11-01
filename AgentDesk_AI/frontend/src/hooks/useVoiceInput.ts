@@ -60,6 +60,7 @@ export function useVoiceInput({ voice: v, prefs, voiceLanguage, setCommand, setB
       v.recognitionRef.current?.abort();
       v.recognitionRef.current = null;
       v.setListening(false);
+      void voiceApi.closeSession();   // silence ends the conversation: back to idle
     }, v.followUpMs);
   };
 
