@@ -1,4 +1,4 @@
-import { voiceApi } from '../api';
+import { AuthError, voiceApi } from '../api';
 import { DEFAULT_VAD, VadSegmenter, downsample, encodeWav, rms } from './vad';
 
 /** The few fields of the browser's SpeechRecognition result that App.tsx reads. */
@@ -144,7 +144,7 @@ export class WhisperRecognition {
       const event = Object.assign(new Event('result'), { resultIndex: 0, results: [result] }) as WhisperResultEvent;
       this.onresult?.(event);
     } catch (error) {
-      this.fail('network', error instanceof Error ? error.message : undefined);
+      this.fail(error instanceof AuthError ? 'not-authorized' : 'network', error instanceof Error ? error.message : undefined);
     }
   }
 

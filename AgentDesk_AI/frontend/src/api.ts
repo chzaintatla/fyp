@@ -201,6 +201,14 @@ export function apiToken(): string {
   }
 }
 
+export const hasApiToken = (): boolean => apiToken() !== '';
+
+/** The backend refused the request (401): this tab has no token, or an old one. */
+export class AuthError extends Error {}
+export const authMessage = (): string => hasApiToken()
+  ? 'Access token purana ya galat hai. START_AGENT_X.cmd se app dobara kholein.'
+  : 'Is tab mein access token nahi hai (naya tab ya refresh se token chala jata hai). START_AGENT_X.cmd se app kholein.';
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   let res: Response;
   try {
@@ -218,7 +226,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     );
   }
   if (res.status === 401) {
-    throw new Error('Access token missing. START_AGENT_X.cmd se app dobara kholein (token wala link use hota hai).');
+    throw new AuthError(authMessage());
   }
   if (!res.ok) {
     let detail = '';
@@ -303,6 +311,7 @@ async function voiceFetch(path: string, init: RequestInit): Promise<Response> {
     ...init,
     headers: { ...(apiToken() ? { Authorization: `Bearer ${apiToken()}` } : {}), ...(init.headers ?? {}) },
   });
+  if (res.status === 401) throw new AuthError(authMessage());
   if (!res.ok) throw new Error(`Voice request failed (${res.status})`);
   return res;
 }

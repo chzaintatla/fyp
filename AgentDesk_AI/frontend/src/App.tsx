@@ -25,6 +25,8 @@ import {
   type TaskOut,
   type UsageOut,
   apiToken,
+  authMessage,
+  hasApiToken,
 } from './api';
 
 /** Task statuses that are still in flight; the active task is polled while in one of these. */
@@ -384,6 +386,8 @@ export default function App() {
     void api.usage().then(setUsage).catch(() => setUsage(null));
   }, [activeTask?.id, activeStatus]);
 
+  useEffect(() => { if (!hasApiToken()) setBanner(authMessage()); }, []);
+
   const loadConfig = useCallback(async () => {
     try {
       const c = await api.config();
@@ -584,6 +588,11 @@ export default function App() {
       stopHandsFree('Hands-free voice mode stopped.');
       return;
     }
+    if (!hasApiToken()) {
+      setBanner(authMessage());
+      setVoiceMessage(authMessage());
+      return;
+    }
     const speechWindow = window as typeof window & {
       SpeechRecognition?: SpeechRecognitionConstructor;
       webkitSpeechRecognition?: SpeechRecognitionConstructor;
@@ -713,6 +722,10 @@ export default function App() {
           return;
         }
         if (event.error === 'no-speech' || event.error === 'aborted') return;
+        if (event.error === 'not-authorized') {
+          stopHandsFree(event.message ?? authMessage());
+          return;
+        }
         stopHandsFree(
           event.error === 'not-allowed' || event.error === 'service-not-allowed'
             ? 'Microphone access was blocked. Allow microphone access for this site and try again.'
