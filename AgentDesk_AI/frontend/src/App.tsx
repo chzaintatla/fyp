@@ -8,6 +8,7 @@ import { Rail, type View } from './components/Rail';
 import { TaskHistory } from './components/TaskHistory';
 import { TaskPanel } from './components/TaskPanel';
 import { CharactersPage } from './pages/CharactersPage';
+import { MailDraftCard } from './components/MailDraftCard';
 import { MemoryPage } from './pages/MemoryPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { useAppData } from './hooks/useAppData';
@@ -182,6 +183,7 @@ export default function App() {
             onStopSpeaking={input.stopSpeaking}
             inputRef={commandInputRef}
           />
+          <MailDraftCard activeTask={activeTask} />
           <TaskPanel
             task={activeTask}
             busy={busy}

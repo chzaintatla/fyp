@@ -136,7 +136,7 @@ def tool_args_schema(tool) -> dict[str, Any]:
 def plan_json_schema(registry, names: list[str] | None = None) -> dict[str, Any]:
     """Strict schema for NLUPlan with one step variant per registered tool (or only `names`, the planner's shortlist)."""
     variants = []
-    for name in (names if names is not None else registry.names()):
+    for name in (names if names is not None else registry.model_names()):
         variants.append({
             "type": "object",
             "additionalProperties": False,
@@ -224,6 +224,9 @@ def validate_plan(plan: NLUPlan, registry, check_paths: bool = True) -> Validati
             tool = registry.get(step.tool)
         except UnknownToolError:
             errors.append(f"Step {index}: unknown tool '{step.tool}'.")
+            continue
+        if tool.hidden_from_model:
+            errors.append(f"Step {index}: '{step.tool}' cannot be planned (only the server runs it).")
             continue
         args = clean_args(step.args)
         unknown = sorted(set(args) - set(tool.args_schema.model_fields))

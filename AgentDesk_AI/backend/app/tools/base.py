@@ -78,6 +78,8 @@ class BaseTool(ABC):
     # True: a pause/cancel may stop this tool mid-run (killing its worker) without leaving a
     # half-applied change. Other tools finish their current step first.
     interruptible: bool = False
+    # True: not shown to the model, not in any plan schema, and a plan that names it is rejected (only server code runs it).
+    hidden_from_model: bool = False
 
     def on_cancel(self, args: BaseModel) -> None:
         """Clean up partial work after the step was cancelled (e.g. a partial download)."""

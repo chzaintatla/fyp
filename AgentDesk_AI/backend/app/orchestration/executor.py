@@ -71,6 +71,7 @@ def task_out(task: Task) -> TaskOut:
         updated_at=task.updated_at,
         retry_at=state.get("retry_at"),
         provider_note=state.get("provider_note"),
+        speak_full=bool(state.get("speak_full")),
         partial=_partial_summary(task),
         actions=[_action_out(a) for a in sorted(task.actions, key=lambda x: x.seq)],
     )
@@ -696,7 +697,7 @@ def start_task(
         _RUN_MS.reset(token)
     total = (time.perf_counter() - started) * 1000
     state = task.agent_state_json or ""
-    if '"matcher": "session"' not in state:
+    if '"matcher": "session"' not in state and '"matcher": "mail"' not in state:
         from . import session
         session.wrap(db, task)   # goal, steps done, current app, open items; "Anything else?" after a verified result
     route = "local" if '"provider": "local"' in state or not state else "cloud"
@@ -719,7 +720,10 @@ def _start_task(
     if not created:
         return task  # idempotency key matched a task made by an earlier or concurrent request
     usage.record(db, "task", task.id)
-    from . import conversation_flow, session_commands
+    from . import conversation_flow, mail_flow, message_flow, session_commands
+    writing = mail_flow.try_handle(db, task, command, registry, settings) or message_flow.try_handle(db, task, command, registry, settings)
+    if writing is not None:
+        return writing   # an e-mail is being written (or started): its words are the e-mail's, not commands
     spoken_about_the_conversation = session_commands.try_handle(db, task, command, registry, settings)
     if spoken_about_the_conversation is not None:
         return spoken_about_the_conversation   # "repeat that", "undo", "no, that's all": never planned as a command

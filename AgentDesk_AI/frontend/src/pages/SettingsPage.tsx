@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { apiToken, type ConfigStatus, type Persona, type Preferences, type PreferencesUpdate, type UsageOut } from '../api';
+import { apiToken, mailApi, type MailStatus, type ConfigStatus, type Persona, type Preferences, type PreferencesUpdate, type UsageOut } from '../api';
 import { desktopApi } from '../desktop';
 
 interface SettingsPageProps {
@@ -21,6 +21,43 @@ function Radio<T extends string>({ name, value, current, label, help, onChange }
         <span className="block text-slate-500">{help}</span>
       </label>
     </div>
+  );
+}
+
+function EmailSection({ prefs, onSave }: { prefs: Preferences; onSave: (patch: PreferencesUpdate) => Promise<void> }) {
+  const [status, setStatus] = useState<MailStatus | null>(null);
+  const [note, setNote] = useState<string | null>(null);
+  const load = () => { void mailApi.status().then(setStatus).catch(() => setStatus(null)); };
+  useEffect(() => { load(); const t = window.setInterval(load, 4000); return () => window.clearInterval(t); }, []);
+  const chosen = prefs.mail_provider ?? 'none';
+  const connect = (provider: 'gmail' | 'outlook') => {
+    setNote(null);
+    void mailApi.connect(provider).then((r) => { window.open(r.url, '_blank', 'noopener'); setNote('Finish signing in in the new tab, then come back.'); }).catch((e: Error) => setNote(e.message.replace(/^Request failed \(\d+\): /, '')));
+  };
+  return (
+    <section aria-labelledby="email-heading" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h3 id="email-heading" className="font-semibold">Email</h3>
+      <p className="mt-1 text-xs text-slate-500">Write and send e-mail by voice. You sign in on Google's or Microsoft's own page; the assistant never sees your password and keeps its access only in the Windows Credential Manager. It sends nothing until it has read the recipient, subject and first line back and you say "yes, send it".</p>
+      <div className="mt-3 flex flex-col gap-3">
+        <Radio name="mail" value="none" current={chosen} label="Off" help="No e-mail by voice." onChange={(v) => void onSave({ mail_provider: v })} />
+        {(['gmail', 'outlook'] as const).map((p) => {
+          const s = status?.providers[p];
+          return (
+            <div key={p} className="flex flex-wrap items-start gap-3">
+              <div className="min-w-[14rem] flex-1">
+                <Radio name="mail" value={p} current={chosen} label={p === 'gmail' ? 'Gmail' : 'Outlook / Microsoft 365'}
+                  help={s?.connected ? `Connected${s.account ? ` as ${s.account}` : ''}.` : s?.configured === false ? 'Not set up: add the OAuth client id to backend\\.env (docs/EMAIL_SETUP.md).' : 'Not connected yet.'}
+                  onChange={(v) => void onSave({ mail_provider: v })} />
+              </div>
+              {s?.connected
+                ? <button type="button" className="rounded border border-slate-300 px-3 py-1 text-sm" onClick={() => void mailApi.disconnect(p).then(load)}>Disconnect</button>
+                : <button type="button" className="rounded bg-blue-700 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50" disabled={s?.configured === false} data-testid={`connect-${p}`} onClick={() => connect(p)}>Connect</button>}
+            </div>
+          );
+        })}
+      </div>
+      {note && <p role="status" className="mt-3 text-sm text-slate-700">{note}</p>}
+    </section>
   );
 }
 
@@ -143,6 +180,8 @@ export function SettingsPage({ prefs, config, usage, onSave }: SettingsPageProps
           <span className="w-8 text-right">{prefs.speech_volume}</span>
         </label>
       </section>
+
+      <EmailSection prefs={prefs} onSave={onSave} />
 
       <section aria-labelledby="provider-heading" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <h3 id="provider-heading" className="font-semibold">AI provider</h3>

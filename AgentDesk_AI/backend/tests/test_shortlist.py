@@ -35,7 +35,7 @@ def _context(item, registry):
 
 
 def test_the_full_catalogue_request_is_over_the_limit_and_the_shortlist_is_far_under_it(registry):
-    ctx = PlannerContext(command="turn the volume up", registry=registry, tools=registry.names())
+    ctx = PlannerContext(command="turn the volume up", registry=registry, tools=registry.model_names())
     assert _tokens(build_messages(ctx), response_format(registry, ctx.tools)) > LIMIT  # the bug that made every planner call HTTP 413
     sizes = []
     for item in GOLD:
@@ -68,7 +68,7 @@ def test_the_shortlist_keeps_the_tools_for_the_conversation_phrasings(registry):
 
 
 def test_size_is_bounded_and_never_below_the_minimum(registry):
-    names = registry.names()
+    names = registry.model_names()
     for command in ["", "asdf", "open notepad", "copy report.docx to desktop and zip it and email it and delete the old one",
                     "volume brightness bluetooth wifi settings screenshot tabs window folder file zip email whatsapp install"]:
         chosen = shortlist_tools(command, names)
@@ -78,20 +78,20 @@ def test_size_is_bounded_and_never_below_the_minimum(registry):
 
 
 def test_file_operations_bring_find_paths_and_install_brings_the_package_search(registry):
-    names = registry.names()
+    names = registry.model_names()
     assert "find_paths" in shortlist_tools("rename draft.txt to final.txt", names) and FILE_TOOLS & set(shortlist_tools("rename draft.txt", names))
     assert "application_package" in shortlist_tools("install zoom", names)
 
 
 def test_the_local_matchers_guess_and_the_previous_turn_widen_the_shortlist(registry):
-    names = registry.names()
+    names = registry.model_names()
     assert "take_screenshot" not in shortlist_tools("hmm do the thing", names)
     assert "take_screenshot" in shortlist_tools("hmm do the thing", names, local_tools=["take_screenshot"])
     assert "manage_system_setting" in shortlist_tools("a bit more", names, last_tools=["manage_system_setting"])
 
 
 def test_the_schema_offers_only_the_shortlisted_tools_but_the_default_is_unchanged(registry):
-    names = registry.names()
+    names = registry.model_names()
     subset = ["open_application", "manage_system_setting"]
     assert tool_names_in_schema(plan_json_schema(registry, subset)) == subset
     assert tool_names_in_schema(plan_json_schema(registry)) == names
@@ -124,7 +124,7 @@ def test_the_planner_sends_the_shortlist_and_validation_still_uses_the_full_regi
 
 
 def test_caching_returns_the_same_list_and_does_not_leak_between_commands(registry):
-    names = registry.names()
+    names = registry.model_names()
     a = tools_for("open notepad", names)
     a.append("x")
     assert "x" not in tools_for("open notepad", names)

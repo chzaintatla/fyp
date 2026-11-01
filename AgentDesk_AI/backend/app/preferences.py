@@ -74,6 +74,7 @@ class Preferences(BaseModel):
     memory_enabled: bool = True
     onboarded: bool = False
     follow_up_seconds: int = Field(default=10, ge=0, le=15)  # keep listening this long after a spoken reply
+    mail_provider: Literal["none", "gmail", "outlook"] = "none"   # which account the assistant writes e-mail with (Settings > Email)
     anything_else: bool = True                    # after a verified result ask "Anything else?" and keep the conversation open
     speech_volume: int = Field(default=100, ge=0, le=100)
     cloud_answers: bool | None = None             # None = not asked yet; True = questions/web answers may use the cloud AI
@@ -94,6 +95,7 @@ class PreferencesUpdate(BaseModel):
     onboarded: bool | None = None
     follow_up_seconds: int | None = Field(default=None, ge=0, le=15)
     anything_else: bool | None = None
+    mail_provider: Literal["none", "gmail", "outlook"] | None = None
     speech_volume: int | None = Field(default=None, ge=0, le=100)
     daily_greeting: bool | None = None
     cloud_answers: bool | None = None

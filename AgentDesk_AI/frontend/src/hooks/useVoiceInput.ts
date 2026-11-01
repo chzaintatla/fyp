@@ -45,7 +45,7 @@ export function useVoiceInput({ voice: v, prefs, voiceLanguage, setCommand, setB
     );
   };
 
-  const beginFollowUp = () => {
+  const beginFollowUp = (ms?: number) => {
     v.voiceTaskActiveRef.current = false;
     v.voiceWaitingForTaskRef.current = false;
     if (v.recognitionRef.current) return;
@@ -61,7 +61,7 @@ export function useVoiceInput({ voice: v, prefs, voiceLanguage, setCommand, setB
       v.recognitionRef.current = null;
       v.setListening(false);
       void voiceApi.closeSession();   // silence ends the conversation: back to idle
-    }, v.followUpMs);
+    }, ms ?? v.followUpMs);
   };
 
   /** Stops the assistant mid-sentence and goes back to listening ("Stop speaking" button). */

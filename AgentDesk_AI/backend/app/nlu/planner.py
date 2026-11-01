@@ -99,7 +99,7 @@ def pick_examples(command: str, limit: int, tools: list[str] | None = None) -> l
 
 def tool_catalogue(registry, names: list[str] | None = None) -> str:
     lines = []
-    for name in (names if names is not None else registry.names()):
+    for name in (names if names is not None else registry.model_names()):
         tool = registry.get(name)
         # Argument names and types are already in the response schema; repeating them costs tokens (free tier: 8k/min).
         lines.append(f"- {name}: {tool.description.strip().splitlines()[0]}")
@@ -145,7 +145,7 @@ def shortlist_for(context: PlannerContext) -> list[str]:
     local = match(context.command, context.memory)
     local_tools = [s.tool for s in local.plan.steps] if local.plan else []
     last_tools = [s.get("tool", "") for t in list(context.memory.turns)[-1:] for s in (getattr(t, "steps", None) or []) if isinstance(s, dict)]
-    return tools_for(context.command, context.registry.names(), local_tools, last_tools)
+    return tools_for(context.command, context.registry.model_names(), local_tools, last_tools)
 
 
 def name_candidates(context: PlannerContext) -> list[dict[str, Any]]:

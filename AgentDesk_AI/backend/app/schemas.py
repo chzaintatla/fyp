@@ -48,6 +48,7 @@ class TaskOut(BaseModel):
     updated_at: datetime
     retry_at: float | None = None
     provider_note: str | None = None
+    speak_full: bool = False   # the reply is meant to be read out in full (a read-back of an e-mail), not shortened to a few sentences
     # Present when a task stopped after some actions had already changed things.
     partial: dict[str, Any] | None = None
     actions: list[ActionOut] = []

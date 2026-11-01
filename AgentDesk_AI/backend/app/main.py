@@ -98,6 +98,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title=settings.app_name, version=settings.app_version, lifespan=lifespan)
 app.include_router(browser_router)
 app.include_router(voice_router)
+from .mail.api import router as mail_router  # noqa: E402
+app.include_router(mail_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list({settings.frontend_origin, "http://localhost:5173", "http://127.0.0.1:5173"}),
@@ -109,7 +111,7 @@ app.add_middleware(
 
 _LOCAL_HOSTS = {"127.0.0.1", "localhost", "[::1]", "testserver"}
 _SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
-_PROTECTED_PREFIXES = ("/tasks", "/config", "/tools", "/usage", "/browser/connect-token", "/preferences", "/memory", "/metrics", "/voice")
+_PROTECTED_PREFIXES = ("/tasks", "/config", "/tools", "/usage", "/browser/connect-token", "/preferences", "/memory", "/metrics", "/voice", "/mail")
 
 
 @app.middleware("http")
@@ -137,7 +139,7 @@ async def _guarded(request: Request, call_next):
         if origin not in allowed:
             return JSONResponse({"detail": "Cross-origin request rejected"}, status_code=403)
     token = get_api_token()
-    if token and request.method != "OPTIONS" and request.url.path.startswith(_PROTECTED_PREFIXES):
+    if token and request.method != "OPTIONS" and request.url.path.startswith(_PROTECTED_PREFIXES) and request.url.path != "/mail/oauth/callback":
         supplied = request.headers.get("authorization", "")
         if not (supplied.startswith("Bearer ") and secrets.compare_digest(supplied[7:], token)):
             return JSONResponse({"detail": "Missing or invalid API token"}, status_code=401)

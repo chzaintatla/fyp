@@ -208,6 +208,8 @@ def line_for_task(task: dict[str, Any], language: str = "en", personality: "str 
     if status == "completed" and not actions:
         note = task.get("plan_note")
         if note:
+            if task.get("speak_full"):
+                return _answer_speech(note, sentences=14, limit=1400)   # an e-mail read back to its author: all of it
             return _answer_speech(note)  # a chat answer / report: say it as it is
         return line("success", language, personality, detail="")  # nothing to verify
     if status == "partially_completed":

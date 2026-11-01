@@ -76,6 +76,8 @@ def test_registry_lists_all_tools(ctx: ToolContext):
         "rename_file",
         "restore_file",
         "run_terminal_command",
+        "send_email",
+        "send_message",
         "summarise_file",
         "summarise_page",
         "take_screenshot",

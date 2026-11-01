@@ -270,6 +270,21 @@ def p_open_terminal(env: Env) -> Outcome:
     return judge(r, v, bool((r.output or {}).get("pid")), f"folder={_short((r.output or {}).get('folder'), 60)}")
 
 
+def _refusal_probe(env: Env, tool: str, args: dict, needle: str) -> Outcome:
+    """A hidden send tool must REFUSE a call that has no server-issued confirmation: the probe passes only if it refused and nothing was sent."""
+    r, _ = env.run(tool, args)
+    refused = (not r.success) and needle in (r.error or "")
+    return Outcome(PASS if refused else FAIL, f"refused without a confirmation: {refused} ({_short(r.error, 80)})")
+
+
+def p_send_email_refuses(env: Env) -> Outcome:
+    return _refusal_probe(env, "send_email", {"draft_id": "livecheck0000", "confirmation": "no-such-confirmation"}, "Nothing was sent")
+
+
+def p_send_message_refuses(env: Env) -> Outcome:
+    return _refusal_probe(env, "send_message", {"app": "whatsapp", "confirmation": "no-such-confirmation"}, "Nothing was sent")
+
+
 def _api_browser_inspect(base_url: str, client: Any = None) -> Outcome:
     """control_browser through the running server: the extension's socket lives in that process, not in this script.
 
@@ -528,6 +543,8 @@ PROBES: list[Probe] = [
     Probe("ui_act", "gui", p_ui_act_read),
     Probe("run_terminal_command", "read", p_terminal_read),
     Probe("open_terminal", "gui", p_open_terminal),
+    Probe("send_email", "read", p_send_email_refuses),
+    Probe("send_message", "read", p_send_message_refuses),
     Probe("application_package", "read", p_package_search),
     Probe("open_application", "gui", p_open_application),
     Probe("open_folder", "gui", p_open_folder),

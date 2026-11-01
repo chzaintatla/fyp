@@ -8,7 +8,7 @@ interface Params {
   activeTask: TaskOut | null;
   prefs: Preferences | null;
   voiceLanguage: string;
-  beginFollowUp: () => void;
+  beginFollowUp: (ms?: number) => void;
 }
 
 /** Speaks the closing line of a task, and a short acknowledgement / progress line while a slow one runs. */
@@ -77,7 +77,7 @@ export function useSpokenReplies({ voice: v, activeTask, prefs, voiceLanguage, b
       if (v.handsFreeRef.current) finishVoiceTask();
       else if (serverVoice && v.followUpMs > 0 && v.listenModeRef.current === 'push_to_talk' && v.voiceTaskActiveRef.current && isTerminal) {
         // "No, that's all" closed the session: go back to idle instead of listening again. Any other reply keeps the conversation open.
-        void voiceApi.session().then((s) => { if (s.open) beginFollowUp(); }).catch(() => beginFollowUp());
+        void voiceApi.session().then((s) => { if (s.open) beginFollowUp(s.dictation ? Math.max(v.followUpMs, 15000) : undefined); }).catch(() => beginFollowUp());   // writing an e-mail: listen 15 s
       }
     });
     v.speechFinishRef.current = finish;

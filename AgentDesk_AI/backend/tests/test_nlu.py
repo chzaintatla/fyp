@@ -43,7 +43,7 @@ def _walk(schema, path="$"):
 
 def test_strict_schema_tool_enum_comes_from_registry(registry):
     schema = plan_json_schema(registry)
-    assert tool_names_in_schema(schema) == registry.names()
+    assert tool_names_in_schema(schema) == registry.model_names()
     assert schema["properties"]["intent"]["enum"] == list(INTENTS)
 
 
@@ -285,8 +285,8 @@ def test_prompt_has_rules_tools_examples_and_marks_context_as_data(registry):
     system = messages[0]["content"]
     assert "never" in system.lower() and "DATA" in system
     shown = shortlist_for(context)  # only the shortlisted tools are described (the full catalogue broke the 8k tokens/min limit)
-    assert 6 <= len(shown) < len(registry.names()) and "open_application" in shown
-    for name in registry.names():
+    assert 6 <= len(shown) < len(registry.model_names()) and "open_application" in shown
+    for name in registry.model_names():
         assert (f"- {name}:" in system) == (name in shown)
     examples = [m for m in messages[1:-1] if m["role"] == "assistant"]
     assert 1 <= len(examples) <= 12  # up to 4 sent per call, only ones that use shortlisted tools

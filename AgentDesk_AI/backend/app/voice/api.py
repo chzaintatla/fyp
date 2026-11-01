@@ -170,8 +170,12 @@ def _with_anything_else(db: Session, task: dict, text: str, language: str) -> st
 @router.get("/session")
 def task_session(db: Session = Depends(get_db)) -> dict:
     """What the conversation is about right now (goal, steps done, current app, open items), or {"open": false}."""
+    from ..mail import draft as drafts
     from ..orchestration import session
     state = session.current(db)
+    mail = drafts.load(db)
+    if mail is not None and mail.state in drafts.DICTATING:   # an e-mail is being written: the conversation stays open and the microphone listens longer
+        return {"open": True, "dictation": True, "mail_state": mail.state, **(state.as_dict() if state else {})}
     return {"open": True, **state.as_dict()} if state else {"open": False}
 
 

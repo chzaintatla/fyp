@@ -6,6 +6,26 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-02 — Session 27: Upgrade U6 (e-mail + chat messages): OAuth, dictation, voice edits, read-back, send, verify in Sent
+
+**Built (not committed)** — details and setup in `docs/EMAIL_SETUP.md`
+- `app/mail/`: `oauth.py` (authorization code + PKCE, single-use state, tokens only in the Windows Credential Manager, refresh, smallest scopes: Gmail send + metadata + contacts, Outlook Mail.Send / Mail.Read / Contacts / People), `providers.py` (Gmail API and Microsoft Graph over httpx: contacts, send with attachments, "is it in Sent?"), `contacts.py` (name -> contact with the U1 sound-alike matcher, asks when several fit, spoken addresses "ali dot khan at example dot com"), `draft.py` (the draft, undo history, and the confirmation), `service.py` (the only place an e-mail leaves the PC), `rewrite.py` ("make it more formal": cloud AI, shown and used only on yes, needs the cloud-answers permission), `api.py` (`/mail/status`, `/mail/connect`, `/mail/oauth/callback`, `/mail/disconnect`, `/mail/draft`).
+- `orchestration/mail_flow.py`: "Write an email to Ali" -> subject -> dictation sentence by sentence -> "stop dictation" -> "send it" -> read-back of recipient, subject and first line -> "yes, send it" -> sent -> looked up in Sent -> "Email sent to Ali." Voice edits: read it back, delete the last sentence, undo, change X to Y (keeps the capitals), change the subject / the recipient, make it more formal / shorter, attach a file (name and size said aloud, waits for yes), cancel. English and Roman Urdu triggers; one language per e-mail; replies in 4 languages. While a draft is open every plain sentence is dictation, including ones that look like commands.
+- SEND RULE (enforced in code, not by the model): only a sentence with "send" / "bhej" after the read-back sends ("yes", "okay", dictated text do not); the confirmation is a server secret tied to the exact recipients, subject, text and attachments (a hash), voided by any edit, expires after 10 minutes, and a draft is sent once. `send_email` is a tool hidden from the model (`hidden_from_model`: not in any tool list or schema, a plan naming it is rejected), refuses a made-up confirmation even if a click approves it, and `verify` looks in Sent (found = verified; otherwise the answer says to check the mailbox).
+- Chat messages (`orchestration/message_flow.py`, `tools/messenger.py`): "In WhatsApp, message Ahmed 'I'm on my way'" (also Telegram, Teams; EN + Roman Urdu) -> read-back -> "yes, send it" -> deep link (text typed in) -> Send pressed through UI Automation -> the chat is read again (message must appear, text box empty). Numbers from the Memory page ("Ahmed: +92..."), Telegram @names, Teams addresses from the e-mail contacts. Same rule and hidden `send_message` tool; "Send" pressed is recorded before the click so a retry can never send twice.
+- Frontend: live "Email draft" card, Settings > Email (provider choice, Connect opens the provider's own page, Disconnect), 15 s listening window while dictating (`/voice/session` reports `dictation`), `/mail` added to the dev proxy. API auth: `/mail/*` needs the local token except the OAuth callback (state + PKCE protect it).
+
+**Tested how**
+- 79 tests (`test_u6_mail.py` 42, `test_u6_providers.py` 24, `test_u6_messages.py` 13) on a fake mailbox, mock HTTP transports and a fake chat window: the spec's conversation end to end, ambiguity, voice edits, attachments (incl. > 20 MB), every send-rule case (no read-back, "yes" only, edited text, old token, stale, double send, made-up token via tool and via a click, Sent folder missing, provider error, hidden from planner), Gmail MIME / Graph payloads, Sent checks, contacts, OAuth (PKCE, state, refresh, revoked, credential manager missing, endpoints). Existing tool-list tests were updated (the two send tools exist but are hidden). Live probes `send_email` / `send_message` pass only by REFUSING a call with no confirmation.
+- Live on the running backend (text): not connected -> "Email is not connected yet. Open Settings, Email, ..."; `/mail/connect` says which client id to add; the Email section renders in Settings; `/tools` does not list the send tools.
+
+**NOT tested / not done**
+- No real mailbox was touched: there is no OAuth client id on this PC and no test mailbox given. The Gmail / Graph calls are verified against my reading of their documentation through mock transports, not against the services. `scripts/mail_live.py` / `scripts\check_u6.ps1 -Provider -To` does the live send to a TEST mailbox once you add the client id.
+- WhatsApp / Telegram / Teams: not installed or not driven here; only the fake chat window ran. The real apps' Send button names and chat markup may differ.
+- Voice: no spoken run (the built-in browser has no microphone); the 15 s dictation window and the live draft card were not exercised in a browser with a draft.
+- The e-mail text is dictated into the app's own draft, not typed into the Gmail / Outlook compose window.
+- Contact lookup uses the account's contacts only; "recent recipients" and CC / BCC are not built. Reply / forward and reading the inbox are out of scope.
+
 ### 2026-11-02 — Session 26: Upgrade U5 (terminal + browser/YouTube completion)
 
 **Built (not committed)**

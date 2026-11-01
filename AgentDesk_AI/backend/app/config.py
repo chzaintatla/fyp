@@ -58,6 +58,11 @@ class Settings(BaseSettings):
     # Bound on agentic-loop tool steps per task (cost + runaway protection).
     agent_max_steps: int = 10
 
+    # --- E-mail (OAuth client ids; see docs/EMAIL_SETUP.md). The ids are not secrets in a desktop app, but they are not committed either. ---
+    google_oauth_client_id: str = ""
+    google_oauth_client_secret: str = ""
+    ms_oauth_client_id: str = ""
+
     # --- Database ---
     database_url: str = "sqlite:///./agentdesk.db"
 

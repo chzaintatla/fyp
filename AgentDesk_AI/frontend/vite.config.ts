@@ -21,7 +21,7 @@ export default defineConfig(({ command }) => ({
     port: 5173,
     strictPort: true,
     proxy: Object.fromEntries(
-      ['/health', '/config', '/tasks', '/tools', '/browser', '/usage', '/preferences', '/memory', '/voice'].map(path => [path, {
+      ['/health', '/config', '/tasks', '/tools', '/browser', '/usage', '/preferences', '/memory', '/voice', '/mail'].map(path => [path, {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         timeout: 300000,

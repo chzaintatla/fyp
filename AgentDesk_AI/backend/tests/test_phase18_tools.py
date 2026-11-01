@@ -245,4 +245,4 @@ def test_email_is_draft_only(registry, monkeypatch):
     assert opened[0].startswith("mailto:a@example.com?") and result.output["sent"] is False
     source = inspect.getsource(apps)
     assert "smtplib" not in source and "sendmail" not in source
-    assert not [n for n in registry.names() if n.startswith("send")]
+    assert not [n for n in registry.model_names() if n.startswith("send")]   # send_email / send_message exist, but are hidden from the model (U6)

@@ -155,6 +155,7 @@ export interface Preferences {
   onboarded: boolean;
   follow_up_seconds: number;
   anything_else?: boolean;
+  mail_provider?: 'none' | 'gmail' | 'outlook';
   speech_volume: number;
   daily_greeting: boolean;
   cloud_answers: boolean | null;
@@ -328,6 +329,25 @@ const jsonInit = (body: unknown): RequestInit => ({
   body: JSON.stringify(body),
 });
 
+export interface MailDraft {
+  id?: string; provider?: string; state: string; to: { name: string; email: string }[]; subject: string; body: string;
+  attachments: { name: string; size: number }[]; candidates: { name: string; email: string }[]; pending?: string | null; dictating?: boolean;
+}
+export interface MailStatus {
+  chosen: 'none' | 'gmail' | 'outlook';
+  providers: Record<'gmail' | 'outlook', { connected: boolean; configured: boolean; account?: string | null; error?: string }>;
+  draft: MailDraft | null;
+}
+
+/** E-mail: connection status, the OAuth round trip (the page opens the provider's own sign-in; no password is typed here), and the live draft. */
+export const mailApi = {
+  status: () => request<MailStatus>('/mail/status'),
+  connect: (provider: 'gmail' | 'outlook') => request<{ url: string }>('/mail/connect', { method: 'POST', body: JSON.stringify({ provider }) }),
+  disconnect: (provider: 'gmail' | 'outlook') => request<{ disconnected: boolean }>('/mail/disconnect', { method: 'POST', body: JSON.stringify({ provider }) }),
+  draft: () => request<MailDraft>('/mail/draft'),
+  cancelDraft: () => request<{ cancelled: boolean }>('/mail/draft/cancel', { method: 'POST' }),
+};
+
 export const voiceApi = {
   chunks: async (text: string, direction?: string | null) =>
     ((await (await voiceFetch('/voice/chunks', jsonInit({ text, direction }))).json()) as { chunks: string[] }).chunks,
@@ -341,7 +361,7 @@ export const voiceApi = {
   line: async (body: { task?: TaskOut; tool?: string; args?: Record<string, unknown>; event?: string; language: string; personality?: string; user_name?: string; formality?: number; humour?: number }) =>
     ((await (await voiceFetch('/voice/line', jsonInit(body))).json()) as { text: string }).text,
   /** What the conversation is about right now; `open` is false once the user said "that's all" or stayed silent. */
-  session: async () => (await (await voiceFetch('/voice/session', { method: 'GET' })).json()) as { open: boolean; goal?: string; current_app?: string | null; awaiting?: string | null },
+  session: async () => (await (await voiceFetch('/voice/session', { method: 'GET' })).json()) as { open: boolean; dictation?: boolean; goal?: string; current_app?: string | null; awaiting?: string | null },
   closeSession: () => voiceFetch('/voice/session/close', jsonInit({})).catch(() => undefined),
   /** The acknowledgement for a command, from the local fast path (no network, nothing executed); text is null when none is safe. */
   ack: async (body: { command: string; language: string; personality?: string; user_name?: string; formality?: number; humour?: number }) =>
