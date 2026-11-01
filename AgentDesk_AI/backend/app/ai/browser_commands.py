@@ -42,7 +42,10 @@ def browser_plan(command):
         opened = re.fullmatch(rf"(.+?)\s+({chrome})\s+{inside}\s+{OPEN}{END}", raw, re.I)
     if opened:
         site = SITES.get(opened.group(1).strip().casefold(), opened.group(1).strip().casefold())
-        urls = {"youtube": "https://www.youtube.com", "gmail": "https://mail.google.com", "google drive": "https://drive.google.com", "whatsapp": "https://web.whatsapp.com", "openai": "https://openai.com", "chatgpt": "https://chatgpt.com"}
+        urls = {"youtube": "https://www.youtube.com", "gmail": "https://mail.google.com", "google drive": "https://drive.google.com", "whatsapp": "https://web.whatsapp.com", "openai": "https://openai.com", "chatgpt": "https://chatgpt.com",
+                "facebook": "https://www.facebook.com", "instagram": "https://www.instagram.com", "twitter": "https://twitter.com",
+                "linkedin": "https://www.linkedin.com", "google": "https://www.google.com", "netflix": "https://www.netflix.com",
+                "reddit": "https://www.reddit.com", "amazon": "https://www.amazon.com", "wikipedia": "https://www.wikipedia.org"}
         if site in urls:
             args = {"url": urls[site]}
             if opened.group(2):

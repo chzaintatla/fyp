@@ -6,6 +6,17 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-01 — Session 21: "Open the YouTube" failed (user screenshot)
+
+**Two bugs**
+1. A spoken article broke the parsers: "Open the YouTube" became `open_application` with app name "the YouTube" (also "the chrome", "the notepad", "the gmail", "the folder downloads"). `clean_transcript` now drops
+   a "the / a / an" right after the verb (and before a Roman Urdu verb) and the final period, before any parser runs. `open facebook / instagram / twitter / linkedin / google / netflix / reddit / amazon / wikipedia` open the website.
+2. A task could hang: when `open_application` answered "closest installed apps: ..." the executor set FAILED and then AWAITING_INPUT, an illegal state change: `/run` returned HTTP 500 and the page showed "executing / Running..." forever (the screenshot).
+   The status is now decided once. The user gets a short question: "I couldn't find \"x\". Did you mean GitHub Desktop? Say yes, or the exact name." (readable and speakable).
+
+**Measured (sandbox server, this PC):** "Open the YouTube" plan + run + verify = 0.53 s and 0.75 s (completed, verified); "show trash" 0.06-0.44 s. Whisper adds 1.1-2.6 s before this, so a spoken command takes about 2-3.5 s end to end; the part this code controls is under 1 s.
+**Tested how:** `pytest tests -q` -> 1782 passed, 4 skipped (new: 20 tests in `tests/test_voice_live_fixes.py`, including a regression test that fails without the executor fix).
+
 ### 2026-11-01 — Session 20: Step 1g, planner comparison result (200 commands, old local path vs new strict planner)
 
 `scripts/shadow_replay.py`, 200 single-turn gold commands (50 per language), tool shortlist on, one call every 45 s, about 2.5 hours; raw rows and summary in `docs/eval/1g_shadow_main/`.

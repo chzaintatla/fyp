@@ -31,6 +31,23 @@ def strip_end_punctuation(text):
     return stripped or (text or "").strip()
 
 
+_ARTICLE_AFTER_VERB = re.compile(
+    r"^((?:please\s+|can you\s+|could you\s+)?(?:open|launch|start|run|close|go to|show|switch to|play|find|delete|remove|"
+    r"copy|move|rename|zip|unzip|extract|read|list)\s+)(?:the|a|an)\s+", re.I)
+_ARTICLE_BEFORE_VERB = re.compile(r"^(?:the|a|an)\s+(?=\S+(?:\s+\S+)?\s+(?:kholo|khol|band|chalao|chalu|karo|kar do)$)", re.I)
+
+
+def strip_leading_article(text):
+    """"open the youtube" -> "open youtube": people say "the" all the time and no app or site is called "the youtube"."""
+    text = (text or "").strip()
+    return _ARTICLE_BEFORE_VERB.sub("", _ARTICLE_AFTER_VERB.sub(lambda m: m.group(1), text, count=1), count=1)
+
+
+def clean_transcript(text):
+    """What the command parsers get from a spoken or typed command: no final punctuation, no article after the verb."""
+    return strip_leading_article(strip_end_punctuation(text))
+
+
 def normalize_speech(text):
     text = unicodedata.normalize("NFKC", text).casefold().replace("़", "")
     for pattern, replacement in [

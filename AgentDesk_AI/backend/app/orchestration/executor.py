@@ -434,13 +434,21 @@ def run_task(db: Session, task_id: str, registry: ToolRegistry, settings: Settin
             if a.status == ActionStatus.APPROVED:
                 a.status = ActionStatus.SKIPPED
         verified_before = any(a.status == ActionStatus.SUCCEEDED for a in task.actions)
-        task.status = TaskStatus.PARTIALLY_COMPLETED if verified_before else TaskStatus.FAILED
         failed_action = next((a for a in runnable if a.status == ActionStatus.FAILED), None)
-        task.error = failed_action.error if failed_action else "One or more actions failed; remaining actions were skipped."
+        error = failed_action.error if failed_action else "One or more actions failed; remaining actions were skipped."
         if failed_action and json.loads(failed_action.result_json or "{}").get("output", {}).get("needs_confirmation"):
+            # "Closest installed apps: ...": ask the user which one. (Setting FAILED first and then AWAITING_INPUT was an illegal
+            # state change: /run answered HTTP 500 and the task stayed "executing" forever.)
             task.status = TaskStatus.AWAITING_INPUT
-            task.plan_note = task.error
+            output = json.loads(failed_action.result_json or "{}").get("output", {})
+            candidates = [str(c) for c in output.get("candidates") or []][:3]
+            asked = str(json.loads(failed_action.args_json or "{}").get("app_name", "")).strip()
+            # a short question the user can read and hear, not the wording meant for the model
+            task.plan_note = (f"I couldn't find \"{asked}\". Did you mean {' or '.join(candidates)}? Say yes, or the exact name." if candidates else error)
             task.error = None
+        else:
+            task.status = TaskStatus.PARTIALLY_COMPLETED if verified_before else TaskStatus.FAILED
+            task.error = error
     elif task.status == TaskStatus.CANCELLED:
         pass  # keep cancellation
     else:
@@ -611,9 +619,9 @@ def _nlu_fallback(command: str, registry: ToolRegistry) -> Plan | None:
     from ..nlu import THRESHOLD, match, validate_plan
     from ..nlu.schema import STEP_REF
 
-    from ..ai.speech_commands import strip_end_punctuation
+    from ..ai.speech_commands import clean_transcript
 
-    result = match(strip_end_punctuation(command))
+    result = match(clean_transcript(command))
     plan = result.plan
     if plan is None or result.confidence < THRESHOLD or plan.intent in _NLU_FALLBACK_INTENTS_SKIP or not plan.steps:
         return None

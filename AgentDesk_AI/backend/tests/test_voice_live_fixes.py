@@ -205,3 +205,63 @@ def test_the_sapi_engine_falls_back_to_the_one_shot_path_when_the_worker_breaks(
     with pytest.raises(OSError, match="stop here"):
         tts.sapi_engine()("Hello", "female")
     assert calls == ["Hello"]  # the old path ran
+
+
+# ------------------------------------------------------------------ "Open the YouTube" (screenshot): article + stuck task
+@pytest.mark.parametrize("text,expected", [
+    ("open the youtube", "open youtube"), ("Open the YouTube.", "Open YouTube"), ("please open the gmail", "please open gmail"),
+    ("launch a calculator", "launch calculator"), ("close the notepad", "close notepad"), ("the youtube kholo", "youtube kholo"),
+    ("open folder downloads", "open folder downloads"), ("open the", "open the"), ("tell me the time", "tell me the time"),
+    ("play the beatles on youtube", "play beatles on youtube"),
+])
+def test_a_spoken_article_after_the_verb_is_dropped_and_nothing_else(text, expected):
+    from app.ai.speech_commands import clean_transcript
+    assert clean_transcript(text) == expected
+
+
+@pytest.mark.parametrize("command,tool,arg", [
+    ("Open the YouTube", "open_url", "https://www.youtube.com"), ("open the youtube.", "open_url", "https://www.youtube.com"),
+    ("open a youtube", "open_url", "https://www.youtube.com"), ("the youtube kholo", "open_url", "https://www.youtube.com"),
+    ("open the gmail", "open_url", "https://mail.google.com"), ("go to the youtube", "open_url", "https://www.youtube.com"),
+    ("open facebook", "open_url", "https://www.facebook.com"), ("open the google", "open_url", "https://www.google.com"),
+    ("open the notepad", "open_application", "notepad"), ("launch the calculator", "open_application", "calculator"),
+])
+def test_commands_with_the_before_the_target_open_the_right_thing(command, tool, arg):
+    from app.database import SessionLocal
+    from app.models import Task, TaskStatus
+    from app.orchestration.executor import _nlu_fallback
+    from app.orchestration.local_agent import prepare_local_request
+    from app.tools.base import ToolContext
+    from app.tools.registry import ToolRegistry
+
+    with SessionLocal() as db:
+        task = Task(command=command, status=TaskStatus.CREATED)
+        db.add(task)
+        db.commit()
+        registry = ToolRegistry(ToolContext.from_settings())
+        plan = prepare_local_request(db, task, registry) or _nlu_fallback(command, registry)
+    assert plan is not None
+    action = plan.actions[0]
+    assert action.tool == tool and arg in action.args.values()
+
+
+def test_an_app_that_needs_a_choice_ends_as_a_question_not_a_hung_task(client, monkeypatch):
+    """open_application answered 'closest apps: GitHub Desktop' -> the task went FAILED then AWAITING_INPUT (illegal): /run was HTTP 500
+    and the page showed 'Running...' forever."""
+    from app.tools import apps
+    from app.tools.base import ToolResult
+
+    monkeypatch.setattr(apps.OpenApplicationTool, "execute", lambda self, args: ToolResult(
+        success=False, error="Application 'the youtube' is not an exact unique match. Closest installed apps: GitHub Desktop.",
+        output={"candidates": ["GitHub Desktop"], "needs_confirmation": True}))
+    task = client.post("/tasks", json={"command": "Open Chrome"}).json()
+    ids = [a["id"] for a in task["actions"]]
+    if task["status"] == "awaiting_approval":
+        assert client.post(f"/tasks/{task['id']}/approve", json={"action_ids": ids}).status_code == 200
+    run = client.post(f"/tasks/{task['id']}/run") if task["status"] in ("awaiting_approval", "approved") else client.get(f"/tasks/{task['id']}")
+    assert run.status_code == 200, run.text
+    body = run.json()
+    assert body["status"] == "awaiting_input" and body["error"] is None
+    assert body["plan_note"].endswith("Say yes, or the exact name.") and "GitHub Desktop" in body["plan_note"] and len(body["plan_note"]) <= 110
+    spoken = responses.line_for_task(body, "en")
+    assert "GitHub Desktop" in spoken  # short enough to be read out as the question

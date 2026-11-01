@@ -183,9 +183,9 @@ def _resolve(task, intent, registry):
 def prepare_local_request(db, task, registry):
     """Return a validated local plan, or None when cloud reasoning is appropriate."""
     from ..ai.command_intents import canonical_command, switch_followup
-    from ..ai.speech_commands import strip_end_punctuation
+    from ..ai.speech_commands import clean_transcript
     recent = db.query(Task).filter(Task.id != task.id).order_by(Task.created_at.desc()).first()
-    spoken = strip_end_punctuation(task.command)  # Whisper ends sentences with "." which the parsers do not expect
+    spoken = clean_transcript(task.command)  # Whisper ends sentences with "." and people say "open THE youtube": the parsers expect neither
     routed = switch_followup(spoken, recent) or canonical_command(spoken)
     media = browser_plan(routed)
     if media is not None:
