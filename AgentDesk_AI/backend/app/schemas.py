@@ -59,6 +59,7 @@ class ConfigStatusOut(BaseModel):
     ai_configured: bool
     mock_mode: bool
     groq_configured: bool = False
+    search: dict[str, bool] = {}   # which web-search providers are set up: {"wikipedia": bool, "tavily": bool}
     speech_ready: bool = False  # server-side speech (Whisper / Orpheus / edge-tts) can be used
     agent_max_steps: int = 10
     fallback_provider: str = "none"

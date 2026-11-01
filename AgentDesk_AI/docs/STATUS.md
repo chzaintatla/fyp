@@ -6,6 +6,32 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-10-31 — Session 14: M5 web search rebuild (branch `m5-search`, NOT merged, NOT yet measured live)
+
+**Decision (user, 2026-10-31):** option B. Wikipedia official REST API + Tavily, behind a `SearchProvider` interface; no scraping, no
+user-agent spoofing. Contact e-mail for Wikipedia's User-Agent and the Tavily key are still to be provided by the user.
+
+**Done**
+- Removed the DuckDuckGo HTML scraping and its browser-style user agent. `app/search/`: `provider.py` (interface, `SearchBusy`,
+  `SearchNotConfigured`), `wikipedia.py` (REST search + page summaries, User-Agent `AgentDesk-AI/0.3 (Riphah FYP; <email>)`, at most 1 request/second,
+  off until `WIKIPEDIA_CONTACT_EMAIL` is set), `tavily.py` (key from Windows Credential Manager or `TAVILY_API_KEY`; sent only in the
+  Authorization header), `router.py` (Wikipedia first for "what/who is ..." definitions, Tavily for everything else, each the other's fallback),
+  `cache.py` (10-minute TTL), `budget.py` (token budget with gpt-oss's `o200k_harmony` tokenizer; estimate fallback is labelled).
+- `web_answer` now: checks the privacy switch BEFORE any search request (the question itself goes to Wikipedia/Tavily), reads provider snippets
+  (no page scraping), keeps the whole prompt <= 1,500 tokens, summarises with gpt-oss-20b, caches answers 10 minutes, and says
+  "Search is busy, try again in a minute." on 429 / Tavily 432-433. Verifier also checks the token budget.
+  `summarise_page` / `summarise_file` use the same budget and the small model; the page reader identifies itself honestly as `AgentDesk-AI/0.3`.
+- `scripts/set_search_key.py` (hidden prompt -> Credential Manager), `docs/SEARCH_SETUP.md`, Settings shows which providers are set up.
+- `scripts/eval_conversation.py`: model grading (gpt-oss-120b, correct / partly / wrong) next to keyword grading, CSV for spot-checks, target
+  web >= 18/20 model-graded correct.
+
+**Tested how:** `pytest tests -q` -> 947 passed, 4 skipped (new `tests/test_m5_search.py`, 41 tests: Wikipedia headers + 1/s spacing, Tavily key only in the
+header, 429/432/433, routing table, cache TTL, token budget, injection text fenced, no request before permission). All with fakes.
+
+**NOT measured:** nothing live. Wikipedia and Tavily were not called (no e-mail, no key), so the web target (>= 18/20, twice, an hour apart) is
+unproven. M5's last live result stays: web 12/20 (old DuckDuckGo path, keyword graded). The first run of the tokenizer downloads its vocabulary
+file from a public host (a new network destination, no user data).
+
 ### 2026-10-31 — Session 13: Step 0 merge to main (v0.3.0)
 
 **Done:** merged `m1-cloud-brain`, `m2-voice`, `m3-avatars`, `m4-ui`, `m5-memory-chat` into `main` in that order (merge commits, no squash).

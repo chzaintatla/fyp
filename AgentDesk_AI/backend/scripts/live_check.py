@@ -421,7 +421,7 @@ def p_summarise_file(env: Env) -> Outcome:
 
 def p_web_answer(env: Env) -> Outcome:
     r, v = env.run("web_answer", {"query": "What is the capital of France?"})
-    blocked = external(r, ("couldn't read any web page", "No AI service", "could not summarise", "busy"))
+    blocked = external(r, ("Search is busy", "SEARCH_SETUP", "couldn't find any web results", "No AI service", "could not summarise", "Settings", "busy"))
     if blocked:
         return Outcome(BLOCKED, f"needs internet and an AI service: {blocked.evidence}")
     answer = str((r.output or {}).get("answer", ""))

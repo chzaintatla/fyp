@@ -49,7 +49,7 @@ class _GroqChat:
         self.client, self.settings = client, settings
 
     def complete(self, messages, *, fast=False, max_tokens=350) -> str:
-        model = getattr(self.settings, "groq_fast_model", None) if fast else None
+        model = "openai/gpt-oss-20b" if fast else None  # small model: enough for short answers and for summarising given text
         out = self.client.chat(messages, model=model or None, temperature=0.3, max_tokens=max_tokens)
         return (out.get("content") or "").strip()
 
