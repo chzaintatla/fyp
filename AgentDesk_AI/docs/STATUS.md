@@ -6,6 +6,22 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-01 — Session 20: Step 1g, planner comparison result (200 commands, old local path vs new strict planner)
+
+`scripts/shadow_replay.py`, 200 single-turn gold commands (50 per language), tool shortlist on, one call every 45 s, about 2.5 hours; raw rows and summary in `docs/eval/1g_shadow_main/`.
+
+| | old local path | new planner |
+|---|---|---|
+| right tool sequence | 178 / 200 (89.0%) | 178 / 200 (89.0%) |
+| right tools and arguments (198 without find-then-act steps) | 156 / 198 (78.8%) | 166 / 198 (83.8%) |
+| has an answer | 177 / 200 have a local plan, 23 would go to the Groq agent loop | 193 / 200 (7 failed: 4 unresolved references, 2 AIError, 1 rejected plan) |
+
+- By language, right tool sequence old / new: English 46 / 45, Roman Urdu 44 / 47, Urdu 44 / 42, Hindi 44 / 44. Where both produced a plan (173) the tool sequences agree 154 times (89%).
+- New planner latency: median 1.23 s, p90 1.87 s per call (Groq, tool shortlist).
+- Meaning: the strict planner is as good as the local parsers on tools and slightly better on arguments, and it covers commands the local path cannot. It is NOT better on tool choice, and it is worse on Urdu script. One run, one dataset, tools-and-arguments scoring only (not the intent label of Gate G3).
+- Not decided: `PLANNER_MODE` stays `legacy`; the planner is already used for conversation intents (Step 1e). Making it the default planner is the user's call.
+- Still open for 1g: the `whatsapp_open_chat` and `winget_install` live checks (need your number and a package ID: `scripts\check_1g.ps1`) and the browser check (extension not paired).
+
 ### 2026-11-01 — Session 19: live voice test, issues found and fixed
 
 **How:** `backend/scripts/voice_live.py` runs the REAL voice pipeline against a sandbox copy of the app (temporary home and database) and prints every step with times:

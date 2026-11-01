@@ -1,0 +1,164 @@
+{
+  "overall": {
+    "commands": 200,
+    "old_has_local_plan": 177,
+    "new_planner_failed": 7,
+    "gold_tools_old": {
+      "n": 200,
+      "ok": 178,
+      "rate": 0.89
+    },
+    "gold_tools_new": {
+      "n": 200,
+      "ok": 178,
+      "rate": 0.89
+    },
+    "gold_args_old": {
+      "n": 198,
+      "ok": 156,
+      "rate": 0.7879
+    },
+    "gold_args_new": {
+      "n": 198,
+      "ok": 166,
+      "rate": 0.8384
+    },
+    "old_vs_new_when_both_plan": {
+      "n": 173,
+      "tools_match": 154,
+      "args_match": 88
+    }
+  },
+  "by_language": {
+    "en": {
+      "commands": 50,
+      "old_has_local_plan": 48,
+      "new_planner_failed": 2,
+      "gold_tools_old": {
+        "n": 50,
+        "ok": 46,
+        "rate": 0.92
+      },
+      "gold_tools_new": {
+        "n": 50,
+        "ok": 45,
+        "rate": 0.9
+      },
+      "gold_args_old": {
+        "n": 50,
+        "ok": 41,
+        "rate": 0.82
+      },
+      "gold_args_new": {
+        "n": 50,
+        "ok": 45,
+        "rate": 0.9
+      },
+      "old_vs_new_when_both_plan": {
+        "n": 46,
+        "tools_match": 42,
+        "args_match": 25
+      }
+    },
+    "roman_ur": {
+      "commands": 50,
+      "old_has_local_plan": 45,
+      "new_planner_failed": 1,
+      "gold_tools_old": {
+        "n": 50,
+        "ok": 44,
+        "rate": 0.88
+      },
+      "gold_tools_new": {
+        "n": 50,
+        "ok": 47,
+        "rate": 0.94
+      },
+      "gold_args_old": {
+        "n": 50,
+        "ok": 42,
+        "rate": 0.84
+      },
+      "gold_args_new": {
+        "n": 50,
+        "ok": 45,
+        "rate": 0.9
+      },
+      "old_vs_new_when_both_plan": {
+        "n": 44,
+        "tools_match": 41,
+        "args_match": 23
+      }
+    },
+    "ur": {
+      "commands": 50,
+      "old_has_local_plan": 42,
+      "new_planner_failed": 2,
+      "gold_tools_old": {
+        "n": 50,
+        "ok": 44,
+        "rate": 0.88
+      },
+      "gold_tools_new": {
+        "n": 50,
+        "ok": 42,
+        "rate": 0.84
+      },
+      "gold_args_old": {
+        "n": 49,
+        "ok": 37,
+        "rate": 0.7551
+      },
+      "gold_args_new": {
+        "n": 49,
+        "ok": 37,
+        "rate": 0.7551
+      },
+      "old_vs_new_when_both_plan": {
+        "n": 42,
+        "tools_match": 35,
+        "args_match": 19
+      }
+    },
+    "hi": {
+      "commands": 50,
+      "old_has_local_plan": 42,
+      "new_planner_failed": 2,
+      "gold_tools_old": {
+        "n": 50,
+        "ok": 44,
+        "rate": 0.88
+      },
+      "gold_tools_new": {
+        "n": 50,
+        "ok": 44,
+        "rate": 0.88
+      },
+      "gold_args_old": {
+        "n": 49,
+        "ok": 36,
+        "rate": 0.7347
+      },
+      "gold_args_new": {
+        "n": 49,
+        "ok": 39,
+        "rate": 0.7959
+      },
+      "old_vs_new_when_both_plan": {
+        "n": 41,
+        "tools_match": 36,
+        "args_match": 21
+      }
+    }
+  },
+  "new_latency_ms": {
+    "median": 1229.6,
+    "p90": 1874.5
+  },
+  "new_errors": {
+    "AIError": 2,
+    "PlanRejected": 1,
+    "unresolved_reference": 4
+  },
+  "note": "gold = tests/nlu_eval/commands.jsonl (single-turn items). 'old' None = the legacy path would call the Groq agent loop."
+}
