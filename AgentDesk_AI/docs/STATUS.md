@@ -6,6 +6,23 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-01 — Session 18: Step 1g, planner tool shortlist (decision: shortlist tools; fixes the HTTP 413)
+
+**Done**
+- `app/nlu/shortlist.py`: per command the planner is shown only the tools it could need (hand-written English / Roman Urdu / Urdu / Hindi trigger words per tool, plus the local matcher's guess,
+  last turn's tools for follow-ups like "a bit more", and pairs such as file operations -> `find_paths`, install -> `application_package`). 6 to 11 tools instead of 38; the prompt catalogue, the few-shot examples and the JSON schema all use the same list.
+- Safety unchanged: the shortlist only narrows what the MODEL may name. Every plan is still validated against the FULL registry; risk and approvals come from the tool. A wrong shortlist can only make the planner say unsupported / ask, never run something extra.
+- Cloud brain (`/cloud/plan`) uses the same planner code, so it benefits once Render is redeployed.
+
+**Measured (offline, `scripts/shortlist_report.py` -> `docs/eval/1g_shortlist.json`)**
+- Planner request size (prompt + examples + schema): **9,332 tokens with all tools -> median 2,979, p95 3,479, max 3,977** (limit 8,000 per minute on the free tier).
+- Shortlist recall (the gold plan's tools are all offered): dev 184/184, holdout 90/90 (not looked at while writing the word lists), all 274/274 (earlier turns passed as context, as in the app).
+  Without the earlier turns 5 follow-ups ("a bit more", "delete the first one") were missed: they rely on last-turn tools. Conversation phrasings of Step 1e: 300/300, BUT I added words after seeing 20 misses, so that number is tuned.
+- Live, 3 real planner calls on this PC: all succeeded (valid plans: volume up -> `manage_system_setting`, "youtube kholo" -> `open_url`, "mera exam ... yaad rakho" -> intent `memory` / `memory_remember`), 2.7-2.8k prompt tokens, 1.2-4.1 s.
+
+**NOT measured:** how accurate the planner is over many commands (the 200-command comparison, see the next entry). Recall of the shortlist is not accuracy of the model.
+`pytest tests -q` -> 1715 passed (+ the known load-sensitive `test_phase9_reliability` kill test failing once under full-suite load).
+
 ### 2026-11-01 — Session 17: Step 1g, planner comparison and live checks (BLOCKED: the planner cannot run on the free tier)
 
 **Done**

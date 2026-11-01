@@ -133,10 +133,10 @@ def tool_args_schema(tool) -> dict[str, Any]:
     return _strict(_inline(raw, raw.get("$defs", {})))
 
 
-def plan_json_schema(registry) -> dict[str, Any]:
-    """Strict schema for NLUPlan with one step variant per registered tool."""
+def plan_json_schema(registry, names: list[str] | None = None) -> dict[str, Any]:
+    """Strict schema for NLUPlan with one step variant per registered tool (or only `names`, the planner's shortlist)."""
     variants = []
-    for name in registry.names():
+    for name in (names if names is not None else registry.names()):
         variants.append({
             "type": "object",
             "additionalProperties": False,

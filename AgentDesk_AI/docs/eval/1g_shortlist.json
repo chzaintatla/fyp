@@ -1,0 +1,58 @@
+{
+  "registry_tools": 38,
+  "limit_tokens_per_minute": 8000,
+  "recall": {
+    "dev": {
+      "n": 184,
+      "hit": 184,
+      "rate": 1.0
+    },
+    "all": {
+      "n": 274,
+      "hit": 274,
+      "rate": 1.0
+    },
+    "en": {
+      "n": 84,
+      "hit": 84,
+      "rate": 1.0
+    },
+    "holdout": {
+      "n": 90,
+      "hit": 90,
+      "rate": 1.0,
+      "holdout_misses": []
+    },
+    "roman_ur": {
+      "n": 82,
+      "hit": 82,
+      "rate": 1.0
+    },
+    "ur": {
+      "n": 54,
+      "hit": 54,
+      "rate": 1.0
+    },
+    "hi": {
+      "n": 54,
+      "hit": 54,
+      "rate": 1.0
+    }
+  },
+  "conversation_phrasings_recall": {
+    "n": 300,
+    "hit": 300,
+    "rate": 1.0
+  },
+  "shortlist_size": {
+    "mean": 6.2,
+    "max": 11
+  },
+  "request_tokens_full_catalogue": 9332,
+  "request_tokens_shortlist": {
+    "median": 2979,
+    "p95": 3479,
+    "max": 3977
+  },
+  "note": "request tokens = prompt + examples + json schema (o200k_base, the gpt-oss tokenizer family), excluding the 900-token answer budget"
+}

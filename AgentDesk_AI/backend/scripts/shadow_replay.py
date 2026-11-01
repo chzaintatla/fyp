@@ -8,8 +8,8 @@ The app's `PLANNER_MODE=shadow` does the same thing one real command at a time. 
          None means the legacy path has no local plan and would hand the command to the Groq agent loop.
   new  = the strict-JSON planner asked for the plan with the LLM only (cloud brain, then Groq), validated like in the app.
 
-Needs a cloud brain or a Groq key (backend/.env) and spends API quota: the planner prompt is ~7k tokens and the free tier
-allows 8k tokens/minute per organization, so the default pace is one call every 65 seconds (200 commands ~ 3.5 hours).
+Needs a cloud brain or a Groq key (backend/.env) and spends API quota: the planner request is ~3k tokens and the free tier
+allows 8k tokens/minute per organization, so the default pace is one call every 45 seconds (200 commands ~ 2.5 hours; the request is ~3k tokens with the tool shortlist).
 The run is resumable: results are appended per command and finished ids are skipped on the next start.
 A temporary database is used; your tasks and memory are not touched. Command text is not written to the output (ids only).
 
@@ -104,7 +104,7 @@ def score_row(registry, item: dict[str, Any], old, new, info: dict[str, Any]) ->
 
 
 def replay(items: list[dict[str, Any]], out: Path, plan_fn: Callable[[str], tuple[Any, dict[str, Any]]],
-           min_interval: float = 65.0, sleep: Callable[[float], None] = time.sleep) -> list[dict[str, Any]]:
+           min_interval: float = 45.0, sleep: Callable[[float], None] = time.sleep) -> list[dict[str, Any]]:
     """Run every item not already in out/shadow.jsonl; append one JSON row per command; return all rows."""
     from app.database import Base, SessionLocal, engine
     from app.tools.base import ToolContext
@@ -189,7 +189,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--limit", type=int, default=200, help="how many commands (default 200)")
     parser.add_argument("--split", choices=("all", "dev", "holdout"), default="all")
-    parser.add_argument("--min-interval", type=float, default=65.0, help="seconds between planner calls (token limit)")
+    parser.add_argument("--min-interval", type=float, default=45.0, help="seconds between planner calls (token limit: ~3.5k tokens per call, 8k per minute shared with the app)")
     parser.add_argument("--out", default=str(BACKEND_DIR.parent / "docs" / "eval" / "1g_shadow"))
     parser.add_argument("--summarise-only", action="store_true")
     args = parser.parse_args(argv)
