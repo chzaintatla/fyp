@@ -389,8 +389,8 @@ def reply_task(task_id: str, payload: TaskReply, db: Session = Depends(get_db)) 
         task = executor._get_task(db, task_id)
         if task.status not in {"awaiting_approval", "awaiting_input"}:
             raise ValueError("This task is no longer waiting for a reply. Refresh before responding.")
-        message = payload.message.strip().casefold().rstrip(".!۔।؟?").strip()
-        yes = {"yes", "yes do it", "yes please", "confirm", "approve", "do it", "okay", "ok", "haan", "han", "haan kar do", "ji haan", "हाँ", "हां", "हाँ कर दो", "हां कर दो", "जी हाँ कर दो", "ہاں", "جی ہاں", "ہاں کر دو", "جی ہاں کر دو"}
+        message = payload.message.strip().casefold().replace(",", "").rstrip(".!۔।؟?").strip()
+        yes = {"yes run it", "run it", "go ahead", "yes go ahead", "yes", "yes do it", "yes please", "confirm", "approve", "do it", "okay", "ok", "haan", "han", "haan kar do", "ji haan", "हाँ", "हां", "हाँ कर दो", "हां कर दो", "जी हाँ कर दो", "ہاں", "جی ہاں", "ہاں کر دو", "جی ہاں کر دو"}
         no = {"no", "cancel", "cancel it", "stop", "don't", "do not", "nahi", "nahin", "nahi karo", "नहीं", "नहीं करो", "रहने दो", "نہیں", "نہیں کرو", "رہنے دو"}
         if message in yes and task.status == "awaiting_approval":
             pending = [a for a in task.actions if a.status == ActionStatus.PENDING]

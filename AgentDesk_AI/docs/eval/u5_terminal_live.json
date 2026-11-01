@@ -1,0 +1,104 @@
+{
+ "folder": "F:\\uisoft\\fyp-nabiha\\AgentDesk_AI",
+ "rows": [
+  {
+   "command": "pwd",
+   "risk": "low",
+   "expected_risk": "low",
+   "ran": true,
+   "verified": true,
+   "exit_code": 0,
+   "seconds": 0.14,
+   "spoken": "You are in F:\\uisoft\\fyp-nabiha\\AgentDesk_AI.",
+   "good": true
+  },
+  {
+   "command": "dir",
+   "risk": "low",
+   "expected_risk": "low",
+   "ran": true,
+   "verified": true,
+   "exit_code": 0,
+   "seconds": 0.07,
+   "spoken": "10 folders, 4 files.",
+   "good": true
+  },
+  {
+   "command": "git status",
+   "risk": "low",
+   "expected_risk": "low",
+   "ran": true,
+   "verified": true,
+   "exit_code": 0,
+   "seconds": 0.17,
+   "spoken": "On branch main: 15 changed, 8 untracked.",
+   "good": true
+  },
+  {
+   "command": "git log --oneline -3",
+   "risk": "low",
+   "expected_risk": "low",
+   "ran": true,
+   "verified": true,
+   "exit_code": 0,
+   "seconds": 0.13,
+   "spoken": "3 commits; the latest: 776625d U4 UI Automation layer: ui_inspect and ui_act on an\u2026",
+   "good": true
+  },
+  {
+   "command": "python --version",
+   "risk": "low",
+   "expected_risk": "low",
+   "ran": true,
+   "verified": true,
+   "exit_code": 0,
+   "seconds": 0.18,
+   "spoken": "Python 3.14.7",
+   "good": true
+  },
+  {
+   "command": "echo hello from the assistant",
+   "risk": "low",
+   "expected_risk": "low",
+   "ran": true,
+   "verified": true,
+   "exit_code": 0,
+   "seconds": 0.08,
+   "spoken": "hello from the assistant",
+   "good": true
+  },
+  {
+   "command": "where git",
+   "risk": "low",
+   "expected_risk": "low",
+   "ran": true,
+   "verified": true,
+   "exit_code": 0,
+   "seconds": 0.08,
+   "spoken": "It is at C:\\Program Files\\Git\\mingw64\\bin\\git.EXE.",
+   "good": true
+  },
+  {
+   "command": "python -c \"print(40 + 2)\"",
+   "risk": "medium",
+   "expected_risk": "medium",
+   "ran": true,
+   "verified": true,
+   "exit_code": 0,
+   "seconds": 0.28,
+   "spoken": "Finished without errors. Last line: 42",
+   "good": true
+  },
+  {
+   "command": "python -c \"import time; time.sleep(60)\"",
+   "risk": "medium",
+   "expected_risk": "medium",
+   "ran": true,
+   "verified": false,
+   "exit_code": null,
+   "seconds": 5.52,
+   "spoken": "It took too long, so I stopped it.",
+   "good": true
+  }
+ ]
+}

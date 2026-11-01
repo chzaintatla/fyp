@@ -6,6 +6,28 @@ Older evidence: `FEATURE_AUDIT.md`, `audit/FEATURE_TRACEABILITY_MATRIX.md`,
 
 ## Session log
 
+### 2026-11-02 — Session 26: Upgrade U5 (terminal + browser/YouTube completion)
+
+**Built (not committed)**
+- Terminal (`tools/terminal_policy.py`, `tools/terminal.py`, `docs/TERMINAL.md`): `open_terminal` (real cmd / PowerShell / Windows Terminal in a folder, low risk) and `run_terminal_command`.
+  Read-only allow-list runs at once (cd, dir / ls, pwd, type / cat of small non-secret files, echo, where, git status / log / diff / show / branch / remote -v ..., tool versions, pip / npm list); most are done by the program itself, the rest as a fixed argument list with no shell.
+  Anything with `; & | < > ` ^ $ % ( ) { } ! * ? ~` is never allow-listed. Everything else needs approval (medium, shown in full and read out "Say yes, run it, or click Approve"); destructive patterns (del, rm, rd /s, format, reg delete, Remove-Item, shutdown, taskkill, curl | iex, Set-ExecutionPolicy, git push --force / reset --hard / clean -f, pip uninstall, npm publish ...) are high risk and a spoken yes is refused (click only); interactive shells, editors and bare REPLs are blocked even if approved.
+  Output: last 50 lines, secrets masked, a one-sentence summary ("3 tests failed, 12 passed.", "On branch main: 2 changed, 1 untracked.", failures say "It failed with exit code N"), the folder is remembered between commands, time limit with whole-tree kill, the program's own API keys are not passed to the command, and a window titled "AgentDesk terminal" follows a transcript file live.
+  `/tasks/{id}/reply` now also accepts "yes, run it" / "run it" / "go ahead".
+- Browser (`tools/browser.py`, `ai/browser_commands.py`, extension 1.2.0): new actions switch tab, read title, seek (skip / rewind seconds or to a position), speed, volume, mute, unmute, full screen, next video, list results, click result N, scroll; spoken commands for them (and "play the second one" right after a YouTube search); every action is verified from the page itself (the extension re-reads the video's `currentTime`, `playbackRate`, `volume`, `muted`, `fullscreenElement`, the new video id, `scrollY`); a page that did not change is reported as not done; an older extension is told to update. All low risk. `exit` and unset fields are not sent.
+- Planner: tools registered, shortlisted (`run_terminal_command` pairs with `find_paths`), `terminal` intent and a prompt rule.
+
+**Tested how**
+- `tests/test_u5_terminal.py`: 732 tests (parametrized): every allow-list entry (45), approve (38) and high-risk (49) commands, blocked commands, and each allow-listed command with 10 injection tails (450 cases, none may stay allowed), paths outside the allowed folder, real runs (dir, cd remembered across tool instances, type, git status in a temp repo, python --version, exit codes, last 50 lines, time-out kill, secrets kept out of the child), summaries, masking, and the end-to-end approval paths through the executor (low runs unasked; medium waits and is read out; high needs a click and refuses a spoken yes; blocked stays blocked when approved; the model cannot lower risk).
+- `tests/test_u5_browser.py` (86) on a simulated extension + `browser-extension/tests/test_youtube.cjs` on a fake YouTube DOM: every action, bad input rejected before it reaches the page, blocked full screen reported, non-YouTube tabs refused.
+- LIVE on this PC (`scripts/terminal_live.py`, `docs/eval/u5_terminal_live.json`): 9/9 as expected: pwd, dir, git status, git log, python --version, echo, where git (0.07-0.2 s each, verified), an approved python one-liner printed 42, a 60 s sleep was stopped after 5 s with no process left behind. A first run found that `python` on this PC's PATH is the Microsoft Store stub (exit 9009): fixed by putting the real interpreter first in the command's PATH.
+
+**NOT tested / not done**
+- The browser controls on the REAL youtube.com and in a real Chrome with the extension loaded: the extension is not paired on this PC and no Chromium was available (Playwright browsers not installed), so only the fake DOM and the simulated extension ran. YouTube's markup (`ytd-video-renderer a#video-title`, `.ytp-next-button`) can differ; full screen may be refused by Chrome (reported, not claimed).
+- Deliberate difference from the spec's "runs commands typed into the terminal": the window is a live VIEW of a controlled child process (reliable exit code, output, time-out kill). Needs your OK (see the report).
+- Spoken summaries are English only; the terminal summaries for Urdu / Hindi users are still English sentences.
+- Scrolling non-YouTube pages is done with the U4 UI Automation tool, not the extension.
+
 ### 2026-11-02 — Session 25: Upgrade U4 (UI Automation layer): `ui_inspect` and `ui_act`
 
 **Built (not committed)**

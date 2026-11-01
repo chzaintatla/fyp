@@ -59,7 +59,7 @@ test('real extension: pair, version handshake, list tabs, open tab via extension
   await page.goto(`${backend.url}/browser-extension/setup.html#token=${encodeURIComponent(backend.token)}`);
   await page.getByText('Paired.').waitFor({ timeout: 10000 });
   const status = await waitFor(async () => { const s = await api(backend, '/browser/status'); return s.connected && s; });
-  assert.equal(status.version, '1.1.0');
+  assert.equal(status.version, '1.2.0');
   assert.equal(status.outdated, false);
   record.steps.push({ step: 'pair + handshake', status });
 

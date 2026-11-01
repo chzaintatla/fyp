@@ -29,7 +29,7 @@ INTENTS: tuple[str, ...] = (
     "whatsapp_draft", "app_install",
     "write_file", "edit_file", "compress", "extract", "screenshot", "email_draft", "package_search",
     "download", "multi", "clarify", "unsupported", "chat",
-    "memory", "summarise", "web_answer", "ui_control",
+    "memory", "summarise", "web_answer", "ui_control", "terminal",
 )
 LANGUAGES: tuple[str, ...] = ("en", "ur", "roman_ur", "hi")
 NO_STEP_INTENTS = {"clarify", "unsupported", "chat"}

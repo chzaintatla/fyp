@@ -257,6 +257,19 @@ def p_ui_act_read(env: Env) -> Outcome:
     return judge(r, v, bool((r.output or {}).get("text")), f"read {_short(named[0]['name'], 40)}")
 
 
+def p_terminal_read(env: Env) -> Outcome:
+    """run_terminal_command in its read-only form (`echo`): nothing is executed outside this program, nothing is changed."""
+    r, v = env.run("run_terminal_command", {"command": "echo live check"})
+    return judge(r, v, (r.output or {}).get("lines") == ["live check"], f"output={_short((r.output or {}).get('lines'), 60)}")
+
+
+def p_open_terminal(env: Env) -> Outcome:
+    r, v = env.run("open_terminal", {"shell": "cmd"})
+    if not IS_WINDOWS and not r.success:
+        return Outcome(BLOCKED, f"not Windows: {_short(r.error, 100)}")
+    return judge(r, v, bool((r.output or {}).get("pid")), f"folder={_short((r.output or {}).get('folder'), 60)}")
+
+
 def _api_browser_inspect(base_url: str, client: Any = None) -> Outcome:
     """control_browser through the running server: the extension's socket lives in that process, not in this script.
 
@@ -513,6 +526,8 @@ PROBES: list[Probe] = [
     Probe("control_browser", "read", p_browser_inspect),
     Probe("ui_inspect", "read", p_ui_inspect),
     Probe("ui_act", "gui", p_ui_act_read),
+    Probe("run_terminal_command", "read", p_terminal_read),
+    Probe("open_terminal", "gui", p_open_terminal),
     Probe("application_package", "read", p_package_search),
     Probe("open_application", "gui", p_open_application),
     Probe("open_folder", "gui", p_open_folder),

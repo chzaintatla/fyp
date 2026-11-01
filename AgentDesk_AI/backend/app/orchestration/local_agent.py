@@ -202,7 +202,8 @@ def prepare_local_request(db, task, registry):
     spoken = clean_transcript(task.command)  # Whisper ends sentences with "." and people say "open THE youtube": the parsers expect neither
     spoken = _apply_correction(db, spoken, recent)
     routed = switch_followup(spoken, recent) or canonical_command(spoken)
-    media = browser_plan(routed)
+    from ..ai.browser_commands import youtube_followup
+    media = youtube_followup(routed, recent) or browser_plan(routed)
     if media is not None:
         return media
     pieces = re.split(r"\s+(?:and|aur|और|اور)\s+", routed, flags=re.IGNORECASE)

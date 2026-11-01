@@ -82,3 +82,24 @@ tab creation, identity and closing are real.
 
 Still to check by hand in your own Chrome/Edge profile (not covered by the automated run): YouTube pause/resume
 on a playing video, autoplay blocking, two profiles connected at once, and the 1.0 -> 1.1 upgrade path.
+
+## YouTube and tab controls added in extension 1.2
+
+Say these with a YouTube tab open (the one playing sound, or the one in front, is used; two idle YouTube tabs make the assistant ask):
+
+- skip 10 seconds / forward 30 / skip 1 minute / rewind 10 seconds / go back 10 seconds / 10 second aage karo / 5 second peeche kar do
+- speed 1.5 / playback speed 2x / normal speed
+- youtube volume 40 (the player's volume; plain "volume down" stays the PC's volume) / mute the video / unmute youtube
+- full screen / exit full screen (Chrome may refuse: it only allows it after a real key press, and the assistant says so)
+- next video
+- search YouTube for X, then: read the results / play result 2 / "play the second one" (right after a YouTube search)
+- youtube scroll down / up (scrolling other sites is done with the UI Automation tools: "scroll down in Chrome")
+- switch to YouTube tab / switch to Gmail / what page is this (reads the title of the tab in front)
+
+Every one is verified from the page itself: the extension reads the DOM again after acting and the backend compares it with what was asked
+(the video's real `currentTime`, `playbackRate`, `volume`, `muted`, `fullscreenElement`, the new video id after "next" or "play result N",
+the page's `scrollY`). A page that did not change is reported as not done. All of them are low risk (media and navigation).
+
+Limits: page controls work on YouTube only (the extension has no permission on other sites). Tested with a fake DOM (`browser-extension/tests/test_youtube.cjs`);
+YouTube's own page markup can change, so the selectors (`ytd-video-renderer a#video-title`, `.ytp-next-button`) need a check on the real site.
+An extension older than 1.2 is told to update itself (the backend asks for a reload when it connects).

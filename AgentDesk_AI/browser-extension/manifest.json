@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Agent X Browser Bridge",
-  "version": "1.1.0",
-  "description": "Connect Agent X AI to exact browser tabs and YouTube pause/resume controls.",
+  "version": "1.2.0",
+  "description": "Connect Agent X AI to exact browser tabs and YouTube controls (play, pause, seek, speed, volume, next, results, scroll).",
   "minimum_chrome_version": "120",
   "permissions": [
     "tabs",

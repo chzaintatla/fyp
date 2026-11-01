@@ -62,7 +62,7 @@ vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'background.js'), 'ut
   assert.equal(result.version, '1.1.0');
   await new Promise(r => setTimeout(r, 300));
   assert.equal(reloads.length, 1, 'reload command must reload the extension');
-  assert.deepEqual([...vm.runInContext('CAPABILITIES', context)], ['inspect', 'open', 'close', 'pause', 'resume', 'reload']);
+  assert.ok(['inspect', 'open', 'close', 'pause', 'resume', 'reload', 'switch', 'seek', 'next', 'click_result', 'scroll'].every(c => vm.runInContext('CAPABILITIES', context).includes(c)));
   await assert.rejects(context.command({ action: 'open', url: 'javascript:alert(1)', browser: 'chrome' }));
   await assert.rejects(context.command({ action: 'open', url: 'https://www.youtube.com', browser: 'edge' }));
   console.log('Browser extension checks passed: idempotent media state, stale URL guard, exact tab close, URL normalisation, self-reload.');

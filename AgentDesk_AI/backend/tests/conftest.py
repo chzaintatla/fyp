@@ -18,6 +18,8 @@ sys.path.insert(0, str(BACKEND_DIR))
 SESSION_TMP = Path(tempfile.mkdtemp(prefix="agentdesk_tests_"))
 os.environ["AGENTDESK_SAPI_WORKER"] = "0"  # tests do not keep a PowerShell voice running; test_sapi_worker turns it on itself
 os.environ["AGENTDESK_LATENCY_LOG"] = str(SESSION_TMP / "voice_latency.jsonl")  # never write the real pilot log from tests
+os.environ["AGENTDESK_TERMINAL_VIEW"] = "0"  # tests never open the visible terminal window
+os.environ["AGENTDESK_TERMINAL_DIR"] = str(SESSION_TMP / "terminal")
 os.environ["AGENTDESK_ENTITY_INDEX"] = "0"  # tests do not scan the real PC; test_u1_entity builds its own index
 os.environ["AI_PROVIDER"] = "mock"
 os.environ["AI_MODEL"] = "mock-test-model"

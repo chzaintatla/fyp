@@ -187,6 +187,9 @@ def line_for_task(task: dict[str, Any], language: str = "en", personality: "str 
     """The closing line for a finished (or waiting) task. "Done" only when the verifier confirmed every action."""
     status, actions = task.get("status"), task.get("actions") or []
     if status == "awaiting_approval":
+        asked = _terminal_approval(actions, _lang(language))
+        if asked:
+            return asked
         return line("needs_approval", language, personality, summary=_approval_summary(language))
     if status == "awaiting_input":
         note = " ".join(str(task.get("plan_note") or "").split())
@@ -297,6 +300,27 @@ def _listing(action: dict[str, Any], lang: str) -> str:
     if len(names) > 3:
         spoken += ", " + _MORE[lang].format(k=len(names) - 3)
     return many.format(n=len(names), names=spoken)
+
+
+_TERMINAL_ASK = {   # a terminal command is read out in short form: what it is, and how to approve it (a click only for the risky ones)
+    "medium": {"en": "I'd run this command: {cmd}. Say yes, run it, or click Approve.",
+               "roman": "Main yeh command chalaunga: {cmd}. Haan bolein ya Approve dabayein.",
+               "ur": "میں یہ کمانڈ چلاؤں گا: {cmd}۔ ہاں کہیں یا اپروو دبائیں۔",
+               "hi": "मैं यह कमांड चलाऊँगा: {cmd}। हाँ बोलें या अप्रूव दबाएँ।"},
+    "high": {"en": "This one is risky: {cmd}. Click Approve on screen to run it.",
+             "roman": "Yeh khatarnak hai: {cmd}. Chalane ke liye screen par Approve dabayein.",
+             "ur": "یہ خطرناک ہے: {cmd}۔ چلانے کے لیے اسکرین پر اپروو دبائیں۔",
+             "hi": "यह जोखिम भरा है: {cmd}। चलाने के लिए स्क्रीन पर अप्रूव दबाएँ।"},
+}
+
+
+def _terminal_approval(actions: list[dict[str, Any]], lang: str) -> str:
+    for a in actions:
+        if a.get("tool_name") == "run_terminal_command" and a.get("status") in ("pending", None):
+            command = " ".join(str((a.get("args") or {}).get("command", "")).split())
+            short = command if len(command) <= 70 else command[:69].rstrip() + "…"
+            return _TERMINAL_ASK["high" if a.get("risk") == "high" else "medium"][lang].format(cmd=short)
+    return ""
 
 
 def _approval_summary(language: str) -> str:

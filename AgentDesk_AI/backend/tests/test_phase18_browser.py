@@ -17,14 +17,14 @@ def _connect(client, hello):
 
 
 def test_expected_version_comes_from_the_shipped_manifest():
-    assert expected_version() == "1.1.0"
+    assert expected_version() == "1.2.0"
 
 
 def test_current_extension_is_not_asked_to_reload(client):
-    socket, ws = _connect(client, {"version": "1.1.0", "capabilities": ["inspect", "open", "reload"]})
+    socket, ws = _connect(client, {"version": "1.2.0", "capabilities": ["inspect", "open", "reload"]})
     try:
         status = client.get("/browser/status").json()
-        assert status["connected"] and status["version"] == "1.1.0" and status["outdated"] is False
+        assert status["connected"] and status["version"] == "1.2.0" and status["outdated"] is False
         assert bridge.supports("open")
     finally:
         socket.__exit__(None, None, None)
@@ -32,7 +32,7 @@ def test_current_extension_is_not_asked_to_reload(client):
 
 def test_outdated_extension_with_reload_support_is_asked_to_reload(client, monkeypatch):
     monkeypatch.setattr("app.browser_bridge.expected_version", lambda: "1.2.0")
-    socket, ws = _connect(client, {"version": "1.1.0", "capabilities": ["inspect", "open", "reload"]})
+    socket, ws = _connect(client, {"version": "1.1.0", "capabilities": ["inspect", "open", "reload"]})   # one version behind the shipped files
     try:
         message = ws.receive_json()
         assert message["action"] == "reload" and message["id"]
@@ -91,7 +91,7 @@ def test_old_extension_fallback_fails_honestly_when_tab_never_appears(ctx, monke
 
 def test_new_extension_uses_open_command(ctx, monkeypatch):
     monkeypatch.setattr(bridge, "clients", {"c": None})
-    monkeypatch.setattr(bridge, "info", {"c": {"version": "1.1.0", "capabilities": ["inspect", "open"]}})
+    monkeypatch.setattr(bridge, "info", {"c": {"version": "1.2.0", "capabilities": ["inspect", "open"]}})
     monkeypatch.setattr(bridge, "request", lambda action, **kw: {"success": True, "tab_id": 3, "url": kw.get("url")} if action == "open" else pytest.fail(action))
     tool = OpenUrlTool(ctx)
     result = tool.execute(tool.validate_args({"url": "https://mail.google.com", "browser": "chrome"}))
